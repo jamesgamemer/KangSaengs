@@ -1,0 +1,373 @@
+[
+  {
+    "name": "Ban",
+    "url": "https://7dsorigin.gg/en/characters/ban",
+    "description": "",
+    "type": [],
+    "rarity": "",
+    "skills": [
+      {
+        "name": "No skills available",
+        "description": "Skills for this character will be added soon."
+      }
+    ],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Bug",
+    "url": "https://7dsorigin.gg/en/characters/bug",
+    "description": "",
+    "type": [
+      "Axe",
+      "Dual Swords",
+      "Book"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Daisy",
+    "url": "https://7dsorigin.gg/en/characters/daisy",
+    "description": "",
+    "type": [
+      "Shield",
+      "Book",
+      "Wand"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Derieri",
+    "url": "https://7dsorigin.gg/en/characters/derieri",
+    "description": "",
+    "type": [],
+    "rarity": "",
+    "skills": [
+      {
+        "name": "No skills available",
+        "description": "Skills for this character will be added soon."
+      }
+    ],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Diane",
+    "url": "https://7dsorigin.gg/en/characters/diane",
+    "description": "",
+    "type": [
+      "Axe",
+      "Gauntlets",
+      "Cudgel"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Drake",
+    "url": "https://7dsorigin.gg/en/characters/drake",
+    "description": "",
+    "type": [
+      "Longsword",
+      "Greatsword",
+      "Staff"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Dreydrin",
+    "url": "https://7dsorigin.gg/en/characters/dreydrin",
+    "description": "",
+    "type": [
+      "Axe",
+      "Shield",
+      "Rapier"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Dreyfus",
+    "url": "https://7dsorigin.gg/en/characters/dreyfus",
+    "description": "",
+    "type": [
+      "Longsword",
+      "Lance",
+      "Rapier"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Elaine",
+    "url": "https://7dsorigin.gg/en/characters/elaine",
+    "description": "",
+    "type": [
+      "Book",
+      "Wand",
+      "Staff"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Elizabeth",
+    "url": "https://7dsorigin.gg/en/characters/elizabeth",
+    "description": "",
+    "type": [],
+    "rarity": "",
+    "skills": [
+      {
+        "name": "No skills available",
+        "description": "Skills for this character will be added soon."
+      }
+    ],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Escanor",
+    "url": "https://7dsorigin.gg/en/characters/escanor",
+    "description": "",
+    "type": [],
+    "rarity": "",
+    "skills": [
+      {
+        "name": "No skills available",
+        "description": "Skills for this character will be added soon."
+      }
+    ],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Gilthunder",
+    "url": "https://7dsorigin.gg/en/characters/gilthunder",
+    "description": "",
+    "type": [
+      "Longsword",
+      "Shield",
+      "Lance"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Gowther",
+    "url": "https://7dsorigin.gg/en/characters/gowther",
+    "description": "",
+    "type": [],
+    "rarity": "",
+    "skills": [
+      {
+        "name": "No skills available",
+        "description": "Skills for this character will be added soon."
+      }
+    ],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Griamore",
+    "url": "https://7dsorigin.gg/en/characters/griamore",
+    "description": "",
+    "type": [
+      "Gauntlets",
+      "Cudgel",
+      "Shield"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Guila",
+    "url": "https://7dsorigin.gg/en/characters/guila",
+    "description": "",
+    "type": [
+      "Shield",
+      "Lance",
+      "Rapier"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Hendrickson",
+    "url": "https://7dsorigin.gg/en/characters/hendrickson",
+    "description": "",
+    "type": [
+      "Longsword",
+      "Dual Swords",
+      "Lance"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Howzer",
+    "url": "https://7dsorigin.gg/en/characters/howzer",
+    "description": "",
+    "type": [
+      "Gauntlets",
+      "Cudgel",
+      "Lance"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Jericho",
+    "url": "https://7dsorigin.gg/en/characters/jericho",
+    "description": "",
+    "type": [
+      "Dual Swords",
+      "Lance",
+      "Rapier"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "King",
+    "url": "https://7dsorigin.gg/en/characters/king",
+    "description": "",
+    "type": [
+      "Book",
+      "Wand",
+      "Staff"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Klotho",
+    "url": "https://7dsorigin.gg/en/characters/klotho",
+    "description": "",
+    "type": [],
+    "rarity": "R",
+    "skills": [
+      {
+        "name": "No skills available",
+        "description": "Skills for this character will be added soon."
+      }
+    ],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Manny",
+    "url": "https://7dsorigin.gg/en/characters/manny",
+    "description": "",
+    "type": [
+      "Longsword",
+      "Dual Swords",
+      "Staff"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Meliodas",
+    "url": "https://7dsorigin.gg/en/characters/meliodas",
+    "description": "",
+    "type": [
+      "Longsword",
+      "Axe",
+      "Dual Swords"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Merlin",
+    "url": "https://7dsorigin.gg/en/characters/merlin",
+    "description": "",
+    "type": [],
+    "rarity": "",
+    "skills": [
+      {
+        "name": "No skills available",
+        "description": "Skills for this character will be added soon."
+      }
+    ],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Slader",
+    "url": "https://7dsorigin.gg/en/characters/slader",
+    "description": "",
+    "type": [
+      "Axe",
+      "Cudgel",
+      "Greatsword"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Tioreh",
+    "url": "https://7dsorigin.gg/en/characters/tioreh",
+    "description": "",
+    "type": [
+      "Book",
+      "Wand",
+      "Staff"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  },
+  {
+    "name": "Tristan",
+    "url": "https://7dsorigin.gg/en/characters/tristan",
+    "description": "",
+    "type": [
+      "Longsword",
+      "Dual Swords",
+      "Greatsword"
+    ],
+    "rarity": "R",
+    "skills": [],
+    "potentials": [],
+    "costumes": []
+  }
+]
