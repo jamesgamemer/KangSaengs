@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ban - 7DS Origin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      transition: color 0.2s;
+    }
+    .page-back:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="../index.html">&#127968; Home</a></li>
+      <li><a href="../characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="../tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="../events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Ban</h1>
+          <img src="../images/Ban.png" class="character-image" alt="Ban">
+          <p class="title">Fox's Sin of Greed</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Character Story</h2>
+          <p>Ban คือ Fox's Sin of Greed หนึ่งในสมาชิกของ Seven Deadly Sins ผู้มีพลังชีวิตที่ไม่สิ้นสุดจากการดื่มน้ำพุแห่งชีวิต</p>
+          <p>ด้วยความสามารถ Snatch ของเขา Ban สามารถดูดพลังและสถิติจากศัตรูมาใช้เป็นของตนเองได้ ทำให้เขาเป็นทั้งนักรบและผู้สนับสนุนทีมที่ยอดเยี่ยม</p>
+        </div>
+      </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('cudgel',this)" class="active">Cudgel</button>
+        <button onclick="showWeapon('gauntlet',this)">Gauntlet</button>
+        <button onclick="showWeapon('greatsword',this)">Greatsword</button>
+      </div>
+
+      <div id="weaponContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'cudgel') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Snatch</h3><p><b>Cooldown:</b> 12s</p><p>ดูดพลังโจมตีและป้องกันจากศัตรู ทำให้ Ban แข็งแกร่งขึ้นในระหว่างการต่อสู้</p></div>'
+          + '<div class="skill-card"><h3>Assault Hunt</h3><p><b>Cooldown:</b> 20s</p><p>โจมตีศัตรูด้วยความเร็วสูง สร้างความเสียหาย 320% ของ Attack</p></div>'
+          + '<div class="skill-card"><h3>Fox Hunt</h3><p><b>Cooldown:</b> 30s</p><p>Ultimate skill ที่ดูดพลังชีวิตจากศัตรูทั้งหมดในพื้นที่</p></div>'
+          + '</div>';
+      } else if (type === 'gauntlet') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Iron Club</h3><p><b>Cooldown:</b> 10s</p><p>โจมตีด้วยหมัดเหล็ก สร้างความเสียหาย 280% และ Stun ศัตรู 2 วินาที</p></div>'
+          + '<div class="skill-card"><h3>Snatch (Gauntlet)</h3><p><b>Cooldown:</b> 18s</p><p>ดูดพลังป้องกันจากศัตรูมาเพิ่มให้ตัวเอง</p></div>'
+          + '</div>';
+      } else {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Slash</h3><p><b>Cooldown:</b> 8s</p><p>โจมตีด้วยดาบยักษ์ สร้างความเสียหาย 350% ของ Attack</p></div>'
+          + '</div>';
+      }
+    }
+    showWeapon('cudgel', document.querySelector('.weapon-tabs button'));
+  </script>
+</body>
+</html>

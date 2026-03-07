@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daisy - 7DS Origin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
+    .page-back:hover { color:var(--gold); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="../index.html">&#127968; Home</a></li>
+      <li><a href="../characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="../tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="../events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Daisy</h1>
+          <img src="../images/Daisy.png" class="character-image" alt="Daisy">
+          <p class="title">Captain of the Seven Deadly Sins</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Character Story</h2>
+          <p>Daisy เป็นกัปตันของ Seven Deadly Sins ผู้มีบุคลิกสดใสแต่แฝงไปด้วยพลังมหาศาล เธอเป็นผู้นำที่คอยปกป้องเพื่อนร่วมทีมและมักจะเป็นคนที่พุ่งเข้าไปในสนามรบก่อนใคร</p>
+          <p>พลังของ Daisy เกี่ยวข้องกับพลังไฟฟ้าและการควบคุมพลังงาน ทำให้เธอสามารถสนับสนุนทีมได้อย่างยอดเยี่ยม ทั้งการเพิ่ม Crit Damage และช่วยสร้าง Burst Damage ให้กับเพื่อนร่วมทีม</p>
+        </div>
+      </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('shield',this)" class="active">Shield</button>
+        <button onclick="showWeapon('book',this)">Book</button>
+        <button onclick="showWeapon('wand',this)">Wand</button>
+      </div>
+
+      <div id="weaponContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'shield') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Fruit Barrage</h3><p><b>Cooldown:</b> 10s &nbsp; <b>Magic Cost:</b> 3</p><p>สร้างความเสียหาย <b>261%</b> ของค่า Attack และลดค่า Crit Defense ของศัตรูลง 30%</p><p>สกิลนี้เหมาะใช้เปิดไฟต์ เพราะการลด Crit Defense จะทำให้ศัตรูโดนคริติคอลได้แรงขึ้น</p></div>'
+          + '<div class="skill-card"><h3>Summon Shocking Streetlamp</h3><p><b>Cooldown:</b> 27s</p><p>เรียก Shocking Streetlamp ลงมาในสนามเป็นเวลา 15 วินาที แต่ละครั้งสร้างความเสียหาย <b>13%</b> ของ Attack และเพิ่มดาเมจต่อศัตรูที่ติด Electromagnet อีก 15%</p><p>ทุก 5 ครั้งที่ Streetlamp โจมตี จะมอบบัฟ Electric Charge ให้ทีม (Crit Damage 5%, Crit Chance 2%) สะสมได้สูงสุด 5 Stack</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><p><b>Cooldown:</b> 16s</p><p>เพิ่ม Crit Damage ให้เพื่อนร่วมทีมในระยะ <b>15%</b> เป็นเวลา 20 วินาที ถ้าใช้กับ Streetlamp ที่อยู่ในสนาม จะทำให้มันโจมตีเร็วขึ้นชั่วคราว</p></div>'
+          + '</div>';
+      } else if (type === 'book') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Offbeat Girl</h3><p>มอบ Static Shock เป็นเวลา 20 วินาทีเมื่อฮีโร่พันธมิตรได้รับสกิลแท็ก (สูงสุด: 3 ครั้ง) Static Shock: เพิ่มความเสียหาย Lightning 5% ทุกๆ 1 เอฟเฟกต์ เมื่อสแตคสูงสุด จะมอบ High Voltage ให้กับฮีโร่พันธมิตรทุกตัวเป็นเวลา 20 วินาที (Lightning Dmg +25%, Crit Chance +15%)</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><p>สร้างความเสียหายเท่ากับ 111% ของพลังโจมตี สร้าง Electromagnet ให้กับศัตรูเป็นเวลา 10 วินาที (ลด Crit Resistance 10%)</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><p>เพิ่มความเสียหายคริติคอลของพันธมิตรในระยะ 15% เป็นเวลา 20 วินาที การใช้สกิลนี้กับ Shocking Streetlamp ในระยะจะเพิ่มความเร็วในการโจมตีเล็กน้อยเป็นเวลา 10 วินาที</p></div>'
+          + '<div class="skill-card"><h3>Summon Shocking Streetlamp</h3><p>เรียก Shocking Streetlamp เป็นเวลา 15 วินาที สร้างความเสียหายเท่ากับ 13% ของพลังโจมตีต่อการโจมตีแต่ละครั้ง ทุกๆ 5 ครั้งที่โจมตี จะมอบ Electric Charge ให้กับพันธมิตรในระยะ (Crit Dmg +5%, Crit Chance +2%, สูงสุด 5 Stack)</p></div>'
+          + '<div class="skill-card"><h3>Here Comes Daisy</h3><p>Passive: เพิ่มพลังโจมตีของทีมเมื่อ Streetlamp อยู่ในสนาม</p></div>'
+          + '<div class="skill-card"><h3>Fruit Barrage</h3><p>สร้างความเสียหายเท่ากับ 261% ของพลังโจมตี และลดพลังป้องกันคริติคอลลง 30%</p></div>'
+          + '</div>';
+      } else {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Arcane Beam</h3><p>Magic beam attack dealing heavy damage.</p></div>'
+          + '</div>';
+      }
+    }
+    showWeapon('shield', document.querySelector('.weapon-tabs button'));
+  </script>
+</body>
+</html>
