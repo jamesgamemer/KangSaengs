@@ -1,13 +1,14 @@
 /* ============================================================
    7DS ORIGIN - AUTH MODULE
-   Simple admin authentication using localStorage
+   Supports both Supabase Auth and local localStorage auth.
+   Supabase is used when configured; otherwise falls back to local.
    ============================================================ */
 
 var Auth = (function () {
   var STORAGE_KEY = '7ds_admin_session';
-  // Default admin credentials (can be changed via admin panel)
   var CRED_KEY = '7ds_admin_credentials';
 
+  // ---- Local Auth (fallback) ----
   function getCredentials() {
     var stored = localStorage.getItem(CRED_KEY);
     if (stored) {
@@ -26,7 +27,7 @@ var Auth = (function () {
       var session = {
         loggedIn: true,
         timestamp: Date.now(),
-        expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+        expires: Date.now() + (24 * 60 * 60 * 1000)
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
       return true;
@@ -36,6 +37,10 @@ var Auth = (function () {
 
   function logout() {
     localStorage.removeItem(STORAGE_KEY);
+    // Also logout from Supabase if connected
+    if (typeof SupaDB !== 'undefined' && SupaDB.isConnected()) {
+      SupaDB.logout();
+    }
   }
 
   function isLoggedIn() {
@@ -53,6 +58,17 @@ var Auth = (function () {
     }
   }
 
+  // ---- Combined check (Supabase + local) ----
+  async function isAdminAsync() {
+    // Check Supabase first
+    if (typeof SupaDB !== 'undefined' && SupaDB.isConnected()) {
+      var supaAdmin = await SupaDB.isLoggedIn();
+      if (supaAdmin) return true;
+    }
+    // Fallback to local
+    return isLoggedIn();
+  }
+
   function requireAdmin(redirectUrl) {
     if (!isLoggedIn()) {
       window.location.href = redirectUrl || 'login.html';
@@ -61,32 +77,62 @@ var Auth = (function () {
     return true;
   }
 
-  // Update admin bar visibility on any page
+  async function requireAdminAsync(redirectUrl) {
+    var admin = await isAdminAsync();
+    if (!admin) {
+      window.location.href = redirectUrl || 'login.html';
+      return false;
+    }
+    return true;
+  }
+
   function updateAdminUI() {
     var adminBar = document.getElementById('adminBar');
     var adminOnlyEls = document.querySelectorAll('.admin-only');
-    var isAdmin = isLoggedIn();
+    var admin = isLoggedIn();
 
     if (adminBar) {
-      adminBar.style.display = isAdmin ? 'flex' : 'none';
+      adminBar.style.display = admin ? 'flex' : 'none';
     }
     adminOnlyEls.forEach(function (el) {
-      el.style.display = isAdmin ? '' : 'none';
+      el.style.display = admin ? '' : 'none';
     });
 
-    // Adjust page content padding when admin bar is visible
     var pageContent = document.querySelector('.page-content');
     if (pageContent) {
-      pageContent.style.paddingTop = isAdmin ? '104px' : '64px';
+      pageContent.style.paddingTop = admin ? '104px' : '64px';
     }
+  }
+
+  // Async version that checks Supabase too
+  async function updateAdminUIAsync() {
+    var admin = await isAdminAsync();
+    var adminBar = document.getElementById('adminBar');
+    var adminOnlyEls = document.querySelectorAll('.admin-only');
+
+    if (adminBar) {
+      adminBar.style.display = admin ? 'flex' : 'none';
+    }
+    adminOnlyEls.forEach(function (el) {
+      el.style.display = admin ? '' : 'none';
+    });
+
+    var pageContent = document.querySelector('.page-content');
+    if (pageContent) {
+      pageContent.style.paddingTop = admin ? '104px' : '64px';
+    }
+    return admin;
   }
 
   return {
     login: login,
     logout: logout,
     isLoggedIn: isLoggedIn,
+    isAdminAsync: isAdminAsync,
     requireAdmin: requireAdmin,
+    requireAdminAsync: requireAdminAsync,
     updateAdminUI: updateAdminUI,
+    updateAdminUIAsync: updateAdminUIAsync,
     getCredentials: getCredentials,
     setCredentials: setCredentials
   };

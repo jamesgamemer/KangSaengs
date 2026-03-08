@@ -6,7 +6,7 @@
   <title>Characters - 7DS Origin</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
-  <link rel="stylesheet" href="css/navbar-auth.css?v=20260308">
+  <link rel="stylesheet" href="css/navbar-auth.css">
   <style>
     .page-header {
       background: linear-gradient(180deg, #0d1f4a 0%, var(--dark2) 100%);
@@ -124,6 +124,7 @@
       color: var(--sr);
       border: 1px solid rgba(167,139,250,0.3);
     }
+    .loading-msg { text-align:center; padding:60px; color:var(--muted); font-size:16px; }
   </style>
 </head>
 <body>
@@ -133,10 +134,10 @@
     <div class="admin-bar-left">
       <span class="admin-badge">ADMIN</span>
       <a href="admin.html" class="admin-bar-link">Dashboard</a>
-      <a href="admin.html#add" class="admin-bar-link">+ Add Character</a>
+      <a href="admin.html" class="admin-bar-link">+ Add Character</a>
     </div>
     <div class="admin-bar-right">
-      <button class="admin-bar-btn" onclick="Auth.logout(); location.reload();">Logout</button>
+      <button class="admin-bar-btn" onclick="doLogout()">Logout</button>
     </div>
   </div>
 
@@ -160,7 +161,9 @@
     <div class="container">
       <input id="searchInput" class="search-bar" placeholder="&#128269; Search a character..." oninput="applyFilters()">
       <div class="filters" id="filterButtons"></div>
-      <div id="charactersGrid"></div>
+      <div id="charactersGrid">
+        <div class="loading-msg" style="grid-column:1/-1;">Loading characters...</div>
+      </div>
     </div>
   </div>
 
@@ -174,11 +177,16 @@
     </p>
   </footer>
 
-  <script src="js/auth.js?v=20260308"></script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/data.js"></script>
-  <script src="js/navbar.js?v=20260308"></script>
+  <script src="js/navbar.js"></script>
   <script>
     var currentFilter = 'all';
+    var allCharacters = [];
 
     function filterWeapon(type, btn) {
       currentFilter = type;
@@ -216,29 +224,77 @@
 
     function buildGrid(chars) {
       var grid = document.getElementById('charactersGrid');
-      // Deduplicate: show each character once
       var seen = {};
       var html = '';
       chars.forEach(function(c) {
         if (seen[c.name]) return;
         seen[c.name] = true;
         var typesStr = (c.types || []).map(function(t) { return t.toLowerCase().replace(/\s+/g, ''); }).join(',');
-        html += '<a href="character.html?id=' + encodeURIComponent(c.id) + '" class="card" data-name="' + c.name + '" data-types="' + typesStr + '">';
+        // Use slug for Supabase, fallback to id for local
+        var linkParam = c.slug ? 'slug=' + encodeURIComponent(c.slug) : 'id=' + encodeURIComponent(c.id);
+        html += '<a href="character.html?' + linkParam + '" class="card" data-name="' + c.name + '" data-types="' + typesStr + '">';
         html += '<div class="card-rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
-        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + c.name + '" loading="lazy">';
+        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + c.name + '" loading="lazy" onerror="this.src=\'images/placeholder.png\'">';
         html += '<div class="rarity ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
         html += '<div class="name">' + c.name + '</div>';
         html += '</a>';
       });
-      grid.innerHTML = html;
+      grid.innerHTML = html || '<p class="loading-msg" style="grid-column:1/-1;">No characters found</p>';
     }
 
-    // Initialize
-    CharDB.loadAll(function(chars) {
-      buildFilters(chars);
-      buildGrid(chars);
-      Auth.updateAdminUI();
-    });
+    async function doLogout() {
+      if (SupaDB.isConnected()) await SupaDB.logout();
+      if (typeof Auth !== 'undefined') Auth.logout();
+      location.reload();
+    }
+
+    // ---- Initialize ----
+    (async function init() {
+      var connected = SupaDB.init();
+      var isAdmin = false;
+
+      // Check admin status
+      if (connected) {
+        isAdmin = await SupaDB.isLoggedIn();
+      } else if (typeof Auth !== 'undefined') {
+        isAdmin = Auth.isLoggedIn();
+      }
+
+      // Show admin bar if admin
+      if (isAdmin) {
+        document.getElementById('adminBar').style.display = '';
+      }
+
+      // Load characters from Supabase or fallback to local
+      if (connected) {
+        allCharacters = await SupaDB.fetchAll();
+      } else {
+        // Fallback: try local CharDB then JSON file
+        try {
+          if (typeof CharDB !== 'undefined') {
+            allCharacters = await new Promise(function(resolve) {
+              CharDB.loadAll(function(chars) { resolve(chars); });
+            });
+          } else {
+            var resp = await fetch('data/characters.json');
+            allCharacters = await resp.json();
+          }
+        } catch(e) { allCharacters = []; }
+      }
+
+      buildFilters(allCharacters);
+      buildGrid(allCharacters);
+
+      // Realtime updates from Supabase
+      if (connected) {
+        SupaDB.subscribeToChanges(async function() {
+          allCharacters = await SupaDB.fetchAll();
+          buildFilters(allCharacters);
+          buildGrid(allCharacters);
+          applyFilters();
+        });
+      }
+    })();
   </script>
 </body>
 </html>

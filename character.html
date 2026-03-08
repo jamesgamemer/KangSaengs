@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/character-detail.css">
   <link rel="stylesheet" href="css/admin.css">
-  <link rel="stylesheet" href="css/navbar-auth.css?v=20260308">
+  <link rel="stylesheet" href="css/navbar-auth.css">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
     <div class="admin-bar-right">
       <button class="admin-bar-btn save-btn" id="saveBtn" style="display:none;" onclick="saveAllChanges()">Save Changes</button>
       <button class="admin-bar-btn cancel-btn" id="cancelBtn" style="display:none;" onclick="cancelEdit()">Cancel</button>
-      <button class="admin-bar-btn" onclick="Auth.logout(); location.reload();">Logout</button>
+      <button class="admin-bar-btn" onclick="doLogout()">Logout</button>
     </div>
   </div>
 
@@ -49,14 +49,21 @@
     <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
   </footer>
 
-  <script src="js/auth.js?v=20260308"></script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
   <script src="js/data.js"></script>
-  <script src="js/navbar.js?v=20260308"></script>
+  <script src="js/navbar.js"></script>
   <script>
     var charData = null;
-    var charId = null;
+    var charId = null;      // Supabase UUID or local id
+    var charSlug = null;    // slug for URL
     var currentWeapon = null;
     var editMode = false;
+    var isAdmin = false;
+    var useSupabase = false;
 
     // ---- Utility Functions ----
     function esc(str) {
@@ -132,7 +139,7 @@
       var html = '<div class="char-detail-header">';
       html += '<div class="char-detail-portrait">';
       html += '<h1>' + esc(c.name) + '</h1>';
-      html += '<img src="' + esc(c.image || 'images/placeholder.png') + '" class="char-img" alt="' + esc(c.name) + '">';
+      html += '<img src="' + esc(c.image || 'images/placeholder.png') + '" class="char-img" alt="' + esc(c.name) + '" onerror="this.src=\'images/placeholder.png\'">';
       html += '<div><span class="char-rarity-badge ' + rarityClass + '">' + esc(c.rarity) + '</span></div>';
       html += '</div>';
       html += '<div class="char-detail-info">';
@@ -252,7 +259,6 @@
 
       document.getElementById('weaponContent').innerHTML = html;
 
-      // Re-apply edit mode if active
       if (editMode) applyEditMode();
     }
 
@@ -279,14 +285,12 @@
     }
 
     function applyEditMode() {
-      // Make description editable
       var descEl = document.querySelector('[data-field="description"]');
       if (descEl) {
         descEl.setAttribute('contenteditable', 'true');
         descEl.classList.add('editable-field');
       }
 
-      // Make skill names and descriptions editable
       document.querySelectorAll('[data-field="skill-name"]').forEach(function(el) {
         el.setAttribute('contenteditable', 'true');
         el.classList.add('editable-field');
@@ -294,7 +298,6 @@
       document.querySelectorAll('[data-field="skill-desc"]').forEach(function(el) {
         el.setAttribute('contenteditable', 'true');
         el.classList.add('editable-field');
-        // Show raw text for editing
         var idx = parseInt(el.getAttribute('data-idx'));
         var skills = (charData.skills && charData.skills[currentWeapon]) || [];
         if (skills[idx]) {
@@ -302,7 +305,6 @@
         }
       });
 
-      // Make potential descriptions editable
       document.querySelectorAll('[data-field="pot-desc"]').forEach(function(el) {
         el.setAttribute('contenteditable', 'true');
         el.classList.add('editable-field');
@@ -313,7 +315,6 @@
         }
       });
 
-      // Make costume names editable
       document.querySelectorAll('[data-field="costume-name"]').forEach(function(el) {
         el.setAttribute('contenteditable', 'true');
         el.classList.add('editable-field');
@@ -325,22 +326,20 @@
         el.removeAttribute('contenteditable');
         el.classList.remove('editable-field');
       });
-      // Re-render to restore highlighted formatting
       if (currentWeapon) {
         showWeapon(currentWeapon, document.querySelector('.weapon-tabs button.active'));
       }
     }
 
-    function saveAllChanges() {
-      if (!charData || !charId) return;
+    async function saveAllChanges() {
+      if (!charData) return;
 
-      // Save description
+      // Collect edits from DOM
       var descEl = document.querySelector('[data-field="description"]');
       if (descEl) {
         charData.description = descEl.textContent.trim();
       }
 
-      // Save skill names and descriptions
       var skills = (charData.skills && charData.skills[currentWeapon]) || [];
       document.querySelectorAll('[data-field="skill-name"]').forEach(function(el) {
         var idx = parseInt(el.getAttribute('data-idx'));
@@ -351,14 +350,12 @@
         if (skills[idx]) skills[idx].description = el.textContent.trim();
       });
 
-      // Save potential descriptions
       var pots = (charData.potentials && charData.potentials[currentWeapon]) || [];
       document.querySelectorAll('[data-field="pot-desc"]').forEach(function(el) {
         var idx = parseInt(el.getAttribute('data-idx'));
         if (pots[idx]) pots[idx].description = el.textContent.trim();
       });
 
-      // Save costume names
       var costumes = charData.costumes || [];
       document.querySelectorAll('[data-field="costume-name"]').forEach(function(el) {
         var idx = parseInt(el.getAttribute('data-idx'));
@@ -371,11 +368,24 @@
         }
       });
 
-      // Update in CharDB
-      CharDB.update(charId, charData);
-
-      // Show success notification
-      showNotification('Changes saved successfully!', 'success');
+      // Save to Supabase or local
+      if (useSupabase && charId) {
+        var updates = {
+          description: charData.description,
+          skills: charData.skills,
+          potentials: charData.potentials,
+          costumes: charData.costumes
+        };
+        var result = await SupaDB.updateCharacter(charId, updates);
+        if (result.error) {
+          showNotification('Save failed: ' + result.error.message, 'error');
+          return;
+        }
+        showNotification('Changes saved to Supabase!', 'success');
+      } else if (typeof CharDB !== 'undefined') {
+        CharDB.update(charId, charData);
+        showNotification('Changes saved locally!', 'success');
+      }
 
       // Exit edit mode
       editMode = false;
@@ -385,11 +395,10 @@
       document.getElementById('saveBtn').style.display = 'none';
       document.getElementById('cancelBtn').style.display = 'none';
 
-      // Re-render
       renderPage(charData);
     }
 
-    function cancelEdit() {
+    async function cancelEdit() {
       editMode = false;
       var btn = document.getElementById('editToggleBtn');
       btn.textContent = 'Enable Edit Mode';
@@ -398,8 +407,18 @@
       document.getElementById('cancelBtn').style.display = 'none';
 
       // Reload original data
-      charData = CharDB.getById(charId);
-      renderPage(charData);
+      if (useSupabase && charSlug) {
+        charData = await SupaDB.fetchBySlug(charSlug);
+      } else if (typeof CharDB !== 'undefined') {
+        charData = CharDB.getById(charId);
+      }
+      if (charData) renderPage(charData);
+    }
+
+    async function doLogout() {
+      if (SupaDB.isConnected()) await SupaDB.logout();
+      if (typeof Auth !== 'undefined') Auth.logout();
+      location.reload();
     }
 
     function showNotification(msg, type) {
@@ -415,24 +434,77 @@
     }
 
     // ---- Initialize ----
-    (function init() {
+    (async function init() {
       var params = new URLSearchParams(window.location.search);
+      charSlug = params.get('slug');
       charId = params.get('id');
 
-      if (!charId) {
+      if (!charSlug && !charId) {
         document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">No character specified. <a href="characters.html">Browse all characters</a></div>';
         return;
       }
 
-      CharDB.loadAll(function(chars) {
-        var c = CharDB.getById(charId);
-        if (!c) {
-          document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">Character not found. <a href="characters.html">Browse all characters</a></div>';
-          return;
+      var connected = SupaDB.init();
+      useSupabase = connected;
+
+      // Check admin status
+      if (connected) {
+        isAdmin = await SupaDB.isLoggedIn();
+      } else if (typeof Auth !== 'undefined') {
+        isAdmin = Auth.isLoggedIn();
+      }
+
+      // Show admin bar if admin
+      if (isAdmin) {
+        document.getElementById('adminBar').style.display = '';
+      }
+
+      // Load character data
+      if (connected && charSlug) {
+        charData = await SupaDB.fetchBySlug(charSlug);
+        if (charData) charId = charData.id;
+      } else if (connected && charId) {
+        charData = await SupaDB.fetchById(charId);
+        if (charData) charSlug = charData.slug;
+      }
+
+      // Fallback to local data
+      if (!charData) {
+        useSupabase = false;
+        if (typeof CharDB !== 'undefined') {
+          await new Promise(function(resolve) {
+            CharDB.loadAll(function() { resolve(); });
+          });
+          if (charId) {
+            charData = CharDB.getById(charId);
+          } else if (charSlug) {
+            // Search by slug in local data
+            var all = CharDB.getAll();
+            charData = all.find(function(c) {
+              var s = (c.id || c.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+              return s === charSlug;
+            });
+            if (charData) charId = charData.id;
+          }
         }
-        renderPage(c);
-        Auth.updateAdminUI();
-      });
+      }
+
+      if (!charData) {
+        document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">Character not found. <a href="characters.html">Browse all characters</a></div>';
+        return;
+      }
+
+      renderPage(charData);
+
+      // Realtime updates from Supabase
+      if (connected && charSlug) {
+        SupaDB.subscribeToChanges(async function(payload) {
+          if (payload.new && payload.new.slug === charSlug) {
+            charData = payload.new;
+            if (!editMode) renderPage(charData);
+          }
+        });
+      }
     })();
   </script>
 </body>

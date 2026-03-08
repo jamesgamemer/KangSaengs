@@ -6,7 +6,7 @@
   <title>Admin Login - 7DS Origin</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
-  <link rel="stylesheet" href="css/navbar-auth.css?v=20260308">
+  <link rel="stylesheet" href="css/navbar-auth.css">
 </head>
 <body>
 
@@ -30,18 +30,40 @@
           <p>Sign in to manage character data</p>
         </div>
 
+        <!-- Mode indicator -->
+        <div id="modeIndicator" style="text-align:center;margin-bottom:16px;font-size:12px;color:#64748b;"></div>
+
         <form id="loginForm" onsubmit="return handleLogin(event)">
           <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Enter username" required autocomplete="username">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="Enter admin email" required autocomplete="email">
           </div>
           <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password" required autocomplete="current-password">
           </div>
           <div id="loginError" class="login-error" style="display:none;"></div>
-          <button type="submit" class="login-btn">Sign In</button>
+          <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
         </form>
+
+        <!-- Fallback local login (shown when Supabase is not configured) -->
+        <div id="localLoginSection" style="display:none;">
+          <div style="text-align:center;margin:16px 0 8px;color:#475569;font-size:13px;">
+            &mdash; or use local admin &mdash;
+          </div>
+          <form id="localLoginForm" onsubmit="return handleLocalLogin(event)">
+            <div class="form-group">
+              <label for="localUser">Username</label>
+              <input type="text" id="localUser" placeholder="Enter username" autocomplete="username">
+            </div>
+            <div class="form-group">
+              <label for="localPass">Password</label>
+              <input type="password" id="localPass" placeholder="Enter password" autocomplete="current-password">
+            </div>
+            <div id="localLoginError" class="login-error" style="display:none;"></div>
+            <button type="submit" class="login-btn" style="background:#475569;">Local Sign In</button>
+          </form>
+        </div>
 
         <div class="login-footer">
           <a href="characters.html">&#8592; Back to Characters</a>
@@ -50,26 +72,104 @@
     </div>
   </div>
 
-  <script src="js/auth.js?v=20260308"></script>
-  <script src="js/navbar.js?v=20260308"></script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navbar.js"></script>
   <script>
-    // If already logged in, redirect to admin
-    if (Auth.isLoggedIn()) {
-      window.location.href = 'admin.html';
+    var connected = SupaDB.init();
+
+    (async function checkSession() {
+      // If already logged in via Supabase, redirect
+      if (connected) {
+        var loggedIn = await SupaDB.isLoggedIn();
+        if (loggedIn) {
+          window.location.href = 'admin.html';
+          return;
+        }
+      }
+      // If already logged in via local auth, redirect
+      if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+        window.location.href = 'admin.html';
+        return;
+      }
+
+      // Show appropriate mode
+      var indicator = document.getElementById('modeIndicator');
+      if (connected) {
+        indicator.textContent = 'Supabase connected';
+        indicator.style.color = '#22c55e';
+      } else {
+        // Show local login as primary when Supabase is not configured
+        indicator.innerHTML = 'Supabase not configured &mdash; using local mode';
+        indicator.style.color = '#f59e0b';
+        document.getElementById('localLoginSection').style.display = 'block';
+      }
+    })();
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      var email = document.getElementById('loginEmail').value.trim();
+      var password = document.getElementById('loginPassword').value;
+      var errorEl = document.getElementById('loginError');
+      var btn = document.getElementById('loginBtn');
+
+      errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+
+      if (connected) {
+        // Supabase Auth
+        var result = await SupaDB.login(email, password);
+        if (result.error) {
+          errorEl.textContent = result.error.message || 'Invalid email or password';
+          errorEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+          document.getElementById('loginPassword').value = '';
+          return false;
+        }
+        // Check if user is admin (has admin role in profiles)
+        var isAdmin = await SupaDB.isLoggedIn();
+        if (!isAdmin) {
+          await SupaDB.logout();
+          errorEl.textContent = 'You do not have admin access';
+          errorEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+          return false;
+        }
+        window.location.href = 'admin.html';
+      } else {
+        // Fallback: try local auth with email as username
+        var username = email.split('@')[0]; // Use part before @ as username
+        if (typeof Auth !== 'undefined' && Auth.login(username, password)) {
+          window.location.href = 'admin.html';
+        } else {
+          errorEl.textContent = 'Invalid credentials. Try local login below.';
+          errorEl.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+          document.getElementById('loginPassword').value = '';
+        }
+      }
+      return false;
     }
 
-    function handleLogin(e) {
+    function handleLocalLogin(e) {
       e.preventDefault();
-      var username = document.getElementById('username').value;
-      var password = document.getElementById('password').value;
-      var errorEl = document.getElementById('loginError');
+      var username = document.getElementById('localUser').value.trim();
+      var password = document.getElementById('localPass').value;
+      var errorEl = document.getElementById('localLoginError');
 
-      if (Auth.login(username, password)) {
+      if (typeof Auth !== 'undefined' && Auth.login(username, password)) {
         window.location.href = 'admin.html';
       } else {
         errorEl.textContent = 'Invalid username or password';
         errorEl.style.display = 'block';
-        document.getElementById('password').value = '';
+        document.getElementById('localPass').value = '';
       }
       return false;
     }

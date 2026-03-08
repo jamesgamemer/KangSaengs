@@ -6,7 +6,7 @@
   <title>Admin Panel - 7DS Origin</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/admin.css">
-  <link rel="stylesheet" href="css/navbar-auth.css?v=20260308">
+  <link rel="stylesheet" href="css/navbar-auth.css">
 </head>
 <body>
 
@@ -17,7 +17,8 @@
       <a href="characters.html" class="admin-bar-link">View Site</a>
     </div>
     <div class="admin-bar-right">
-      <button class="admin-bar-btn" onclick="Auth.logout(); window.location.href='login.html';">Logout</button>
+      <span id="adminEmail" style="color:#94a3b8;font-size:13px;margin-right:12px;"></span>
+      <button class="admin-bar-btn" onclick="doLogout()">Logout</button>
     </div>
   </div>
 
@@ -35,21 +36,23 @@
   <div class="page-content" style="padding-top:104px;">
     <div class="container">
 
+      <!-- Connection Status -->
+      <div id="connectionStatus" style="margin-bottom:16px;"></div>
+
       <!-- Dashboard Header -->
       <div class="admin-header">
         <h1>&#128736; Character Management</h1>
-        <p>Add, edit, and manage all character data from one place</p>
+        <p>Add, edit, and manage all character data via Supabase</p>
       </div>
 
       <!-- Quick Actions -->
       <div class="admin-actions">
         <button class="btn btn-gold" onclick="showAddForm()">&#10133; Add New Character</button>
-        <button class="btn btn-blue" onclick="CharDB.exportJSON()">&#128190; Export JSON</button>
+        <button class="btn btn-blue" onclick="doExport()">&#128190; Export JSON</button>
         <label class="btn btn-outline" style="cursor:pointer;">
           &#128194; Import JSON
           <input type="file" accept=".json" style="display:none;" onchange="handleImport(this)">
         </label>
-        <button class="btn btn-outline" onclick="confirmReset()" style="color:#ef4444;border-color:#ef4444;">&#128260; Reset Data</button>
       </div>
 
       <!-- Stats -->
@@ -64,7 +67,7 @@
         <div class="admin-char-list" id="adminCharList"></div>
       </div>
 
-      <!-- Add/Edit Form (hidden by default) -->
+      <!-- Add/Edit Form Modal -->
       <div class="admin-form-overlay" id="formOverlay" style="display:none;" onclick="closeFormOverlay(event)">
         <div class="admin-form-modal" onclick="event.stopPropagation();">
           <div class="form-modal-header">
@@ -91,12 +94,27 @@
                   </select>
                 </div>
               </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Tier</label>
+                  <select id="charTier">
+                    <option value="S">S</option>
+                    <option value="A">A</option>
+                    <option value="B" selected>B</option>
+                    <option value="C">C</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Slug (auto-generated)</label>
+                  <input type="text" id="charSlug" placeholder="auto-generated-from-name" readonly style="opacity:0.6;">
+                </div>
+              </div>
               <div class="form-group">
                 <label>Description</label>
                 <textarea id="charDesc" rows="3" placeholder="Character background story..."></textarea>
               </div>
               <div class="form-group">
-                <label>Image</label>
+                <label>Character Image</label>
                 <div class="image-upload-area" id="imageUploadArea">
                   <input type="file" id="charImage" accept="image/*" onchange="handleImageUpload(this)" style="display:none;">
                   <div class="image-preview" id="imagePreview" style="display:none;">
@@ -106,6 +124,7 @@
                     <span>&#128247;</span>
                     <p>Click to upload image</p>
                     <p class="small">PNG, JPG (recommended: 256x256)</p>
+                    <p class="small" style="color:#60a5fa;">Images are uploaded to Supabase Storage</p>
                   </div>
                 </div>
               </div>
@@ -146,27 +165,11 @@
 
           <div class="form-modal-footer">
             <button class="btn btn-outline" onclick="hideForm()">Cancel</button>
-            <button class="btn btn-gold" onclick="saveCharacter()">Save Character</button>
+            <button class="btn btn-gold" id="saveBtn" onclick="saveCharacter()">
+              <span id="saveBtnText">Save Character</span>
+              <span id="saveBtnLoading" style="display:none;">Saving...</span>
+            </button>
           </div>
-        </div>
-      </div>
-
-      <!-- Settings -->
-      <div class="admin-section" style="margin-top:40px;">
-        <h2>Settings</h2>
-        <div class="settings-card">
-          <h3>Change Admin Password</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label>New Username</label>
-              <input type="text" id="newUsername" placeholder="admin">
-            </div>
-            <div class="form-group">
-              <label>New Password</label>
-              <input type="password" id="newPassword" placeholder="New password">
-            </div>
-          </div>
-          <button class="btn btn-blue" onclick="changeCredentials()">Update Credentials</button>
         </div>
       </div>
 
@@ -174,18 +177,18 @@
   </div>
 
   <footer class="site-footer">
-    <p>7DS Origin Database &mdash; Admin Panel</p>
+    <p>7DS Origin Database &mdash; Admin Panel &mdash; Powered by Supabase</p>
   </footer>
 
-  <script src="js/auth.js?v=20260308"></script>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/data.js"></script>
-  <script src="js/navbar.js?v=20260308"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navbar.js"></script>
   <script>
-    // Require admin login
-    if (!Auth.isLoggedIn()) {
-      window.location.href = 'login.html';
-    }
-
+    // ---- Constants ----
     var ALL_WEAPONS = ['Axe','Book','Cudgel','Dual Swords','Gauntlets','Greatsword','Lance','Longsword','Rapier','Shield','Staff','Wand'];
     var SKILL_TYPES = ['Adventure','Passive','Normal Attack','Special','Skill','Tag','Ultimate'];
     var editingId = null;
@@ -193,16 +196,86 @@
     var currentPotWeapon = null;
     var tempSkills = {};
     var tempPotentials = {};
-    var tempImageData = null;
+    var tempImageFile = null;
+    var allCharacters = [];
+
+    // ---- Init ----
+    (async function init() {
+      var connected = SupaDB.init();
+
+      if (!connected) {
+        document.getElementById('connectionStatus').innerHTML =
+          '<div style="padding:12px 16px;background:#7f1d1d;border:1px solid #dc2626;border-radius:8px;color:#fca5a5;font-size:14px;">' +
+          '&#9888; Supabase not configured. Please edit <code>js/supabase-config.js</code> with your Supabase URL and anon key.' +
+          '</div>';
+        // Fallback: try loading from local JSON
+        if (typeof CharDB !== 'undefined') {
+          CharDB.loadAll(function(chars) {
+            allCharacters = chars;
+            renderDashboard();
+          });
+        } else {
+          // Direct fetch from data/characters.json
+          fetch('data/characters.json').then(function(r){return r.json();}).then(function(chars){
+            allCharacters = chars;
+            renderDashboard();
+          }).catch(function(e){
+            console.error('Failed to load local data:', e);
+          });
+        }
+        // Check local auth
+        if (typeof Auth !== 'undefined' && !Auth.isLoggedIn()) {
+          window.location.href = 'login.html';
+          return;
+        }
+        return;
+      }
+
+      // Check auth
+      var session = await SupaDB.getSession();
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Show admin email
+      document.getElementById('adminEmail').textContent = session.user.email;
+
+      // Show connection status
+      document.getElementById('connectionStatus').innerHTML =
+        '<div style="padding:12px 16px;background:#052e16;border:1px solid #16a34a;border-radius:8px;color:#86efac;font-size:14px;">' +
+        '&#9989; Connected to Supabase &mdash; Data is saved to the cloud' +
+        '</div>';
+
+      // Load characters
+      allCharacters = await SupaDB.fetchAll();
+      renderDashboard();
+
+      // Subscribe to realtime changes
+      SupaDB.subscribeToChanges(async function(payload) {
+        allCharacters = await SupaDB.fetchAll();
+        renderDashboard();
+        showNotification('Data updated (realtime)', 'info');
+      });
+    })();
+
+    // ---- Logout ----
+    async function doLogout() {
+      if (SupaDB.isConnected()) {
+        await SupaDB.logout();
+      }
+      // Also clear local auth
+      if (typeof Auth !== 'undefined') Auth.logout();
+      window.location.href = 'login.html';
+    }
 
     // ---- Dashboard ----
     function renderDashboard() {
-      var chars = CharDB.getAll();
-      // Stats
+      var chars = allCharacters;
       var ssrCount = chars.filter(function(c) { return c.rarity === 'SSR'; }).length;
       var srCount = chars.filter(function(c) { return c.rarity === 'SR'; }).length;
       var withSkills = chars.filter(function(c) {
-        if (!c.skills) return false;
+        if (!c.skills || typeof c.skills !== 'object') return false;
         for (var k in c.skills) { if (c.skills[k] && c.skills[k].length > 0) return true; }
         return false;
       }).length;
@@ -213,7 +286,6 @@
         '<div class="stat-card sr"><div class="stat-num">' + srCount + '</div><div class="stat-label">SR</div></div>' +
         '<div class="stat-card"><div class="stat-num">' + withSkills + '</div><div class="stat-label">With Skills</div></div>';
 
-      // Character list
       renderCharList(chars);
     }
 
@@ -221,26 +293,35 @@
       var html = '';
       chars.forEach(function(c) {
         var hasSkills = false;
-        if (c.skills) { for (var k in c.skills) { if (c.skills[k] && c.skills[k].length > 0) { hasSkills = true; break; } } }
+        if (c.skills && typeof c.skills === 'object') {
+          for (var k in c.skills) { if (c.skills[k] && c.skills[k].length > 0) { hasSkills = true; break; } }
+        }
         var statusClass = hasSkills ? 'status-complete' : 'status-incomplete';
         var statusText = hasSkills ? 'Complete' : 'Incomplete';
+        var tierBadge = '<span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:' +
+          getTierColor(c.tier) + ';color:#fff;margin-left:6px;">' + (c.tier || 'B') + '</span>';
 
         html += '<div class="admin-char-row" data-name="' + (c.name || '').toLowerCase() + '">';
         html += '<div class="admin-char-info">';
-        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + (c.name || '') + '" class="admin-char-thumb">';
+        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + (c.name || '') + '" class="admin-char-thumb" onerror="this.src=\'images/placeholder.png\'">';
         html += '<div>';
-        html += '<div class="admin-char-name">' + (c.name || 'Unknown') + '</div>';
+        html += '<div class="admin-char-name">' + (c.name || 'Unknown') + tierBadge + '</div>';
         html += '<div class="admin-char-meta"><span class="rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</span>';
         html += ' &bull; ' + (c.types || []).join(', ');
         html += ' &bull; <span class="' + statusClass + '">' + statusText + '</span></div>';
         html += '</div></div>';
         html += '<div class="admin-char-actions">';
-        html += '<a href="character.html?id=' + encodeURIComponent(c.id) + '" class="action-btn view-btn" title="View">&#128065;</a>';
+        html += '<a href="character.html?slug=' + encodeURIComponent(c.slug) + '" class="action-btn view-btn" title="View">&#128065;</a>';
         html += '<button class="action-btn edit-btn" title="Edit" onclick="editCharacter(\'' + c.id + '\')">&#9998;</button>';
-        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'' + c.id + '\',\'' + (c.name || '') + '\')">&#128465;</button>';
+        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'' + c.id + '\',\'' + (c.name || '').replace(/'/g, "\\'") + '\')">&#128465;</button>';
         html += '</div></div>';
       });
-      document.getElementById('adminCharList').innerHTML = html || '<div class="no-data-msg">No characters found</div>';
+      document.getElementById('adminCharList').innerHTML = html || '<p style="color:#64748b;text-align:center;padding:40px;">No characters found</p>';
+    }
+
+    function getTierColor(tier) {
+      var colors = { S: '#dc2626', A: '#f59e0b', B: '#3b82f6', C: '#6b7280' };
+      return colors[tier] || colors.B;
     }
 
     function filterAdminList() {
@@ -258,8 +339,10 @@
       document.getElementById('editId').value = '';
       document.getElementById('charName').value = '';
       document.getElementById('charRarity').value = 'SSR';
+      document.getElementById('charTier').value = 'B';
+      document.getElementById('charSlug').value = '';
       document.getElementById('charDesc').value = '';
-      tempImageData = null;
+      tempImageFile = null;
       document.getElementById('imagePreview').style.display = 'none';
       document.getElementById('imagePrompt').style.display = '';
       tempSkills = {};
@@ -275,17 +358,19 @@
     }
 
     function editCharacter(id) {
-      var c = CharDB.getById(id);
+      var c = allCharacters.find(function(ch) { return ch.id === id; });
       if (!c) return;
       editingId = id;
       document.getElementById('formTitle').textContent = 'Edit: ' + c.name;
       document.getElementById('editId').value = id;
       document.getElementById('charName').value = c.name || '';
       document.getElementById('charRarity').value = c.rarity || 'SSR';
+      document.getElementById('charTier').value = c.tier || 'B';
+      document.getElementById('charSlug').value = c.slug || '';
       document.getElementById('charDesc').value = c.description || '';
 
       // Image
-      tempImageData = null;
+      tempImageFile = null;
       if (c.image) {
         document.getElementById('previewImg').src = c.image;
         document.getElementById('imagePreview').style.display = '';
@@ -305,7 +390,7 @@
 
       // Costumes
       var costumesHtml = '';
-      (c.costumes || []).forEach(function(cos, i) {
+      (c.costumes || []).forEach(function(cos) {
         var name = (typeof cos === 'string') ? cos : (cos.name || '');
         costumesHtml += '<div class="costume-input-row"><input type="text" class="costume-input" value="' + name.replace(/"/g, '&quot;') + '" placeholder="Costume name"><button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button></div>';
       });
@@ -323,6 +408,13 @@
     function closeFormOverlay(e) {
       if (e.target === document.getElementById('formOverlay')) hideForm();
     }
+
+    // Auto-generate slug from name
+    document.getElementById('charName').addEventListener('input', function() {
+      if (!editingId) {
+        document.getElementById('charSlug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      }
+    });
 
     // ---- Weapon Checkboxes ----
     function buildWeaponCheckboxes(selected) {
@@ -375,9 +467,7 @@
     function renderSkillsForWeapon(weapon) {
       var skills = tempSkills[weapon] || [];
       var html = '';
-      skills.forEach(function(sk, i) {
-        html += buildSkillRow(sk, i);
-      });
+      skills.forEach(function(sk, i) { html += buildSkillRow(sk, i); });
       html += '<button type="button" class="btn-add-item" onclick="addSkillField()">+ Add Skill</button>';
       document.getElementById('skillsEditor').innerHTML = html;
     }
@@ -410,9 +500,7 @@
 
     function removeSkillField(idx) {
       saveCurrentSkills();
-      if (tempSkills[currentSkillWeapon]) {
-        tempSkills[currentSkillWeapon].splice(idx, 1);
-      }
+      if (tempSkills[currentSkillWeapon]) tempSkills[currentSkillWeapon].splice(idx, 1);
       renderSkillsForWeapon(currentSkillWeapon);
     }
 
@@ -457,10 +545,7 @@
 
     function renderPotentialsForWeapon(weapon) {
       var pots = tempPotentials[weapon] || [];
-      // Ensure 10 tiers
-      while (pots.length < 10) {
-        pots.push({ tier: 'Tier ' + (pots.length + 1), description: '' });
-      }
+      while (pots.length < 10) pots.push({ tier: 'Tier ' + (pots.length + 1), description: '' });
       tempPotentials[weapon] = pots;
 
       var html = '<div class="potentials-input-grid">';
@@ -496,119 +581,179 @@
     // ---- Image Upload ----
     function handleImageUpload(input) {
       if (input.files && input.files[0]) {
+        tempImageFile = input.files[0];
         var reader = new FileReader();
         reader.onload = function(e) {
-          tempImageData = e.target.result;
-          document.getElementById('previewImg').src = tempImageData;
+          document.getElementById('previewImg').src = e.target.result;
           document.getElementById('imagePreview').style.display = '';
           document.getElementById('imagePrompt').style.display = 'none';
         };
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(tempImageFile);
       }
     }
 
-    // ---- Save Character ----
-    function saveCharacter() {
+    // ---- Save Character (Supabase) ----
+    async function saveCharacter() {
       var name = document.getElementById('charName').value.trim();
-      if (!name) {
-        alert('Character name is required!');
-        return;
+      if (!name) { alert('Character name is required!'); return; }
+
+      // Show loading
+      document.getElementById('saveBtnText').style.display = 'none';
+      document.getElementById('saveBtnLoading').style.display = '';
+      document.getElementById('saveBtn').disabled = true;
+
+      try {
+        saveCurrentSkills();
+        saveCurrentPotentials();
+
+        var weapons = getSelectedWeapons();
+        var slug = document.getElementById('charSlug').value || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+        // Collect costumes
+        var costumes = [];
+        document.querySelectorAll('.costume-input').forEach(function(input) {
+          if (input.value.trim()) costumes.push(input.value.trim());
+        });
+
+        // Clean skills/potentials for unselected weapons
+        var cleanSkills = {};
+        var cleanPotentials = {};
+        weapons.forEach(function(w) {
+          cleanSkills[w] = tempSkills[w] || [];
+          cleanPotentials[w] = tempPotentials[w] || [];
+        });
+
+        // Upload image if new file selected
+        var imageUrl = '';
+        if (tempImageFile && SupaDB.isConnected()) {
+          var uploadResult = await SupaDB.uploadImage(tempImageFile, slug);
+          if (uploadResult.error) {
+            showNotification('Image upload failed: ' + uploadResult.error.message, 'error');
+          } else {
+            imageUrl = uploadResult.url;
+          }
+        }
+
+        var charObj = {
+          name: name,
+          slug: slug,
+          rarity: document.getElementById('charRarity').value,
+          tier: document.getElementById('charTier').value,
+          description: document.getElementById('charDesc').value.trim(),
+          types: weapons,
+          skills: cleanSkills,
+          potentials: cleanPotentials,
+          costumes: costumes
+        };
+
+        // Set image URL
+        if (imageUrl) {
+          charObj.image = imageUrl;
+        } else if (editingId) {
+          // Keep existing image if no new upload
+          var existing = allCharacters.find(function(ch) { return ch.id === editingId; });
+          if (existing) charObj.image = existing.image;
+        } else {
+          charObj.image = 'images/' + name + '.png';
+        }
+
+        // Save to Supabase
+        if (SupaDB.isConnected()) {
+          var result;
+          if (editingId) {
+            result = await SupaDB.updateCharacter(editingId, charObj);
+          } else {
+            result = await SupaDB.insertCharacter(charObj);
+          }
+
+          if (result.error) {
+            showNotification('Save failed: ' + result.error.message, 'error');
+          } else {
+            showNotification(editingId ? 'Character updated: ' + name : 'Character added: ' + name, 'success');
+            allCharacters = await SupaDB.fetchAll();
+            renderDashboard();
+            hideForm();
+          }
+        } else {
+          // Fallback to local storage
+          if (typeof CharDB !== 'undefined') {
+            if (editingId) {
+              CharDB.update(editingId, charObj);
+            } else {
+              charObj.id = slug;
+              CharDB.add(charObj);
+            }
+            allCharacters = CharDB.getAll();
+            renderDashboard();
+            hideForm();
+            showNotification('Saved locally (Supabase not connected)', 'info');
+          }
+        }
+      } catch (err) {
+        showNotification('Error: ' + err.message, 'error');
+      } finally {
+        document.getElementById('saveBtnText').style.display = '';
+        document.getElementById('saveBtnLoading').style.display = 'none';
+        document.getElementById('saveBtn').disabled = false;
       }
-
-      saveCurrentSkills();
-      saveCurrentPotentials();
-
-      var weapons = getSelectedWeapons();
-
-      // Collect costumes
-      var costumes = [];
-      document.querySelectorAll('.costume-input').forEach(function(input) {
-        if (input.value.trim()) costumes.push(input.value.trim());
-      });
-
-      // Clean skills/potentials for unselected weapons
-      var cleanSkills = {};
-      var cleanPotentials = {};
-      weapons.forEach(function(w) {
-        cleanSkills[w] = tempSkills[w] || [];
-        cleanPotentials[w] = tempPotentials[w] || [];
-      });
-
-      var charObj = {
-        name: name,
-        rarity: document.getElementById('charRarity').value,
-        description: document.getElementById('charDesc').value.trim(),
-        types: weapons,
-        skills: cleanSkills,
-        potentials: cleanPotentials,
-        costumes: costumes,
-        image: tempImageData || (editingId ? (CharDB.getById(editingId) || {}).image : 'images/' + name + '.png')
-      };
-
-      if (editingId) {
-        charObj.id = editingId;
-        CharDB.update(editingId, charObj);
-        showNotification('Character updated: ' + name, 'success');
-      } else {
-        charObj.id = name.toLowerCase().replace(/\s+/g, '-');
-        charObj.image = tempImageData || 'images/' + name + '.png';
-        CharDB.add(charObj);
-        showNotification('Character added: ' + name, 'success');
-      }
-
-      hideForm();
-      renderDashboard();
     }
 
     // ---- Delete Character ----
-    function deleteCharacter(id, name) {
-      if (confirm('Are you sure you want to delete "' + name + '"? This cannot be undone.')) {
+    async function deleteCharacter(id, name) {
+      if (!confirm('Are you sure you want to delete "' + name + '"? This cannot be undone.')) return;
+
+      if (SupaDB.isConnected()) {
+        var result = await SupaDB.deleteCharacter(id);
+        if (result.error) {
+          showNotification('Delete failed: ' + result.error.message, 'error');
+        } else {
+          showNotification('Character deleted: ' + name, 'error');
+          allCharacters = await SupaDB.fetchAll();
+          renderDashboard();
+        }
+      } else if (typeof CharDB !== 'undefined') {
         CharDB.remove(id);
-        showNotification('Character deleted: ' + name, 'error');
+        allCharacters = CharDB.getAll();
         renderDashboard();
+        showNotification('Deleted locally', 'info');
       }
     }
 
     // ---- Import/Export ----
-    function handleImport(input) {
-      if (input.files && input.files[0]) {
-        CharDB.importJSON(input.files[0], function(success, msg) {
-          if (success) {
-            showNotification(msg, 'success');
-            renderDashboard();
-          } else {
-            showNotification('Import failed: ' + msg, 'error');
-          }
-          input.value = '';
-        });
+    async function doExport() {
+      if (SupaDB.isConnected()) {
+        await SupaDB.exportJSON();
+      } else if (typeof CharDB !== 'undefined') {
+        CharDB.exportJSON();
       }
     }
 
-    function confirmReset() {
-      if (confirm('Reset all data to the original JSON file? All changes will be lost.')) {
-        CharDB.resetToDefault(function(success) {
-          if (success) {
-            showNotification('Data reset to defaults', 'success');
-            renderDashboard();
-          } else {
-            showNotification('Reset failed', 'error');
-          }
-        });
-      }
-    }
+    async function handleImport(input) {
+      if (!input.files || !input.files[0]) return;
+      var reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          var data = JSON.parse(e.target.result);
+          if (!Array.isArray(data)) { showNotification('Invalid format: expected array', 'error'); return; }
 
-    // ---- Change Credentials ----
-    function changeCredentials() {
-      var newUser = document.getElementById('newUsername').value.trim();
-      var newPass = document.getElementById('newPassword').value;
-      if (!newUser || !newPass) {
-        alert('Both username and password are required');
-        return;
-      }
-      Auth.setCredentials(newUser, newPass);
-      showNotification('Credentials updated! New login: ' + newUser, 'success');
-      document.getElementById('newUsername').value = '';
-      document.getElementById('newPassword').value = '';
+          if (SupaDB.isConnected()) {
+            var result = await SupaDB.bulkImport(data);
+            if (result.error) {
+              showNotification('Import failed: ' + result.error.message, 'error');
+            } else {
+              showNotification(data.length + ' characters imported to Supabase', 'success');
+              allCharacters = await SupaDB.fetchAll();
+              renderDashboard();
+            }
+          } else {
+            showNotification('Supabase not connected. Cannot import.', 'error');
+          }
+        } catch (err) {
+          showNotification('Invalid JSON: ' + err.message, 'error');
+        }
+        input.value = '';
+      };
+      reader.readAsText(input.files[0]);
     }
 
     // ---- Notification ----
@@ -623,13 +768,6 @@
         setTimeout(function() { notif.remove(); }, 300);
       }, 3000);
     }
-
-    // ---- Init ----
-    CharDB.loadAll(function() {
-      renderDashboard();
-      // Check hash for direct add
-      if (window.location.hash === '#add') showAddForm();
-    });
   </script>
 </body>
 </html>
