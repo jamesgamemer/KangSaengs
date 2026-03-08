@@ -7,23 +7,55 @@
    - Supabase JS CDN (loaded via script tag)
    ============================================================ */
 
+/* ============================================================
+   7DS ORIGIN - SUPABASE CLIENT MODULE
+   Handles all Supabase operations: Auth, CRUD, Storage, Realtime
+   ============================================================ */
+
 var SupaDB = (function () {
+
   var _client = null;
   var _cache = null;
   var _realtimeChannel = null;
 
-  // ---- Initialize ----
+  // ============================================================
+  // INIT
+  // ============================================================
+
   function init() {
+
     if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-      console.warn('[SupaDB] Supabase not configured. Falling back to local JSON.');
+      console.warn('[SupaDB] Supabase URL not configured');
       return false;
     }
-    if (typeof supabase === 'undefined' || !supabase.createClient) {
-      console.warn('[SupaDB] Supabase JS library not loaded.');
+
+    if (typeof SUPABASE_ANON_KEY === 'undefined') {
+      console.warn('[SupaDB] Supabase ANON KEY missing');
       return false;
     }
-    _client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    return true;
+
+    if (typeof window.supabase === 'undefined') {
+      console.error('[SupaDB] Supabase JS library not loaded');
+      return false;
+    }
+
+    try {
+
+      _client = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      console.log('[SupaDB] Supabase connected');
+
+      return true;
+
+    } catch (err) {
+
+      console.error('[SupaDB] Init error:', err);
+      return false;
+
+    }
   }
 
   function getClient() {
@@ -35,40 +67,71 @@ var SupaDB = (function () {
   }
 
   // ============================================================
-  // AUTH - Login / Logout / Session
+  // AUTH
   // ============================================================
 
   async function login(email, password) {
-    if (!_client) return { error: { message: 'Supabase not connected' } };
-    var result = await _client.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
-    return result;
+
+    if (!_client) {
+      return { error: { message: 'Supabase not connected' } };
+    }
+
+    try {
+
+      var result = await _client.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      return result;
+
+    } catch (err) {
+
+      console.error('[SupaDB] Login error:', err);
+      return { error: err };
+
+    }
+
   }
 
   async function logout() {
+
     if (!_client) return;
+
     await _client.auth.signOut();
+
   }
 
   async function getSession() {
+
     if (!_client) return null;
+
     var result = await _client.auth.getSession();
+
     return result.data.session;
+
   }
 
   async function isLoggedIn() {
+
     var session = await getSession();
+
     return session !== null;
+
   }
 
   function onAuthChange(callback) {
+
     if (!_client) return;
+
     _client.auth.onAuthStateChange(function (event, session) {
+
       callback(event, session);
+
     });
+
   }
+
 
   // ============================================================
   // CRUD - Characters
