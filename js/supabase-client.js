@@ -155,10 +155,16 @@ var SupaDB = (function () {
 
   async function bulkImport(characters) {
     if (!_client) return { error: { message: 'Not connected' } };
-    // Strip any existing IDs so Supabase generates new ones
+    // Strip any existing IDs and ensure slug exists
     var sanitized = characters.map(function(c) {
       var copy = Object.assign({}, c);
       delete copy.id;
+      
+      // Ensure slug exists (Critical fix for database constraint)
+      if (!copy.slug && copy.name) {
+        copy.slug = copy.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      }
+      
       return copy;
     });
     const { data, error } = await _client

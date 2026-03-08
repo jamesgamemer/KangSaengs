@@ -346,7 +346,7 @@
       document.getElementById('charName').value = c.name || '';
       document.getElementById('charRarity').value = c.rarity || 'SSR';
       document.getElementById('charTier').value = c.tier || 'B';
-      document.getElementById('charSlug').value = c.slug || '';
+      document.getElementById('charSlug').value = c.slug || (c.name ? c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '');
       document.getElementById('charDesc').value = c.description || '';
 
       // Image
@@ -586,7 +586,10 @@
           if (tempPotentials[w]) finalPotentials[w] = tempPotentials[w];
         });
 
-        var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        var slug = document.getElementById('charSlug').value.trim();
+        if (!slug) {
+          slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
         
         var charData = {
           name: name,
@@ -624,7 +627,11 @@
         hideForm();
       } catch (err) {
         console.error('[Save] Error:', err);
-        showNotification('Failed to save: ' + err.message, 'error');
+        let errorMsg = err.message;
+        if (errorMsg.includes('row-level security')) {
+          errorMsg = "Database access denied (RLS Policy). Please check your Supabase permissions.";
+        }
+        showNotification('Failed to save: ' + errorMsg, 'error');
       } finally {
         saveBtn.disabled = false;
         saveBtnText.style.display = 'inline';
