@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Characters - 7DS Origin</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
   <style>
     .page-header {
       background: linear-gradient(180deg, #0d1f4a 0%, var(--dark2) 100%);
@@ -39,7 +40,6 @@
       position: relative;
       z-index: 1;
     }
-
     .search-bar {
       width: 100%;
       padding: 13px 18px;
@@ -52,19 +52,14 @@
       font-size: 15px;
       transition: border-color 0.2s;
     }
-    .search-bar:focus {
-      outline: none;
-      border-color: var(--gold);
-    }
+    .search-bar:focus { outline: none; border-color: var(--gold); }
     .search-bar::placeholder { color: var(--muted); }
-
     .filters {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 30px;
     }
-
     .filters button {
       padding: 8px 16px;
       border: 1px solid var(--border);
@@ -78,20 +73,17 @@
       cursor: pointer;
       transition: 0.2s;
     }
-
     .filters button:hover,
     .filters button.active-filter {
       border-color: var(--gold);
       color: var(--gold);
       background: rgba(240,192,64,0.08);
     }
-
     #charactersGrid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
       gap: 16px;
     }
-
     .card {
       background: var(--dark3);
       border-radius: 12px;
@@ -99,25 +91,54 @@
       text-align: center;
       border: 1px solid var(--border);
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
     }
-
     .card:hover {
       transform: translateY(-6px);
       border-color: var(--gold);
       box-shadow: 0 8px 24px rgba(240,192,64,0.18);
     }
-
     .card img { width: 100%; display: block; }
-
     .rarity { font-size: 10px; padding: 3px; font-weight: 700; }
     .name   { font-size: 12px; padding: 6px; font-weight: 600; }
-
     a { text-decoration: none; color: white; }
+    .card-rarity-tag {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      z-index: 2;
+    }
+    .card-rarity-tag.SSR {
+      background: rgba(250,204,21,0.2);
+      color: var(--ssr);
+      border: 1px solid rgba(250,204,21,0.3);
+    }
+    .card-rarity-tag.SR {
+      background: rgba(167,139,250,0.2);
+      color: var(--sr);
+      border: 1px solid rgba(167,139,250,0.3);
+    }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- Admin Bar -->
+  <div class="admin-bar" id="adminBar" style="display:none;">
+    <div class="admin-bar-left">
+      <span class="admin-badge">ADMIN</span>
+      <a href="admin.html" class="admin-bar-link">Dashboard</a>
+      <a href="admin.html#add" class="admin-bar-link">+ Add Character</a>
+    </div>
+    <div class="admin-bar-right">
+      <button class="admin-bar-btn" onclick="Auth.logout(); location.reload();">Logout</button>
+    </div>
+  </div>
+
   <nav class="navbar">
     <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
     <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
@@ -136,24 +157,8 @@
     </div>
 
     <div class="container">
-      <input id="searchInput" class="search-bar" placeholder="&#128269; Search a character...">
-
-      <div class="filters">
-        <button onclick="filterWeapon('all',this)" class="active-filter">All</button>
-        <button onclick="filterWeapon('axe',this)">Axe</button>
-        <button onclick="filterWeapon('book',this)">Book</button>
-        <button onclick="filterWeapon('cudgel',this)">Cudgel</button>
-        <button onclick="filterWeapon('dualsword',this)">Dual Swords</button>
-        <button onclick="filterWeapon('gauntlet',this)">Gauntlet</button>
-        <button onclick="filterWeapon('greatsword',this)">Greatsword</button>
-        <button onclick="filterWeapon('lance',this)">Lance</button>
-        <button onclick="filterWeapon('longsword',this)">Longsword</button>
-        <button onclick="filterWeapon('rapier',this)">Rapier</button>
-        <button onclick="filterWeapon('shield',this)">Shield</button>
-        <button onclick="filterWeapon('staff',this)">Staff</button>
-        <button onclick="filterWeapon('wand',this)">Wand</button>
-      </div>
-
+      <input id="searchInput" class="search-bar" placeholder="&#128269; Search a character..." oninput="applyFilters()">
+      <div class="filters" id="filterButtons"></div>
       <div id="charactersGrid"></div>
     </div>
   </div>
@@ -168,124 +173,70 @@
     </p>
   </footer>
 
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
   <script src="js/navbar.js"></script>
   <script>
-    var characters = [
-      {name:"Escanor",   weapon:"axe",       rarity:"SSR", img:"images/Escanor.png",   link:"characters/Escanor.html"},
-      {name:"Derieri",   weapon:"axe",       rarity:"SSR", img:"images/Derieri.png",   link:"characters/Derieri.html"},
-      {name:"Dreydrin",  weapon:"axe",       rarity:"SR",  img:"images/Dreydrin.png",  link:"characters/Dreydrin.html"},
-      {name:"Bug",       weapon:"axe",       rarity:"SR",  img:"images/Bug.png",       link:"characters/Bug.html"},
-      {name:"Slader",    weapon:"axe",       rarity:"SR",  img:"images/Slader.png",    link:"characters/Slader.html"},
-      {name:"Diane",     weapon:"axe",       rarity:"SSR", img:"images/Diane.png",     link:"characters/Diane.html"},
-      {name:"Meliodas",  weapon:"axe",       rarity:"SSR", img:"images/Meliodas.png",  link:"characters/Meliodas.html"},
-      {name:"Elizabeth", weapon:"book",      rarity:"SSR", img:"images/Elizabeth.png", link:"characters/Elizabeth.html"},
-      {name:"Tioreh",    weapon:"book",      rarity:"SSR", img:"images/Tioreh.png",    link:"characters/Tioreh.html"},
-      {name:"Manny",     weapon:"book",      rarity:"SR",  img:"images/Manny.png",     link:"characters/Manny.html"},
-      {name:"Elaine",    weapon:"book",      rarity:"SR",  img:"images/Elaine.png",    link:"characters/Elaine.html"},
-      {name:"Drake",     weapon:"book",      rarity:"SR",  img:"images/Drake.png",     link:"characters/Drake.html"},
-      {name:"Daisy",     weapon:"book",      rarity:"SSR", img:"images/Daisy.png",     link:"characters/Daisy.html"},
-      {name:"Gowther",   weapon:"book",      rarity:"SSR", img:"images/Gowther.png",   link:"characters/Gowther.html"},
-      {name:"Merlin",    weapon:"book",      rarity:"SSR", img:"images/Merlin.png",    link:"characters/Merlin.html"},
-      {name:"King",      weapon:"book",      rarity:"SSR", img:"images/King.png",      link:"characters/King.html"},
-      {name:"Howzer",    weapon:"cudgel",    rarity:"SR",  img:"images/Howzer.png",    link:"characters/howzer.html"},
-      {name:"Griamore",  weapon:"cudgel",    rarity:"SR",  img:"images/Griamore.png",  link:"characters/Griamore.html"},
-      {name:"Slader",    weapon:"cudgel",    rarity:"SR",  img:"images/Slader.png",    link:"characters/Slader.html"},
-      {name:"Diane",     weapon:"cudgel",    rarity:"SSR", img:"images/Diane.png",     link:"characters/Diane.html"},
-      {name:"Ban",       weapon:"cudgel",    rarity:"SSR", img:"images/Ban.png",       link:"characters/Ban.html"},
-      {name:"Tristan",   weapon:"dualsword", rarity:"SSR", img:"images/Tristan.png",   link:"characters/Tristan.html"},
-      {name:"Hendrickson",weapon:"dualsword",rarity:"SR",  img:"images/Hendrickson.png",link:"characters/Hendrickson.html"},
-      {name:"Bug",       weapon:"dualsword", rarity:"SR",  img:"images/Bug.png",       link:"characters/Bug.html"},
-      {name:"Manny",     weapon:"dualsword", rarity:"SR",  img:"images/Manny.png",     link:"characters/Manny.html"},
-      {name:"Jericho",   weapon:"dualsword", rarity:"SR",  img:"images/Jericho.png",   link:"characters/Jericho.html"},
-      {name:"Meliodas",  weapon:"dualsword", rarity:"SSR", img:"images/Meliodas.png",  link:"characters/Meliodas.html"},
-      {name:"Derieri",   weapon:"gauntlet",  rarity:"SSR", img:"images/Derieri.png",   link:"characters/Derieri.html"},
-      {name:"Howzer",    weapon:"gauntlet",  rarity:"SR",  img:"images/Howzer.png",    link:"characters/Howzer.html"},
-      {name:"Griamore",  weapon:"gauntlet",  rarity:"SR",  img:"images/Griamore.png",  link:"characters/Griamore.html"},
-      {name:"Diane",     weapon:"gauntlet",  rarity:"SSR", img:"images/Diane.png",     link:"characters/Diane.html"},
-      {name:"Ban",       weapon:"gauntlet",  rarity:"SSR", img:"images/Ban.png",       link:"characters/Ban.html"},
-      {name:"Escanor",   weapon:"greatsword",rarity:"SSR", img:"images/Escanor.png",   link:"characters/Escanor.html"},
-      {name:"Derieri",   weapon:"greatsword",rarity:"SSR", img:"images/Derieri.png",   link:"characters/Derieri.html"},
-      {name:"Tristan",   weapon:"greatsword",rarity:"SSR", img:"images/Tristan.png",   link:"characters/Tristan.html"},
-      {name:"Slader",    weapon:"greatsword",rarity:"SR",  img:"images/Slader.png",    link:"characters/Slader.html"},
-      {name:"Drake",     weapon:"greatsword",rarity:"SR",  img:"images/Drake.png",     link:"characters/Drake.html"},
-      {name:"Ban",       weapon:"greatsword",rarity:"SSR", img:"images/Ban.png",       link:"characters/Ban.html"},
-      {name:"Howzer",    weapon:"lance",     rarity:"SR",  img:"images/Howzer.png",    link:"characters/Howzer.html"},
-      {name:"Hendrickson",weapon:"lance",    rarity:"SR",  img:"images/Hendrickson.png",link:"characters/Hendrickson.html"},
-      {name:"Gilthunder",weapon:"lance",     rarity:"SR",  img:"images/Gilthunder.png",link:"characters/Gilthunder.html"},
-      {name:"Dreyfus",   weapon:"lance",     rarity:"SR",  img:"images/Dreyfus.png",   link:"characters/Dreyfus.html"},
-      {name:"Jericho",   weapon:"lance",     rarity:"SR",  img:"images/Jericho.png",   link:"characters/Jericho.html"},
-      {name:"Guila",     weapon:"lance",     rarity:"SR",  img:"images/Guila.png",     link:"characters/Guila.html"},
-      {name:"Tristan",   weapon:"longsword", rarity:"SSR", img:"images/Tristan.png",   link:"characters/Tristan.html"},
-      {name:"Hendrickson",weapon:"longsword",rarity:"SR",  img:"images/Hendrickson.png",link:"characters/Hendrickson.html"},
-      {name:"Gilthunder",weapon:"longsword", rarity:"SR",  img:"images/Gilthunder.png",link:"characters/Gilthunder.html"},
-      {name:"Dreyfus",   weapon:"longsword", rarity:"SR",  img:"images/Dreyfus.png",   link:"characters/Dreyfus.html"},
-      {name:"Manny",     weapon:"longsword", rarity:"SR",  img:"images/Manny.png",     link:"characters/Manny.html"},
-      {name:"Drake",     weapon:"longsword", rarity:"SR",  img:"images/Drake.png",     link:"characters/Drake.html"},
-      {name:"Meliodas",  weapon:"longsword", rarity:"SSR", img:"images/Meliodas.png",  link:"characters/Meliodas.html"},
-      {name:"Dreyfus",   weapon:"rapier",    rarity:"SR",  img:"images/Dreyfus.png",   link:"characters/Dreyfus.html"},
-      {name:"Dreydrin",  weapon:"rapier",    rarity:"SR",  img:"images/Dreydrin.png",  link:"characters/Dreydrin.html"},
-      {name:"Jericho",   weapon:"rapier",    rarity:"SR",  img:"images/Jericho.png",   link:"characters/Jericho.html"},
-      {name:"Guila",     weapon:"rapier",    rarity:"SR",  img:"images/Guila.png",     link:"characters/Guila.html"},
-      {name:"Klotho",    weapon:"rapier",    rarity:"SR",  img:"images/Klotho.png",    link:"characters/Klotho.html"},
-      {name:"Escanor",   weapon:"shield",    rarity:"SSR", img:"images/Escanor.png",   link:"characters/Escanor.html"},
-      {name:"Griamore",  weapon:"shield",    rarity:"SR",  img:"images/Griamore.png",  link:"characters/Griamore.html"},
-      {name:"Gilthunder",weapon:"shield",    rarity:"SR",  img:"images/Gilthunder.png",link:"characters/Gilthunder.html"},
-      {name:"Dreydrin",  weapon:"shield",    rarity:"SR",  img:"images/Dreydrin.png",  link:"characters/Dreydrin.html"},
-      {name:"Guila",     weapon:"shield",    rarity:"SR",  img:"images/Guila.png",     link:"characters/Guila.html"},
-      {name:"Daisy",     weapon:"shield",    rarity:"SSR", img:"images/Daisy.png",     link:"characters/Daisy.html"},
-      {name:"Elizabeth", weapon:"staff",     rarity:"SSR", img:"images/Elizabeth.png", link:"characters/Elizabeth.html"},
-      {name:"Tioreh",    weapon:"staff",     rarity:"SSR", img:"images/Tioreh.png",    link:"characters/Tioreh.html"},
-      {name:"Manny",     weapon:"staff",     rarity:"SR",  img:"images/Manny.png",     link:"characters/Manny.html"},
-      {name:"Elaine",    weapon:"staff",     rarity:"SR",  img:"images/Elaine.png",    link:"characters/Elaine.html"},
-      {name:"Drake",     weapon:"staff",     rarity:"SR",  img:"images/Drake.png",     link:"characters/Drake.html"},
-      {name:"Daisy",     weapon:"staff",     rarity:"SSR", img:"images/Daisy.png",     link:"characters/Daisy.html"},
-      {name:"Gowther",   weapon:"staff",     rarity:"SSR", img:"images/Gowther.png",   link:"characters/Gowther.html"},
-      {name:"Merlin",    weapon:"staff",     rarity:"SSR", img:"images/Merlin.png",    link:"characters/Merlin.html"},
-      {name:"King",      weapon:"staff",     rarity:"SSR", img:"images/King.png",      link:"characters/King.html"},
-      {name:"Elizabeth", weapon:"wand",      rarity:"SSR", img:"images/Elizabeth.png", link:"characters/Elizabeth.html"},
-      {name:"Tioreh",    weapon:"wand",      rarity:"SSR", img:"images/Tioreh.png",    link:"characters/Tioreh.html"},
-      {name:"Elaine",    weapon:"wand",      rarity:"SR",  img:"images/Elaine.png",    link:"characters/Elaine.html"},
-      {name:"Daisy",     weapon:"wand",      rarity:"SSR", img:"images/Daisy.png",     link:"characters/Daisy.html"},
-      {name:"Merlin",    weapon:"wand",      rarity:"SSR", img:"images/Merlin.png",    link:"characters/Merlin.html"},
-      {name:"King",      weapon:"wand",      rarity:"SSR", img:"images/King.png",      link:"characters/King.html"},
-    ];
+    var currentFilter = 'all';
 
-    var grid = document.getElementById('charactersGrid');
+    function filterWeapon(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.filters button').forEach(function(b) { b.classList.remove('active-filter'); });
+      btn.classList.add('active-filter');
+      applyFilters();
+    }
 
-    function render(list) {
-      grid.innerHTML = '';
-      list.forEach(function(c) {
-        grid.innerHTML += '<a href="'+c.link+'">'
-          + '<div class="card">'
-          + '<img src="'+c.img+'" alt="'+c.name+'" loading="lazy">'
-          + '<div class="rarity '+c.rarity+'">'+c.rarity+'</div>'
-          + '<div class="name">'+c.name+'</div>'
-          + '</div></a>';
+    function applyFilters() {
+      var search = document.getElementById('searchInput').value.toLowerCase();
+      var cards = document.querySelectorAll('.card');
+      cards.forEach(function(card) {
+        var name = (card.getAttribute('data-name') || '').toLowerCase();
+        var types = (card.getAttribute('data-types') || '').toLowerCase();
+        var matchSearch = name.indexOf(search) !== -1;
+        var matchFilter = currentFilter === 'all' || types.indexOf(currentFilter) !== -1;
+        card.style.display = (matchSearch && matchFilter) ? '' : 'none';
       });
     }
 
-    function getUniqueCharacters() {
-      return Object.values(characters.reduce(function(acc, char) {
-        if (!acc[char.name]) acc[char.name] = char;
-        return acc;
-      }, {}));
+    function buildFilters(chars) {
+      var typesMap = {};
+      chars.forEach(function(c) {
+        (c.types || []).forEach(function(t) { typesMap[t] = true; });
+      });
+      var types = Object.keys(typesMap).sort();
+      var container = document.getElementById('filterButtons');
+      var html = '<button onclick="filterWeapon(\'all\',this)" class="active-filter">All</button>';
+      types.forEach(function(t) {
+        var key = t.toLowerCase().replace(/\s+/g, '');
+        html += '<button onclick="filterWeapon(\'' + key + '\',this)">' + t + '</button>';
+      });
+      container.innerHTML = html;
     }
 
-    render(getUniqueCharacters());
-
-    function filterWeapon(type, btn) {
-      document.querySelectorAll('.filters button').forEach(function(b){ b.classList.remove('active-filter'); });
-      btn.classList.add('active-filter');
-      if (type === 'all') {
-        render(getUniqueCharacters());
-      } else {
-        render(characters.filter(function(c){ return c.weapon === type; }));
-      }
+    function buildGrid(chars) {
+      var grid = document.getElementById('charactersGrid');
+      // Deduplicate: show each character once
+      var seen = {};
+      var html = '';
+      chars.forEach(function(c) {
+        if (seen[c.name]) return;
+        seen[c.name] = true;
+        var typesStr = (c.types || []).map(function(t) { return t.toLowerCase().replace(/\s+/g, ''); }).join(',');
+        html += '<a href="character.html?id=' + encodeURIComponent(c.id) + '" class="card" data-name="' + c.name + '" data-types="' + typesStr + '">';
+        html += '<div class="card-rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
+        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + c.name + '" loading="lazy">';
+        html += '<div class="rarity ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
+        html += '<div class="name">' + c.name + '</div>';
+        html += '</a>';
+      });
+      grid.innerHTML = html;
     }
 
-    document.getElementById('searchInput').addEventListener('input', function() {
-      var value = this.value.toLowerCase();
-      render(getUniqueCharacters().filter(function(c){ return c.name.toLowerCase().includes(value); }));
+    // Initialize
+    CharDB.loadAll(function(chars) {
+      buildFilters(chars);
+      buildGrid(chars);
+      Auth.updateAdminUI();
     });
   </script>
 </body>

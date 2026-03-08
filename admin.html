@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Admin Bar -->
+  <div class="admin-bar" id="adminBar">
+    <div class="admin-bar-left">
+      <span class="admin-badge">ADMIN PANEL</span>
+      <a href="characters.html" class="admin-bar-link">View Site</a>
+    </div>
+    <div class="admin-bar-right">
+      <button class="admin-bar-btn" onclick="Auth.logout(); window.location.href='login.html';">Logout</button>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html">&#9876; Characters</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content" style="padding-top:104px;">
+    <div class="container">
+
+      <!-- Dashboard Header -->
+      <div class="admin-header">
+        <h1>&#128736; Character Management</h1>
+        <p>Add, edit, and manage all character data from one place</p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="admin-actions">
+        <button class="btn btn-gold" onclick="showAddForm()">&#10133; Add New Character</button>
+        <button class="btn btn-blue" onclick="CharDB.exportJSON()">&#128190; Export JSON</button>
+        <label class="btn btn-outline" style="cursor:pointer;">
+          &#128194; Import JSON
+          <input type="file" accept=".json" style="display:none;" onchange="handleImport(this)">
+        </label>
+        <button class="btn btn-outline" onclick="confirmReset()" style="color:#ef4444;border-color:#ef4444;">&#128260; Reset Data</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="admin-stats" id="adminStats"></div>
+
+      <!-- Character List -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <h2>All Characters</h2>
+          <input type="text" id="adminSearch" class="admin-search" placeholder="Search characters..." oninput="filterAdminList()">
+        </div>
+        <div class="admin-char-list" id="adminCharList"></div>
+      </div>
+
+      <!-- Add/Edit Form (hidden by default) -->
+      <div class="admin-form-overlay" id="formOverlay" style="display:none;" onclick="closeFormOverlay(event)">
+        <div class="admin-form-modal" onclick="event.stopPropagation();">
+          <div class="form-modal-header">
+            <h2 id="formTitle">Add New Character</h2>
+            <button class="form-close-btn" onclick="hideForm()">&times;</button>
+          </div>
+
+          <div class="form-modal-body">
+            <input type="hidden" id="editId">
+
+            <!-- Basic Info -->
+            <div class="form-section">
+              <h3>Basic Information</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Character Name *</label>
+                  <input type="text" id="charName" placeholder="e.g. Meliodas" required>
+                </div>
+                <div class="form-group">
+                  <label>Rarity *</label>
+                  <select id="charRarity">
+                    <option value="SSR">SSR</option>
+                    <option value="SR">SR</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="charDesc" rows="3" placeholder="Character background story..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Image</label>
+                <div class="image-upload-area" id="imageUploadArea">
+                  <input type="file" id="charImage" accept="image/*" onchange="handleImageUpload(this)" style="display:none;">
+                  <div class="image-preview" id="imagePreview" style="display:none;">
+                    <img id="previewImg" src="" alt="Preview">
+                  </div>
+                  <div class="image-upload-prompt" id="imagePrompt" onclick="document.getElementById('charImage').click();">
+                    <span>&#128247;</span>
+                    <p>Click to upload image</p>
+                    <p class="small">PNG, JPG (recommended: 256x256)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weapon Types -->
+            <div class="form-section">
+              <h3>Weapon Types</h3>
+              <div class="form-group">
+                <label>Select up to 3 weapon types</label>
+                <div class="weapon-checkboxes" id="weaponCheckboxes"></div>
+              </div>
+            </div>
+
+            <!-- Skills (per weapon) -->
+            <div class="form-section">
+              <h3>Skills</h3>
+              <p class="form-hint">Configure skills for each selected weapon type</p>
+              <div class="weapon-skills-tabs" id="weaponSkillsTabs"></div>
+              <div id="skillsEditor"></div>
+            </div>
+
+            <!-- Potentials (per weapon) -->
+            <div class="form-section">
+              <h3>Potentials</h3>
+              <p class="form-hint">10 tiers per weapon type</p>
+              <div class="weapon-potentials-tabs" id="weaponPotentialsTabs"></div>
+              <div id="potentialsEditor"></div>
+            </div>
+
+            <!-- Costumes -->
+            <div class="form-section">
+              <h3>Costumes</h3>
+              <div id="costumesEditor"></div>
+              <button type="button" class="btn-add-item" onclick="addCostumeField()">+ Add Costume</button>
+            </div>
+          </div>
+
+          <div class="form-modal-footer">
+            <button class="btn btn-outline" onclick="hideForm()">Cancel</button>
+            <button class="btn btn-gold" onclick="saveCharacter()">Save Character</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="admin-section" style="margin-top:40px;">
+        <h2>Settings</h2>
+        <div class="settings-card">
+          <h3>Change Admin Password</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>New Username</label>
+              <input type="text" id="newUsername" placeholder="admin">
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" id="newPassword" placeholder="New password">
+            </div>
+          </div>
+          <button class="btn btn-blue" onclick="changeCredentials()">Update Credentials</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Admin Panel</p>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    // Require admin login
+    if (!Auth.isLoggedIn()) {
+      window.location.href = 'login.html';
+    }
+
+    var ALL_WEAPONS = ['Axe','Book','Cudgel','Dual Swords','Gauntlets','Greatsword','Lance','Longsword','Rapier','Shield','Staff','Wand'];
+    var SKILL_TYPES = ['Adventure','Passive','Normal Attack','Special','Skill','Tag','Ultimate'];
+    var editingId = null;
+    var currentSkillWeapon = null;
+    var currentPotWeapon = null;
+    var tempSkills = {};
+    var tempPotentials = {};
+    var tempImageData = null;
+
+    // ---- Dashboard ----
+    function renderDashboard() {
+      var chars = CharDB.getAll();
+      // Stats
+      var ssrCount = chars.filter(function(c) { return c.rarity === 'SSR'; }).length;
+      var srCount = chars.filter(function(c) { return c.rarity === 'SR'; }).length;
+      var withSkills = chars.filter(function(c) {
+        if (!c.skills) return false;
+        for (var k in c.skills) { if (c.skills[k] && c.skills[k].length > 0) return true; }
+        return false;
+      }).length;
+
+      document.getElementById('adminStats').innerHTML =
+        '<div class="stat-card"><div class="stat-num">' + chars.length + '</div><div class="stat-label">Total Characters</div></div>' +
+        '<div class="stat-card ssr"><div class="stat-num">' + ssrCount + '</div><div class="stat-label">SSR</div></div>' +
+        '<div class="stat-card sr"><div class="stat-num">' + srCount + '</div><div class="stat-label">SR</div></div>' +
+        '<div class="stat-card"><div class="stat-num">' + withSkills + '</div><div class="stat-label">With Skills</div></div>';
+
+      // Character list
+      renderCharList(chars);
+    }
+
+    function renderCharList(chars) {
+      var html = '';
+      chars.forEach(function(c) {
+        var hasSkills = false;
+        if (c.skills) { for (var k in c.skills) { if (c.skills[k] && c.skills[k].length > 0) { hasSkills = true; break; } } }
+        var statusClass = hasSkills ? 'status-complete' : 'status-incomplete';
+        var statusText = hasSkills ? 'Complete' : 'Incomplete';
+
+        html += '<div class="admin-char-row" data-name="' + (c.name || '').toLowerCase() + '">';
+        html += '<div class="admin-char-info">';
+        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + (c.name || '') + '" class="admin-char-thumb">';
+        html += '<div>';
+        html += '<div class="admin-char-name">' + (c.name || 'Unknown') + '</div>';
+        html += '<div class="admin-char-meta"><span class="rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</span>';
+        html += ' &bull; ' + (c.types || []).join(', ');
+        html += ' &bull; <span class="' + statusClass + '">' + statusText + '</span></div>';
+        html += '</div></div>';
+        html += '<div class="admin-char-actions">';
+        html += '<a href="character.html?id=' + encodeURIComponent(c.id) + '" class="action-btn view-btn" title="View">&#128065;</a>';
+        html += '<button class="action-btn edit-btn" title="Edit" onclick="editCharacter(\'' + c.id + '\')">&#9998;</button>';
+        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'' + c.id + '\',\'' + (c.name || '') + '\')">&#128465;</button>';
+        html += '</div></div>';
+      });
+      document.getElementById('adminCharList').innerHTML = html || '<div class="no-data-msg">No characters found</div>';
+    }
+
+    function filterAdminList() {
+      var search = document.getElementById('adminSearch').value.toLowerCase();
+      document.querySelectorAll('.admin-char-row').forEach(function(row) {
+        var name = row.getAttribute('data-name') || '';
+        row.style.display = name.indexOf(search) !== -1 ? '' : 'none';
+      });
+    }
+
+    // ---- Form Management ----
+    function showAddForm() {
+      editingId = null;
+      document.getElementById('formTitle').textContent = 'Add New Character';
+      document.getElementById('editId').value = '';
+      document.getElementById('charName').value = '';
+      document.getElementById('charRarity').value = 'SSR';
+      document.getElementById('charDesc').value = '';
+      tempImageData = null;
+      document.getElementById('imagePreview').style.display = 'none';
+      document.getElementById('imagePrompt').style.display = '';
+      tempSkills = {};
+      tempPotentials = {};
+      buildWeaponCheckboxes([]);
+      document.getElementById('skillsEditor').innerHTML = '';
+      document.getElementById('potentialsEditor').innerHTML = '';
+      document.getElementById('costumesEditor').innerHTML = '';
+      document.getElementById('weaponSkillsTabs').innerHTML = '';
+      document.getElementById('weaponPotentialsTabs').innerHTML = '';
+      document.getElementById('formOverlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function editCharacter(id) {
+      var c = CharDB.getById(id);
+      if (!c) return;
+      editingId = id;
+      document.getElementById('formTitle').textContent = 'Edit: ' + c.name;
+      document.getElementById('editId').value = id;
+      document.getElementById('charName').value = c.name || '';
+      document.getElementById('charRarity').value = c.rarity || 'SSR';
+      document.getElementById('charDesc').value = c.description || '';
+
+      // Image
+      tempImageData = null;
+      if (c.image) {
+        document.getElementById('previewImg').src = c.image;
+        document.getElementById('imagePreview').style.display = '';
+        document.getElementById('imagePrompt').style.display = 'none';
+      } else {
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('imagePrompt').style.display = '';
+      }
+
+      // Deep copy skills and potentials
+      tempSkills = JSON.parse(JSON.stringify(c.skills || {}));
+      tempPotentials = JSON.parse(JSON.stringify(c.potentials || {}));
+
+      buildWeaponCheckboxes(c.types || []);
+      updateSkillsTabs();
+      updatePotentialsTabs();
+
+      // Costumes
+      var costumesHtml = '';
+      (c.costumes || []).forEach(function(cos, i) {
+        var name = (typeof cos === 'string') ? cos : (cos.name || '');
+        costumesHtml += '<div class="costume-input-row"><input type="text" class="costume-input" value="' + name.replace(/"/g, '&quot;') + '" placeholder="Costume name"><button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button></div>';
+      });
+      document.getElementById('costumesEditor').innerHTML = costumesHtml;
+
+      document.getElementById('formOverlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideForm() {
+      document.getElementById('formOverlay').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function closeFormOverlay(e) {
+      if (e.target === document.getElementById('formOverlay')) hideForm();
+    }
+
+    // ---- Weapon Checkboxes ----
+    function buildWeaponCheckboxes(selected) {
+      var html = '';
+      ALL_WEAPONS.forEach(function(w) {
+        var checked = selected.indexOf(w) !== -1 ? ' checked' : '';
+        html += '<label class="weapon-checkbox"><input type="checkbox" value="' + w + '"' + checked + ' onchange="onWeaponChange()"> ' + w + '</label>';
+      });
+      document.getElementById('weaponCheckboxes').innerHTML = html;
+    }
+
+    function getSelectedWeapons() {
+      var weapons = [];
+      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) {
+        weapons.push(cb.value);
+      });
+      return weapons;
+    }
+
+    function onWeaponChange() {
+      updateSkillsTabs();
+      updatePotentialsTabs();
+    }
+
+    // ---- Skills Editor ----
+    function updateSkillsTabs() {
+      var weapons = getSelectedWeapons();
+      var html = '';
+      weapons.forEach(function(w, i) {
+        var active = (i === 0 || w === currentSkillWeapon) ? ' active' : '';
+        html += '<button class="weapon-tab-btn' + active + '" onclick="switchSkillWeapon(\'' + w + '\',this)">' + w + '</button>';
+      });
+      document.getElementById('weaponSkillsTabs').innerHTML = html;
+      if (weapons.length > 0) {
+        currentSkillWeapon = (weapons.indexOf(currentSkillWeapon) !== -1) ? currentSkillWeapon : weapons[0];
+        renderSkillsForWeapon(currentSkillWeapon);
+      } else {
+        document.getElementById('skillsEditor').innerHTML = '<p class="form-hint">Select weapon types above first</p>';
+      }
+    }
+
+    function switchSkillWeapon(w, btn) {
+      saveCurrentSkills();
+      currentSkillWeapon = w;
+      document.querySelectorAll('#weaponSkillsTabs .weapon-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderSkillsForWeapon(w);
+    }
+
+    function renderSkillsForWeapon(weapon) {
+      var skills = tempSkills[weapon] || [];
+      var html = '';
+      skills.forEach(function(sk, i) {
+        html += buildSkillRow(sk, i);
+      });
+      html += '<button type="button" class="btn-add-item" onclick="addSkillField()">+ Add Skill</button>';
+      document.getElementById('skillsEditor').innerHTML = html;
+    }
+
+    function buildSkillRow(sk, idx) {
+      var typeOptions = SKILL_TYPES.map(function(t) {
+        var sel = (t === (sk.type || '')) ? ' selected' : '';
+        return '<option value="' + t + '"' + sel + '>' + t + '</option>';
+      }).join('');
+      return '<div class="skill-input-group" data-skill-idx="' + idx + '">' +
+        '<div class="skill-input-header">' +
+        '<span class="skill-input-num">#' + (idx + 1) + '</span>' +
+        '<button class="btn-remove-item" onclick="removeSkillField(' + idx + ')">&times;</button>' +
+        '</div>' +
+        '<div class="form-row">' +
+        '<div class="form-group"><label>Name</label><input type="text" class="skill-name-input" value="' + (sk.name || '').replace(/"/g, '&quot;') + '" placeholder="Skill name"></div>' +
+        '<div class="form-group"><label>Type</label><select class="skill-type-input">' + typeOptions + '</select></div>' +
+        '</div>' +
+        '<div class="form-group"><label>Description</label><textarea class="skill-desc-input" rows="2" placeholder="Skill description...">' + (sk.description || '') + '</textarea></div>' +
+        '</div>';
+    }
+
+    function addSkillField() {
+      saveCurrentSkills();
+      if (!currentSkillWeapon) return;
+      if (!tempSkills[currentSkillWeapon]) tempSkills[currentSkillWeapon] = [];
+      tempSkills[currentSkillWeapon].push({ name: '', type: 'Normal Attack', description: '' });
+      renderSkillsForWeapon(currentSkillWeapon);
+    }
+
+    function removeSkillField(idx) {
+      saveCurrentSkills();
+      if (tempSkills[currentSkillWeapon]) {
+        tempSkills[currentSkillWeapon].splice(idx, 1);
+      }
+      renderSkillsForWeapon(currentSkillWeapon);
+    }
+
+    function saveCurrentSkills() {
+      if (!currentSkillWeapon) return;
+      var skills = [];
+      document.querySelectorAll('#skillsEditor .skill-input-group').forEach(function(group) {
+        var name = group.querySelector('.skill-name-input');
+        var type = group.querySelector('.skill-type-input');
+        var desc = group.querySelector('.skill-desc-input');
+        if (name && type && desc) {
+          skills.push({ name: name.value, type: type.value, description: desc.value });
+        }
+      });
+      tempSkills[currentSkillWeapon] = skills;
+    }
+
+    // ---- Potentials Editor ----
+    function updatePotentialsTabs() {
+      var weapons = getSelectedWeapons();
+      var html = '';
+      weapons.forEach(function(w, i) {
+        var active = (i === 0 || w === currentPotWeapon) ? ' active' : '';
+        html += '<button class="weapon-tab-btn' + active + '" onclick="switchPotWeapon(\'' + w + '\',this)">' + w + '</button>';
+      });
+      document.getElementById('weaponPotentialsTabs').innerHTML = html;
+      if (weapons.length > 0) {
+        currentPotWeapon = (weapons.indexOf(currentPotWeapon) !== -1) ? currentPotWeapon : weapons[0];
+        renderPotentialsForWeapon(currentPotWeapon);
+      } else {
+        document.getElementById('potentialsEditor').innerHTML = '<p class="form-hint">Select weapon types above first</p>';
+      }
+    }
+
+    function switchPotWeapon(w, btn) {
+      saveCurrentPotentials();
+      currentPotWeapon = w;
+      document.querySelectorAll('#weaponPotentialsTabs .weapon-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderPotentialsForWeapon(w);
+    }
+
+    function renderPotentialsForWeapon(weapon) {
+      var pots = tempPotentials[weapon] || [];
+      // Ensure 10 tiers
+      while (pots.length < 10) {
+        pots.push({ tier: 'Tier ' + (pots.length + 1), description: '' });
+      }
+      tempPotentials[weapon] = pots;
+
+      var html = '<div class="potentials-input-grid">';
+      pots.forEach(function(p, i) {
+        html += '<div class="potential-input-card">';
+        html += '<div class="pot-tier-label">Tier ' + (i + 1) + '</div>';
+        html += '<textarea class="pot-desc-input" rows="2" placeholder="Tier ' + (i + 1) + ' description...">' + (p.description || '') + '</textarea>';
+        html += '</div>';
+      });
+      html += '</div>';
+      document.getElementById('potentialsEditor').innerHTML = html;
+    }
+
+    function saveCurrentPotentials() {
+      if (!currentPotWeapon) return;
+      var pots = [];
+      document.querySelectorAll('#potentialsEditor .potential-input-card').forEach(function(card, i) {
+        var desc = card.querySelector('.pot-desc-input');
+        pots.push({ tier: 'Tier ' + (i + 1), description: desc ? desc.value : '' });
+      });
+      tempPotentials[currentPotWeapon] = pots;
+    }
+
+    // ---- Costumes ----
+    function addCostumeField() {
+      var editor = document.getElementById('costumesEditor');
+      var div = document.createElement('div');
+      div.className = 'costume-input-row';
+      div.innerHTML = '<input type="text" class="costume-input" placeholder="Costume name"><button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button>';
+      editor.appendChild(div);
+    }
+
+    // ---- Image Upload ----
+    function handleImageUpload(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          tempImageData = e.target.result;
+          document.getElementById('previewImg').src = tempImageData;
+          document.getElementById('imagePreview').style.display = '';
+          document.getElementById('imagePrompt').style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // ---- Save Character ----
+    function saveCharacter() {
+      var name = document.getElementById('charName').value.trim();
+      if (!name) {
+        alert('Character name is required!');
+        return;
+      }
+
+      saveCurrentSkills();
+      saveCurrentPotentials();
+
+      var weapons = getSelectedWeapons();
+
+      // Collect costumes
+      var costumes = [];
+      document.querySelectorAll('.costume-input').forEach(function(input) {
+        if (input.value.trim()) costumes.push(input.value.trim());
+      });
+
+      // Clean skills/potentials for unselected weapons
+      var cleanSkills = {};
+      var cleanPotentials = {};
+      weapons.forEach(function(w) {
+        cleanSkills[w] = tempSkills[w] || [];
+        cleanPotentials[w] = tempPotentials[w] || [];
+      });
+
+      var charObj = {
+        name: name,
+        rarity: document.getElementById('charRarity').value,
+        description: document.getElementById('charDesc').value.trim(),
+        types: weapons,
+        skills: cleanSkills,
+        potentials: cleanPotentials,
+        costumes: costumes,
+        image: tempImageData || (editingId ? (CharDB.getById(editingId) || {}).image : 'images/' + name + '.png')
+      };
+
+      if (editingId) {
+        charObj.id = editingId;
+        CharDB.update(editingId, charObj);
+        showNotification('Character updated: ' + name, 'success');
+      } else {
+        charObj.id = name.toLowerCase().replace(/\s+/g, '-');
+        charObj.image = tempImageData || 'images/' + name + '.png';
+        CharDB.add(charObj);
+        showNotification('Character added: ' + name, 'success');
+      }
+
+      hideForm();
+      renderDashboard();
+    }
+
+    // ---- Delete Character ----
+    function deleteCharacter(id, name) {
+      if (confirm('Are you sure you want to delete "' + name + '"? This cannot be undone.')) {
+        CharDB.remove(id);
+        showNotification('Character deleted: ' + name, 'error');
+        renderDashboard();
+      }
+    }
+
+    // ---- Import/Export ----
+    function handleImport(input) {
+      if (input.files && input.files[0]) {
+        CharDB.importJSON(input.files[0], function(success, msg) {
+          if (success) {
+            showNotification(msg, 'success');
+            renderDashboard();
+          } else {
+            showNotification('Import failed: ' + msg, 'error');
+          }
+          input.value = '';
+        });
+      }
+    }
+
+    function confirmReset() {
+      if (confirm('Reset all data to the original JSON file? All changes will be lost.')) {
+        CharDB.resetToDefault(function(success) {
+          if (success) {
+            showNotification('Data reset to defaults', 'success');
+            renderDashboard();
+          } else {
+            showNotification('Reset failed', 'error');
+          }
+        });
+      }
+    }
+
+    // ---- Change Credentials ----
+    function changeCredentials() {
+      var newUser = document.getElementById('newUsername').value.trim();
+      var newPass = document.getElementById('newPassword').value;
+      if (!newUser || !newPass) {
+        alert('Both username and password are required');
+        return;
+      }
+      Auth.setCredentials(newUser, newPass);
+      showNotification('Credentials updated! New login: ' + newUser, 'success');
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newPassword').value = '';
+    }
+
+    // ---- Notification ----
+    function showNotification(msg, type) {
+      var notif = document.createElement('div');
+      notif.className = 'notification ' + (type || 'info');
+      notif.textContent = msg;
+      document.body.appendChild(notif);
+      setTimeout(function() { notif.classList.add('show'); }, 10);
+      setTimeout(function() {
+        notif.classList.remove('show');
+        setTimeout(function() { notif.remove(); }, 300);
+      }, 3000);
+    }
+
+    // ---- Init ----
+    CharDB.loadAll(function() {
+      renderDashboard();
+      // Check hash for direct add
+      if (window.location.hash === '#add') showAddForm();
+    });
+  </script>
+</body>
+</html>

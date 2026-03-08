@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html">&#9876; Characters</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-icon">&#128272;</div>
+          <h1>Admin Login</h1>
+          <p>Sign in to manage character data</p>
+        </div>
+
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password">
+          </div>
+          <div id="loginError" class="login-error" style="display:none;"></div>
+          <button type="submit" class="login-btn">Sign In</button>
+        </form>
+
+        <div class="login-footer">
+          <a href="characters.html">&#8592; Back to Characters</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    // If already logged in, redirect to admin
+    if (Auth.isLoggedIn()) {
+      window.location.href = 'admin.html';
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      var username = document.getElementById('username').value;
+      var password = document.getElementById('password').value;
+      var errorEl = document.getElementById('loginError');
+
+      if (Auth.login(username, password)) {
+        window.location.href = 'admin.html';
+      } else {
+        errorEl.textContent = 'Invalid username or password';
+        errorEl.style.display = 'block';
+        document.getElementById('password').value = '';
+      }
+      return false;
+    }
+  </script>
+</body>
+</html>
