@@ -620,11 +620,11 @@
 
         if (result.error) throw result.error;
 
-        showNotification('Character saved successfully!', 'success');
+        showNotification('Character "' + name + '" saved successfully!', 'success');
         hideForm();
       } catch (err) {
-        console.error('Save failed:', err);
-        alert('Failed to save: ' + err.message);
+        console.error('[Save] Error:', err);
+        showNotification('Failed to save: ' + err.message, 'error');
       } finally {
         saveBtn.disabled = false;
         saveBtnText.style.display = 'inline';
@@ -638,9 +638,10 @@
       try {
         var result = await CharDB.remove(id);
         if (result.error) throw result.error;
-        showNotification('Character deleted', 'info');
+        showNotification('Character deleted successfully', 'success');
       } catch (err) {
-        alert('Delete failed: ' + err.message);
+        console.error("[Delete] Error:", err);
+        showNotification('Delete failed: ' + err.message, 'error');
       }
     }
 
@@ -688,11 +689,12 @@
           const result = await SupaDB.bulkImport(characters);
 
           if (result.error) {
-            console.error(result.error);
-            alert("Tier list import failed");
+            console.error("[Import] Tier list error:", result.error);
+            showNotification("Tier list import failed: " + result.error.message, "error");
           } else {
-            alert("Tier list characters imported");
-            location.reload();
+            console.log("[Import] Tier list success:", result.data.length, "characters");
+            showNotification("Imported " + result.data.length + " characters successfully!", "success");
+            setTimeout(() => location.reload(), 1500);
           }
         }
       } catch (err) {
@@ -714,11 +716,12 @@
           }
           var result = await SupaDB.bulkImport(data);
           if (result.error) {
-            console.error(result.error);
-            alert('Import failed. Check console.');
+            console.error("[Import] JSON error:", result.error);
+            showNotification("JSON Import failed: " + result.error.message, "error");
           } else {
-            alert('Characters imported successfully.');
-            location.reload();
+            console.log("[Import] JSON success:", result.data.length, "characters");
+            showNotification("JSON Imported " + result.data.length + " characters successfully!", "success");
+            setTimeout(() => location.reload(), 1500);
           }
         } catch (err) {
           console.error(err);
@@ -729,6 +732,7 @@
     }
 
     function showNotification(msg, type) {
+      console.log(`[Notification] [${type.toUpperCase()}] ${msg}`);
       var n = document.createElement('div');
       n.style.position = 'fixed';
       n.style.bottom = '20px';
@@ -742,11 +746,17 @@
       n.style.fontSize = '14px';
       n.style.animation = 'slideIn 0.3s ease-out';
       
-      if (type === 'success') n.style.backgroundColor = '#16a34a';
-      else if (type === 'info') n.style.backgroundColor = '#3b82f6';
-      else n.style.backgroundColor = '#ef4444';
+      if (type === 'success') {
+        n.style.backgroundColor = '#16a34a';
+        n.innerHTML = '✅ ' + msg;
+      } else if (type === 'info') {
+        n.style.backgroundColor = '#3b82f6';
+        n.innerHTML = 'ℹ️ ' + msg;
+      } else {
+        n.style.backgroundColor = '#ef4444';
+        n.innerHTML = '❌ ' + msg;
+      }
       
-      n.textContent = msg;
       document.body.appendChild(n);
       
       setTimeout(function() {
