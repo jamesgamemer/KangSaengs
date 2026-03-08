@@ -137,7 +137,7 @@
       <a href="admin.html" class="admin-bar-link">+ Add Character</a>
     </div>
     <div class="admin-bar-right">
-      <button class="admin-bar-btn" onclick="doLogout()">Logout</button>
+      <button class="admin-bar-btn" onclick="Auth.logout()">Logout</button>
     </div>
   </div>
 
@@ -230,8 +230,7 @@
         if (seen[c.name]) return;
         seen[c.name] = true;
         var typesStr = (c.types || []).map(function(t) { return t.toLowerCase().replace(/\s+/g, ''); }).join(',');
-        // Use slug for Supabase, fallback to id for local
-        var linkParam = c.slug ? 'slug=' + encodeURIComponent(c.slug) : 'id=' + encodeURIComponent(c.id);
+        var linkParam = 'slug=' + encodeURIComponent(c.slug);
         html += '<a href="character.html?' + linkParam + '" class="card" data-name="' + c.name + '" data-types="' + typesStr + '">';
         html += '<div class="card-rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
         html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + c.name + '" loading="lazy" onerror="this.src=\'images/placeholder.png\'">';
@@ -242,59 +241,27 @@
       grid.innerHTML = html || '<p class="loading-msg" style="grid-column:1/-1;">No characters found</p>';
     }
 
-    async function doLogout() {
-      if (SupaDB.isConnected()) await SupaDB.logout();
-      if (typeof Auth !== 'undefined') Auth.logout();
-      location.reload();
-    }
-
     // ---- Initialize ----
-    (async function init() {
-      var connected = SupaDB.init();
-      var isAdmin = false;
-
-      // Check admin status
-      if (connected) {
-        isAdmin = await SupaDB.isLoggedIn();
-      } else if (typeof Auth !== 'undefined') {
-        isAdmin = Auth.isLoggedIn();
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Auth check
+      const admin = await Auth.isLoggedIn();
+      if (admin) {
+        document.getElementById('adminBar').style.display = 'flex';
       }
 
-      // Show admin bar if admin
-      if (isAdmin) {
-        document.getElementById('adminBar').style.display = '';
-      }
-
-      // Load characters from Supabase or fallback to local
-      if (connected) {
-        allCharacters = await SupaDB.fetchAll();
-      } else {
-        // Fallback: try local CharDB then JSON file
-        try {
-          if (typeof CharDB !== 'undefined') {
-            allCharacters = await new Promise(function(resolve) {
-              CharDB.loadAll(function(chars) { resolve(chars); });
-            });
-          } else {
-            var resp = await fetch('data/characters.json');
-            allCharacters = await resp.json();
-          }
-        } catch(e) { allCharacters = []; }
-      }
-
+      // Load characters
+      allCharacters = await CharDB.loadAll();
       buildFilters(allCharacters);
       buildGrid(allCharacters);
 
-      // Realtime updates from Supabase
-      if (connected) {
-        SupaDB.subscribeToChanges(async function() {
-          allCharacters = await SupaDB.fetchAll();
-          buildFilters(allCharacters);
-          buildGrid(allCharacters);
-          applyFilters();
-        });
-      }
-    })();
+      // Realtime updates
+      SupaDB.subscribeToChanges(async () => {
+        allCharacters = await CharDB.loadAll();
+        buildFilters(allCharacters);
+        buildGrid(allCharacters);
+        applyFilters();
+      });
+    });
   </script>
 </body>
 </html>

@@ -16,12 +16,9 @@
     <div class="admin-bar-left">
       <span class="admin-badge">ADMIN</span>
       <a href="admin.html" class="admin-bar-link">Dashboard</a>
-      <button class="admin-bar-btn edit-toggle-btn" id="editToggleBtn" onclick="toggleEditMode()">Enable Edit Mode</button>
     </div>
     <div class="admin-bar-right">
-      <button class="admin-bar-btn save-btn" id="saveBtn" style="display:none;" onclick="saveAllChanges()">Save Changes</button>
-      <button class="admin-bar-btn cancel-btn" id="cancelBtn" style="display:none;" onclick="cancelEdit()">Cancel</button>
-      <button class="admin-bar-btn" onclick="doLogout()">Logout</button>
+      <button class="admin-bar-btn" onclick="Auth.logout()">Logout</button>
     </div>
   </div>
 
@@ -58,12 +55,7 @@
   <script src="js/navbar.js"></script>
   <script>
     var charData = null;
-    var charId = null;      // Supabase UUID or local id
-    var charSlug = null;    // slug for URL
     var currentWeapon = null;
-    var editMode = false;
-    var isAdmin = false;
-    var useSupabase = false;
 
     // ---- Utility Functions ----
     function esc(str) {
@@ -144,7 +136,7 @@
       html += '</div>';
       html += '<div class="char-detail-info">';
       html += '<div class="section-label">Description</div>';
-      html += '<p class="desc-text" data-field="description">' + esc(c.description) + '</p>';
+      html += '<p class="desc-text">' + esc(c.description) + '</p>';
       html += '<div class="char-types"><span class="label">Weapon Types:</span>' + typePills + '</div>';
       html += '</div></div>';
 
@@ -163,8 +155,7 @@
         currentWeapon = weaponKeys[0];
       } else {
         html += '<div class="no-data-msg">';
-        html += '<p>&#128679; Skills, Potentials, and Costumes data will be added soon.</p>';
-        html += '<p style="margin-top:8px;font-size:13px;color:var(--border);">Check back later for updates</p>';
+        html += '<p>&#128679; Skills data will be added soon.</p>';
         html += '</div>';
       }
 
@@ -173,71 +164,6 @@
       if (hasSkills && weaponKeys.length > 0) {
         showWeapon(weaponKeys[0], document.querySelector('.weapon-tabs button'));
       }
-    }
-
-    function renderSkillCard(sk, idx) {
-      var stype = sk.type || 'Normal';
-      var badge = getBadgeClass(stype);
-      var isUlt = stype.toLowerCase() === 'ultimate';
-      var desc = sk.description || '';
-      var extracted = extractHits(desc);
-
-      var html = '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '" data-skill-idx="' + idx + '">';
-      html += '<div class="skill-header">';
-      html += '<div class="skill-name" data-field="skill-name" data-idx="' + idx + '">' + esc(sk.name) + '</div>';
-      html += '<span class="skill-type-badge ' + badge + '">' + esc(stype) + '</span>';
-      html += '</div>';
-      if (extracted.clean) {
-        html += '<div class="skill-desc" data-field="skill-desc" data-idx="' + idx + '">' + highlightNums(extracted.clean) + '</div>';
-      }
-      if (extracted.hits.length > 0) {
-        html += '<div class="dmg-breakdown">';
-        extracted.hits.forEach(function(h) {
-          var parts = h.split(':');
-          if (parts.length >= 2) {
-            html += '<div class="dmg-box"><span class="dmg-label">' + esc(parts[0].trim()) + '</span><span class="dmg-value">' + esc(parts[1].trim()) + '</span></div>';
-          }
-        });
-        html += '</div>';
-      }
-      html += '</div>';
-      return html;
-    }
-
-    function renderPotentials(pots) {
-      if (!pots || pots.length === 0) return '';
-      var html = '<div class="potentials-section-v2">';
-      html += '<div class="detail-section-title">Potentials</div>';
-      html += '<div class="detail-section-sub">Unlock powerful upgrades as you progress</div>';
-      html += '<div class="potentials-grid-v2">';
-      pots.forEach(function(p, i) {
-        var tier = p.tier || '';
-        var num = (tier.toString().match(/\d+/) || ['?'])[0];
-        var milestone = (num === '5' || num === '7' || num === '10') ? ' tier-milestone' : '';
-        html += '<div class="potential-card-v2' + milestone + '" data-pot-idx="' + i + '">';
-        html += '<div class="tier-label"><span class="tier-num">' + num + '</span> Tier ' + num + '</div>';
-        html += '<div class="tier-desc" data-field="pot-desc" data-idx="' + i + '">' + highlightNums(p.description || '') + '</div>';
-        html += '</div>';
-      });
-      html += '</div></div>';
-      return html;
-    }
-
-    function renderCostumes(costumes) {
-      if (!costumes || costumes.length === 0) return '';
-      var html = '<div class="costumes-section-v2">';
-      html += '<div class="detail-section-title">Costumes</div>';
-      html += '<div class="detail-section-sub">Available skins and outfits</div>';
-      html += '<div class="costumes-grid-v2">';
-      costumes.forEach(function(c, i) {
-        var name = (typeof c === 'string') ? c : (c.name || '');
-        html += '<div class="costume-card-v2" data-costume-idx="' + i + '">';
-        html += '<div class="costume-icon">&#128090;</div>';
-        html += '<p data-field="costume-name" data-idx="' + i + '">' + esc(name) + '</p>';
-        html += '</div>';
-      });
-      html += '</div></div>';
-      return html;
     }
 
     function showWeapon(type, btn) {
@@ -249,263 +175,71 @@
       var pots = (charData.potentials && charData.potentials[type]) || [];
       var costumes = charData.costumes || [];
 
-      var html = '<div class="detail-section-title">Skills</div>';
-      html += '<div class="detail-section-sub">Combat abilities and techniques</div>';
-      html += '<div class="skills-grid">';
-      skills.forEach(function(sk, i) { html += renderSkillCard(sk, i); });
+      var html = '<div class="skills-grid-v2">';
+      skills.forEach(function(sk, i) {
+        var stype = sk.type || 'Normal';
+        var badge = getBadgeClass(stype);
+        var isUlt = stype.toLowerCase() === 'ultimate';
+        var extracted = extractHits(sk.description || '');
+
+        html += '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
+        html += '<div class="skill-header"><div class="skill-name">' + esc(sk.name) + '</div><span class="skill-type-badge ' + badge + '">' + esc(stype) + '</span></div>';
+        if (extracted.clean) html += '<div class="skill-desc">' + highlightNums(extracted.clean) + '</div>';
+        if (extracted.hits.length > 0) {
+          html += '<div class="dmg-breakdown">';
+          extracted.hits.forEach(function(h) {
+            var parts = h.split(':');
+            if (parts.length >= 2) html += '<div class="dmg-box"><span class="dmg-label">' + esc(parts[0].trim()) + '</span><span class="dmg-value">' + esc(parts[1].trim()) + '</span></div>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      });
       html += '</div>';
-      html += renderPotentials(pots);
-      html += renderCostumes(costumes);
+
+      if (pots.length > 0) {
+        html += '<div class="potentials-section-v2"><div class="detail-section-title">Potentials</div><div class="potentials-grid-v2">';
+        pots.forEach(function(p, i) {
+          var num = (p.tier || '').toString().match(/\d+/) || [i+1];
+          html += '<div class="potential-card-v2"><div class="tier-label">Tier ' + num + '</div><div class="tier-desc">' + highlightNums(p.description || '') + '</div></div>';
+        });
+        html += '</div></div>';
+      }
+
+      if (costumes.length > 0) {
+        html += '<div class="costumes-section-v2"><div class="detail-section-title">Costumes</div><div class="costumes-grid-v2">';
+        costumes.forEach(function(c) {
+          var name = (typeof c === 'string') ? c : (c.name || '');
+          html += '<div class="costume-card-v2"><div class="costume-icon">&#128090;</div><p>' + esc(name) + '</p></div>';
+        });
+        html += '</div></div>';
+      }
 
       document.getElementById('weaponContent').innerHTML = html;
-
-      if (editMode) applyEditMode();
-    }
-
-    // ---- Inline Edit System ----
-    function toggleEditMode() {
-      editMode = !editMode;
-      var btn = document.getElementById('editToggleBtn');
-      var saveBtn = document.getElementById('saveBtn');
-      var cancelBtn = document.getElementById('cancelBtn');
-
-      if (editMode) {
-        btn.textContent = 'Editing...';
-        btn.classList.add('active');
-        saveBtn.style.display = '';
-        cancelBtn.style.display = '';
-        applyEditMode();
-      } else {
-        btn.textContent = 'Enable Edit Mode';
-        btn.classList.remove('active');
-        saveBtn.style.display = 'none';
-        cancelBtn.style.display = 'none';
-        removeEditMode();
-      }
-    }
-
-    function applyEditMode() {
-      var descEl = document.querySelector('[data-field="description"]');
-      if (descEl) {
-        descEl.setAttribute('contenteditable', 'true');
-        descEl.classList.add('editable-field');
-      }
-
-      document.querySelectorAll('[data-field="skill-name"]').forEach(function(el) {
-        el.setAttribute('contenteditable', 'true');
-        el.classList.add('editable-field');
-      });
-      document.querySelectorAll('[data-field="skill-desc"]').forEach(function(el) {
-        el.setAttribute('contenteditable', 'true');
-        el.classList.add('editable-field');
-        var idx = parseInt(el.getAttribute('data-idx'));
-        var skills = (charData.skills && charData.skills[currentWeapon]) || [];
-        if (skills[idx]) {
-          el.textContent = skills[idx].description || '';
-        }
-      });
-
-      document.querySelectorAll('[data-field="pot-desc"]').forEach(function(el) {
-        el.setAttribute('contenteditable', 'true');
-        el.classList.add('editable-field');
-        var idx = parseInt(el.getAttribute('data-idx'));
-        var pots = (charData.potentials && charData.potentials[currentWeapon]) || [];
-        if (pots[idx]) {
-          el.textContent = pots[idx].description || '';
-        }
-      });
-
-      document.querySelectorAll('[data-field="costume-name"]').forEach(function(el) {
-        el.setAttribute('contenteditable', 'true');
-        el.classList.add('editable-field');
-      });
-    }
-
-    function removeEditMode() {
-      document.querySelectorAll('.editable-field').forEach(function(el) {
-        el.removeAttribute('contenteditable');
-        el.classList.remove('editable-field');
-      });
-      if (currentWeapon) {
-        showWeapon(currentWeapon, document.querySelector('.weapon-tabs button.active'));
-      }
-    }
-
-    async function saveAllChanges() {
-      if (!charData) return;
-
-      // Collect edits from DOM
-      var descEl = document.querySelector('[data-field="description"]');
-      if (descEl) {
-        charData.description = descEl.textContent.trim();
-      }
-
-      var skills = (charData.skills && charData.skills[currentWeapon]) || [];
-      document.querySelectorAll('[data-field="skill-name"]').forEach(function(el) {
-        var idx = parseInt(el.getAttribute('data-idx'));
-        if (skills[idx]) skills[idx].name = el.textContent.trim();
-      });
-      document.querySelectorAll('[data-field="skill-desc"]').forEach(function(el) {
-        var idx = parseInt(el.getAttribute('data-idx'));
-        if (skills[idx]) skills[idx].description = el.textContent.trim();
-      });
-
-      var pots = (charData.potentials && charData.potentials[currentWeapon]) || [];
-      document.querySelectorAll('[data-field="pot-desc"]').forEach(function(el) {
-        var idx = parseInt(el.getAttribute('data-idx'));
-        if (pots[idx]) pots[idx].description = el.textContent.trim();
-      });
-
-      var costumes = charData.costumes || [];
-      document.querySelectorAll('[data-field="costume-name"]').forEach(function(el) {
-        var idx = parseInt(el.getAttribute('data-idx'));
-        if (idx < costumes.length) {
-          if (typeof costumes[idx] === 'string') {
-            costumes[idx] = el.textContent.trim();
-          } else {
-            costumes[idx].name = el.textContent.trim();
-          }
-        }
-      });
-
-      // Save to Supabase or local
-      if (useSupabase && charId) {
-        var updates = {
-          description: charData.description,
-          skills: charData.skills,
-          potentials: charData.potentials,
-          costumes: charData.costumes
-        };
-        var result = await SupaDB.updateCharacter(charId, updates);
-        if (result.error) {
-          showNotification('Save failed: ' + result.error.message, 'error');
-          return;
-        }
-        showNotification('Changes saved to Supabase!', 'success');
-      } else if (typeof CharDB !== 'undefined') {
-        CharDB.update(charId, charData);
-        showNotification('Changes saved locally!', 'success');
-      }
-
-      // Exit edit mode
-      editMode = false;
-      var btn = document.getElementById('editToggleBtn');
-      btn.textContent = 'Enable Edit Mode';
-      btn.classList.remove('active');
-      document.getElementById('saveBtn').style.display = 'none';
-      document.getElementById('cancelBtn').style.display = 'none';
-
-      renderPage(charData);
-    }
-
-    async function cancelEdit() {
-      editMode = false;
-      var btn = document.getElementById('editToggleBtn');
-      btn.textContent = 'Enable Edit Mode';
-      btn.classList.remove('active');
-      document.getElementById('saveBtn').style.display = 'none';
-      document.getElementById('cancelBtn').style.display = 'none';
-
-      // Reload original data
-      if (useSupabase && charSlug) {
-        charData = await SupaDB.fetchBySlug(charSlug);
-      } else if (typeof CharDB !== 'undefined') {
-        charData = CharDB.getById(charId);
-      }
-      if (charData) renderPage(charData);
-    }
-
-    async function doLogout() {
-      if (SupaDB.isConnected()) await SupaDB.logout();
-      if (typeof Auth !== 'undefined') Auth.logout();
-      location.reload();
-    }
-
-    function showNotification(msg, type) {
-      var notif = document.createElement('div');
-      notif.className = 'notification ' + (type || 'info');
-      notif.textContent = msg;
-      document.body.appendChild(notif);
-      setTimeout(function() { notif.classList.add('show'); }, 10);
-      setTimeout(function() {
-        notif.classList.remove('show');
-        setTimeout(function() { notif.remove(); }, 300);
-      }, 3000);
     }
 
     // ---- Initialize ----
-    (async function init() {
-      var params = new URLSearchParams(window.location.search);
-      charSlug = params.get('slug');
-      charId = params.get('id');
-
-      if (!charSlug && !charId) {
-        document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">No character specified. <a href="characters.html">Browse all characters</a></div>';
-        return;
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Auth check
+      if (await Auth.isLoggedIn()) {
+        document.getElementById('adminBar').style.display = 'flex';
       }
 
-      var connected = SupaDB.init();
-      useSupabase = connected;
+      // Get slug from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get('slug');
 
-      // Check admin status
-      if (connected) {
-        isAdmin = await SupaDB.isLoggedIn();
-      } else if (typeof Auth !== 'undefined') {
-        isAdmin = Auth.isLoggedIn();
-      }
-
-      // Show admin bar if admin
-      if (isAdmin) {
-        document.getElementById('adminBar').style.display = '';
-      }
-
-      // Load character data
-      if (connected && charSlug) {
-        charData = await SupaDB.fetchBySlug(charSlug);
-        if (charData) charId = charData.id;
-      } else if (connected && charId) {
-        charData = await SupaDB.fetchById(charId);
-        if (charData) charSlug = charData.slug;
-      }
-
-      // Fallback to local data
-      if (!charData) {
-        useSupabase = false;
-        if (typeof CharDB !== 'undefined') {
-          await new Promise(function(resolve) {
-            CharDB.loadAll(function() { resolve(); });
-          });
-          if (charId) {
-            charData = CharDB.getById(charId);
-          } else if (charSlug) {
-            // Search by slug in local data
-            var all = CharDB.getAll();
-            charData = all.find(function(c) {
-              var s = (c.id || c.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-              return s === charSlug;
-            });
-            if (charData) charId = charData.id;
-          }
+      if (slug) {
+        const character = await CharDB.getBySlug(slug);
+        if (character) {
+          renderPage(character);
+        } else {
+          document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">Character not found.</div>';
         }
+      } else {
+        document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">No character selected.</div>';
       }
-
-      if (!charData) {
-        document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">Character not found. <a href="characters.html">Browse all characters</a></div>';
-        return;
-      }
-
-      renderPage(charData);
-
-      // Realtime updates from Supabase
-      if (connected && charSlug) {
-        SupaDB.subscribeToChanges(async function(payload) {
-          if (payload.new && payload.new.slug === charSlug) {
-            charData = payload.new;
-            if (!editMode) renderPage(charData);
-          }
-        });
-      }
-    })();
+    });
   </script>
 </body>
 </html>

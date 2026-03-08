@@ -18,7 +18,7 @@
     </div>
     <div class="admin-bar-right">
       <span id="adminEmail" style="color:#94a3b8;font-size:13px;margin-right:12px;"></span>
-      <button class="admin-bar-btn" onclick="doLogout()">Logout</button>
+      <button class="admin-bar-btn" onclick="Auth.logout()">Logout</button>
     </div>
   </div>
 
@@ -200,74 +200,40 @@
     var allCharacters = [];
 
     // ---- Init ----
-    (async function init() {
-      var connected = SupaDB.init();
-
-      if (!connected) {
-        document.getElementById('connectionStatus').innerHTML =
-          '<div style="padding:12px 16px;background:#7f1d1d;border:1px solid #dc2626;border-radius:8px;color:#fca5a5;font-size:14px;">' +
-          '&#9888; Supabase not configured. Please edit <code>js/supabase-config.js</code> with your Supabase URL and anon key.' +
-          '</div>';
-        // Fallback: try loading from local JSON
-        if (typeof CharDB !== 'undefined') {
-          CharDB.loadAll(function(chars) {
-            allCharacters = chars;
-            renderDashboard();
-          });
-        } else {
-          // Direct fetch from data/characters.json
-          fetch('data/characters.json').then(function(r){return r.json();}).then(function(chars){
-            allCharacters = chars;
-            renderDashboard();
-          }).catch(function(e){
-            console.error('Failed to load local data:', e);
-          });
-        }
-        // Check local auth
-        if (typeof Auth !== 'undefined' && !Auth.isLoggedIn()) {
-          window.location.href = 'login.html';
-          return;
-        }
-        return;
-      }
-
-      // Check auth
-      var session = await SupaDB.getSession();
-      if (!session) {
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Auth check
+      const admin = await Auth.isLoggedIn();
+      if (!admin) {
         window.location.href = 'login.html';
         return;
       }
 
-      // Show admin email
-      document.getElementById('adminEmail').textContent = session.user.email;
-
-      // Show connection status
-      document.getElementById('connectionStatus').innerHTML =
-        '<div style="padding:12px 16px;background:#052e16;border:1px solid #16a34a;border-radius:8px;color:#86efac;font-size:14px;">' +
-        '&#9989; Connected to Supabase &mdash; Data is saved to the cloud' +
-        '</div>';
+      // Connection status
+      if (SupaDB.isConnected()) {
+        const session = await SupaDB.getSession();
+        document.getElementById('adminEmail').textContent = session.user.email;
+        document.getElementById('connectionStatus').innerHTML =
+          '<div style="padding:12px 16px;background:#052e16;border:1px solid #16a34a;border-radius:8px;color:#86efac;font-size:14px;">' +
+          '&#9989; Connected to Supabase &mdash; Data is saved to the cloud' +
+          '</div>';
+      } else {
+        document.getElementById('connectionStatus').innerHTML =
+          '<div style="padding:12px 16px;background:#7f1d1d;border:1px solid #dc2626;border-radius:8px;color:#fca5a5;font-size:14px;">' +
+          '&#9888; Supabase initialization failed. Check console for errors.' +
+          '</div>';
+      }
 
       // Load characters
-      allCharacters = await SupaDB.fetchAll();
+      allCharacters = await CharDB.loadAll();
       renderDashboard();
 
-      // Subscribe to realtime changes
-      SupaDB.subscribeToChanges(async function(payload) {
-        allCharacters = await SupaDB.fetchAll();
+      // Realtime updates
+      SupaDB.subscribeToChanges(async () => {
+        allCharacters = await CharDB.loadAll();
         renderDashboard();
         showNotification('Data updated (realtime)', 'info');
       });
-    })();
-
-    // ---- Logout ----
-    async function doLogout() {
-      if (SupaDB.isConnected()) {
-        await SupaDB.logout();
-      }
-      // Also clear local auth
-      if (typeof Auth !== 'undefined') Auth.logout();
-      window.location.href = 'login.html';
-    }
+    });
 
     // ---- Dashboard ----
     function renderDashboard() {
@@ -395,7 +361,6 @@
         costumesHtml += '<div class="costume-input-row"><input type="text" class="costume-input" value="' + name.replace(/"/g, '&quot;') + '" placeholder="Costume name"><button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button></div>';
       });
       document.getElementById('costumesEditor').innerHTML = costumesHtml;
-
       document.getElementById('formOverlay').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }
@@ -406,176 +371,161 @@
     }
 
     function closeFormOverlay(e) {
-      if (e.target === document.getElementById('formOverlay')) hideForm();
+      if (e.target.id === 'formOverlay') hideForm();
     }
 
-    // Auto-generate slug from name
-    document.getElementById('charName').addEventListener('input', function() {
-      if (!editingId) {
-        document.getElementById('charSlug').value = this.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      }
-    });
-
-    // ---- Weapon Checkboxes ----
+    // ---- Form Helpers ----
     function buildWeaponCheckboxes(selected) {
+      var container = document.getElementById('weaponCheckboxes');
       var html = '';
       ALL_WEAPONS.forEach(function(w) {
-        var checked = selected.indexOf(w) !== -1 ? ' checked' : '';
-        html += '<label class="weapon-checkbox"><input type="checkbox" value="' + w + '"' + checked + ' onchange="onWeaponChange()"> ' + w + '</label>';
+        var checked = selected.indexOf(w) !== -1 ? 'checked' : '';
+        html += '<label class="weapon-checkbox"><input type="checkbox" value="' + w + '" ' + checked + ' onchange="onWeaponChange()"> ' + w + '</label>';
       });
-      document.getElementById('weaponCheckboxes').innerHTML = html;
-    }
-
-    function getSelectedWeapons() {
-      var weapons = [];
-      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) {
-        weapons.push(cb.value);
-      });
-      return weapons;
+      container.innerHTML = html;
     }
 
     function onWeaponChange() {
+      var selected = [];
+      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selected.push(cb.value); });
+      
+      // Update tabs
       updateSkillsTabs();
       updatePotentialsTabs();
     }
 
-    // ---- Skills Editor ----
     function updateSkillsTabs() {
-      var weapons = getSelectedWeapons();
+      var selected = [];
+      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selected.push(cb.value); });
+      
+      var container = document.getElementById('weaponSkillsTabs');
       var html = '';
-      weapons.forEach(function(w, i) {
-        var active = (i === 0 || w === currentSkillWeapon) ? ' active' : '';
-        html += '<button class="weapon-tab-btn' + active + '" onclick="switchSkillWeapon(\'' + w + '\',this)">' + w + '</button>';
+      selected.forEach(function(w) {
+        var active = (w === currentSkillWeapon) ? 'active' : '';
+        html += '<button class="weapon-tab ' + active + '" onclick="showSkillEditor(\'' + w + '\')">' + w + '</button>';
       });
-      document.getElementById('weaponSkillsTabs').innerHTML = html;
-      if (weapons.length > 0) {
-        currentSkillWeapon = (weapons.indexOf(currentSkillWeapon) !== -1) ? currentSkillWeapon : weapons[0];
-        renderSkillsForWeapon(currentSkillWeapon);
+      container.innerHTML = html;
+
+      if (selected.length > 0) {
+        if (!currentSkillWeapon || selected.indexOf(currentSkillWeapon) === -1) {
+          showSkillEditor(selected[0]);
+        } else {
+          showSkillEditor(currentSkillWeapon);
+        }
       } else {
-        document.getElementById('skillsEditor').innerHTML = '<p class="form-hint">Select weapon types above first</p>';
+        document.getElementById('skillsEditor').innerHTML = '<p class="form-hint">Select a weapon type first</p>';
       }
     }
 
-    function switchSkillWeapon(w, btn) {
-      saveCurrentSkills();
-      currentSkillWeapon = w;
-      document.querySelectorAll('#weaponSkillsTabs .weapon-tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      renderSkillsForWeapon(w);
-    }
+    function showSkillEditor(weapon) {
+      currentSkillWeapon = weapon;
+      document.querySelectorAll('#weaponSkillsTabs .weapon-tab').forEach(function(t) {
+        t.classList.toggle('active', t.textContent === weapon);
+      });
 
-    function renderSkillsForWeapon(weapon) {
       var skills = tempSkills[weapon] || [];
+      // Ensure basic skills exist
+      if (skills.length === 0) {
+        skills = [
+          { name: 'Normal Attack', type: 'Normal Attack', description: '' },
+          { name: 'Skill 1', type: 'Skill', description: '' },
+          { name: 'Skill 2', type: 'Skill', description: '' },
+          { name: 'Ultimate', type: 'Ultimate', description: '' }
+        ];
+        tempSkills[weapon] = skills;
+      }
+
       var html = '';
-      skills.forEach(function(sk, i) { html += buildSkillRow(sk, i); });
-      html += '<button type="button" class="btn-add-item" onclick="addSkillField()">+ Add Skill</button>';
+      skills.forEach(function(sk, i) {
+        html += '<div class="skill-input-group">';
+        html += '<div class="form-row">';
+        html += '<div class="form-group"><label>Skill Name</label><input type="text" value="' + (sk.name||'').replace(/"/g,'&quot;') + '" oninput="updateTempSkill(' + i + ',\'name\',this.value)"></div>';
+        html += '<div class="form-group"><label>Type</label><select onchange="updateTempSkill(' + i + ',\'type\',this.value)">';
+        SKILL_TYPES.forEach(function(t) {
+          var sel = (sk.type === t) ? 'selected' : '';
+          html += '<option value="' + t + '" ' + sel + '>' + t + '</option>';
+        });
+        html += '</select></div>';
+        html += '</div>';
+        html += '<div class="form-group"><label>Description</label><textarea rows="2" oninput="updateTempSkill(' + i + ',\'description\',this.value)">' + (sk.description||'') + '</textarea></div>';
+        html += '<button class="btn-remove-item" onclick="removeTempSkill(' + i + ')">Remove Skill</button>';
+        html += '</div>';
+      });
+      html += '<button type="button" class="btn-add-item" onclick="addTempSkill()">+ Add Skill</button>';
       document.getElementById('skillsEditor').innerHTML = html;
     }
 
-    function buildSkillRow(sk, idx) {
-      var typeOptions = SKILL_TYPES.map(function(t) {
-        var sel = (t === (sk.type || '')) ? ' selected' : '';
-        return '<option value="' + t + '"' + sel + '>' + t + '</option>';
-      }).join('');
-      return '<div class="skill-input-group" data-skill-idx="' + idx + '">' +
-        '<div class="skill-input-header">' +
-        '<span class="skill-input-num">#' + (idx + 1) + '</span>' +
-        '<button class="btn-remove-item" onclick="removeSkillField(' + idx + ')">&times;</button>' +
-        '</div>' +
-        '<div class="form-row">' +
-        '<div class="form-group"><label>Name</label><input type="text" class="skill-name-input" value="' + (sk.name || '').replace(/"/g, '&quot;') + '" placeholder="Skill name"></div>' +
-        '<div class="form-group"><label>Type</label><select class="skill-type-input">' + typeOptions + '</select></div>' +
-        '</div>' +
-        '<div class="form-group"><label>Description</label><textarea class="skill-desc-input" rows="2" placeholder="Skill description...">' + (sk.description || '') + '</textarea></div>' +
-        '</div>';
-    }
-
-    function addSkillField() {
-      saveCurrentSkills();
-      if (!currentSkillWeapon) return;
+    function updateTempSkill(idx, field, val) {
       if (!tempSkills[currentSkillWeapon]) tempSkills[currentSkillWeapon] = [];
-      tempSkills[currentSkillWeapon].push({ name: '', type: 'Normal Attack', description: '' });
-      renderSkillsForWeapon(currentSkillWeapon);
+      tempSkills[currentSkillWeapon][idx][field] = val;
     }
 
-    function removeSkillField(idx) {
-      saveCurrentSkills();
-      if (tempSkills[currentSkillWeapon]) tempSkills[currentSkillWeapon].splice(idx, 1);
-      renderSkillsForWeapon(currentSkillWeapon);
+    function addTempSkill() {
+      if (!tempSkills[currentSkillWeapon]) tempSkills[currentSkillWeapon] = [];
+      tempSkills[currentSkillWeapon].push({ name: '', type: 'Skill', description: '' });
+      showSkillEditor(currentSkillWeapon);
     }
 
-    function saveCurrentSkills() {
-      if (!currentSkillWeapon) return;
-      var skills = [];
-      document.querySelectorAll('#skillsEditor .skill-input-group').forEach(function(group) {
-        var name = group.querySelector('.skill-name-input');
-        var type = group.querySelector('.skill-type-input');
-        var desc = group.querySelector('.skill-desc-input');
-        if (name && type && desc) {
-          skills.push({ name: name.value, type: type.value, description: desc.value });
-        }
-      });
-      tempSkills[currentSkillWeapon] = skills;
+    function removeTempSkill(idx) {
+      tempSkills[currentSkillWeapon].splice(idx, 1);
+      showSkillEditor(currentSkillWeapon);
     }
 
-    // ---- Potentials Editor ----
     function updatePotentialsTabs() {
-      var weapons = getSelectedWeapons();
+      var selected = [];
+      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selected.push(cb.value); });
+      
+      var container = document.getElementById('weaponPotentialsTabs');
       var html = '';
-      weapons.forEach(function(w, i) {
-        var active = (i === 0 || w === currentPotWeapon) ? ' active' : '';
-        html += '<button class="weapon-tab-btn' + active + '" onclick="switchPotWeapon(\'' + w + '\',this)">' + w + '</button>';
+      selected.forEach(function(w) {
+        var active = (w === currentPotWeapon) ? 'active' : '';
+        html += '<button class="weapon-tab ' + active + '" onclick="showPotentialsEditor(\'' + w + '\')">' + w + '</button>';
       });
-      document.getElementById('weaponPotentialsTabs').innerHTML = html;
-      if (weapons.length > 0) {
-        currentPotWeapon = (weapons.indexOf(currentPotWeapon) !== -1) ? currentPotWeapon : weapons[0];
-        renderPotentialsForWeapon(currentPotWeapon);
+      container.innerHTML = html;
+
+      if (selected.length > 0) {
+        if (!currentPotWeapon || selected.indexOf(currentPotWeapon) === -1) {
+          showPotentialsEditor(selected[0]);
+        } else {
+          showPotentialsEditor(currentPotWeapon);
+        }
       } else {
-        document.getElementById('potentialsEditor').innerHTML = '<p class="form-hint">Select weapon types above first</p>';
+        document.getElementById('potentialsEditor').innerHTML = '<p class="form-hint">Select a weapon type first</p>';
       }
     }
 
-    function switchPotWeapon(w, btn) {
-      saveCurrentPotentials();
-      currentPotWeapon = w;
-      document.querySelectorAll('#weaponPotentialsTabs .weapon-tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-      renderPotentialsForWeapon(w);
-    }
+    function showPotentialsEditor(weapon) {
+      currentPotWeapon = weapon;
+      document.querySelectorAll('#weaponPotentialsTabs .weapon-tab').forEach(function(t) {
+        t.classList.toggle('active', t.textContent === weapon);
+      });
 
-    function renderPotentialsForWeapon(weapon) {
       var pots = tempPotentials[weapon] || [];
-      while (pots.length < 10) pots.push({ tier: 'Tier ' + (pots.length + 1), description: '' });
-      tempPotentials[weapon] = pots;
+      if (pots.length === 0) {
+        for (var i = 1; i <= 10; i++) pots.push({ tier: 'Tier ' + i, description: '' });
+        tempPotentials[weapon] = pots;
+      }
 
       var html = '<div class="potentials-input-grid">';
       pots.forEach(function(p, i) {
-        html += '<div class="potential-input-card">';
-        html += '<div class="pot-tier-label">Tier ' + (i + 1) + '</div>';
-        html += '<textarea class="pot-desc-input" rows="2" placeholder="Tier ' + (i + 1) + ' description...">' + (p.description || '') + '</textarea>';
+        html += '<div class="pot-input-group">';
+        html += '<label>Tier ' + (i+1) + '</label>';
+        html += '<textarea rows="2" placeholder="Bonus effect..." oninput="updateTempPot(' + i + ',this.value)">' + (p.description||'') + '</textarea>';
         html += '</div>';
       });
       html += '</div>';
       document.getElementById('potentialsEditor').innerHTML = html;
     }
 
-    function saveCurrentPotentials() {
-      if (!currentPotWeapon) return;
-      var pots = [];
-      document.querySelectorAll('#potentialsEditor .potential-input-card').forEach(function(card, i) {
-        var desc = card.querySelector('.pot-desc-input');
-        pots.push({ tier: 'Tier ' + (i + 1), description: desc ? desc.value : '' });
-      });
-      tempPotentials[currentPotWeapon] = pots;
+    function updateTempPot(idx, val) {
+      tempPotentials[currentPotWeapon][idx].description = val;
     }
 
-    // ---- Costumes ----
     function addCostumeField() {
-      var editor = document.getElementById('costumesEditor');
       var div = document.createElement('div');
       div.className = 'costume-input-row';
       div.innerHTML = '<input type="text" class="costume-input" placeholder="Costume name"><button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button>';
-      editor.appendChild(div);
+      document.getElementById('costumesEditor').appendChild(div);
     }
 
     // ---- Image Upload ----
@@ -592,182 +542,153 @@
       }
     }
 
-    // ---- Save Character (Supabase) ----
+    // ---- Actions ----
     async function saveCharacter() {
       var name = document.getElementById('charName').value.trim();
-      if (!name) { alert('Character name is required!'); return; }
+      if (!name) { alert('Name is required'); return; }
 
-      // Show loading
-      document.getElementById('saveBtnText').style.display = 'none';
-      document.getElementById('saveBtnLoading').style.display = '';
-      document.getElementById('saveBtn').disabled = true;
+      var saveBtn = document.getElementById('saveBtn');
+      var saveBtnText = document.getElementById('saveBtnText');
+      var saveBtnLoading = document.getElementById('saveBtnLoading');
+
+      saveBtn.disabled = true;
+      saveBtnText.style.display = 'none';
+      saveBtnLoading.style.display = 'inline';
 
       try {
-        saveCurrentSkills();
-        saveCurrentPotentials();
+        var selectedTypes = [];
+        document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selectedTypes.push(cb.value); });
 
-        var weapons = getSelectedWeapons();
-        var slug = document.getElementById('charSlug').value || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-        // Collect costumes
         var costumes = [];
         document.querySelectorAll('.costume-input').forEach(function(input) {
           if (input.value.trim()) costumes.push(input.value.trim());
         });
 
-        // Clean skills/potentials for unselected weapons
-        var cleanSkills = {};
-        var cleanPotentials = {};
-        weapons.forEach(function(w) {
-          cleanSkills[w] = tempSkills[w] || [];
-          cleanPotentials[w] = tempPotentials[w] || [];
+        // Clean up skills/potentials for unselected weapons
+        var finalSkills = {};
+        var finalPotentials = {};
+        selectedTypes.forEach(function(w) {
+          if (tempSkills[w]) finalSkills[w] = tempSkills[w];
+          if (tempPotentials[w]) finalPotentials[w] = tempPotentials[w];
         });
 
-        // Upload image if new file selected
-        var imageUrl = '';
-        if (tempImageFile && SupaDB.isConnected()) {
-          var uploadResult = await SupaDB.uploadImage(tempImageFile, slug);
-          if (uploadResult.error) {
-            showNotification('Image upload failed: ' + uploadResult.error.message, 'error');
-          } else {
-            imageUrl = uploadResult.url;
-          }
-        }
-
-        var charObj = {
+        var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        
+        var charData = {
           name: name,
-          slug: slug,
           rarity: document.getElementById('charRarity').value,
           tier: document.getElementById('charTier').value,
-          description: document.getElementById('charDesc').value.trim(),
-          types: weapons,
-          skills: cleanSkills,
-          potentials: cleanPotentials,
+          slug: slug,
+          description: document.getElementById('charDesc').value,
+          types: selectedTypes,
+          skills: finalSkills,
+          potentials: finalPotentials,
           costumes: costumes
         };
 
-        // Set image URL
-        if (imageUrl) {
-          charObj.image = imageUrl;
+        // Upload image if changed
+        if (tempImageFile) {
+          var upload = await SupaDB.uploadImage(tempImageFile, slug);
+          if (upload.error) throw upload.error;
+          charData.image = upload.url;
         } else if (editingId) {
-          // Keep existing image if no new upload
-          var existing = allCharacters.find(function(ch) { return ch.id === editingId; });
-          if (existing) charObj.image = existing.image;
-        } else {
-          charObj.image = 'images/' + name + '.png';
+          // Keep existing image
+          var existing = allCharacters.find(function(c){ return c.id === editingId; });
+          if (existing) charData.image = existing.image;
         }
 
-        // Save to Supabase
-        if (SupaDB.isConnected()) {
-          var result;
-          if (editingId) {
-            result = await SupaDB.updateCharacter(editingId, charObj);
-          } else {
-            result = await SupaDB.insertCharacter(charObj);
-          }
-
-          if (result.error) {
-            showNotification('Save failed: ' + result.error.message, 'error');
-          } else {
-            showNotification(editingId ? 'Character updated: ' + name : 'Character added: ' + name, 'success');
-            allCharacters = await SupaDB.fetchAll();
-            renderDashboard();
-            hideForm();
-          }
+        var result;
+        if (editingId) {
+          result = await CharDB.update(editingId, charData);
         } else {
-          // Fallback to local storage
-          if (typeof CharDB !== 'undefined') {
-            if (editingId) {
-              CharDB.update(editingId, charObj);
-            } else {
-              charObj.id = slug;
-              CharDB.add(charObj);
-            }
-            allCharacters = CharDB.getAll();
-            renderDashboard();
-            hideForm();
-            showNotification('Saved locally (Supabase not connected)', 'info');
-          }
+          result = await CharDB.add(charData);
         }
+
+        if (result.error) throw result.error;
+
+        showNotification('Character saved successfully!', 'success');
+        hideForm();
       } catch (err) {
-        showNotification('Error: ' + err.message, 'error');
+        console.error('Save failed:', err);
+        alert('Failed to save: ' + err.message);
       } finally {
-        document.getElementById('saveBtnText').style.display = '';
-        document.getElementById('saveBtnLoading').style.display = 'none';
-        document.getElementById('saveBtn').disabled = false;
+        saveBtn.disabled = false;
+        saveBtnText.style.display = 'inline';
+        saveBtnLoading.style.display = 'none';
       }
     }
 
-    // ---- Delete Character ----
     async function deleteCharacter(id, name) {
-      if (!confirm('Are you sure you want to delete "' + name + '"? This cannot be undone.')) return;
-
-      if (SupaDB.isConnected()) {
-        var result = await SupaDB.deleteCharacter(id);
-        if (result.error) {
-          showNotification('Delete failed: ' + result.error.message, 'error');
-        } else {
-          showNotification('Character deleted: ' + name, 'error');
-          allCharacters = await SupaDB.fetchAll();
-          renderDashboard();
-        }
-      } else if (typeof CharDB !== 'undefined') {
-        CharDB.remove(id);
-        allCharacters = CharDB.getAll();
-        renderDashboard();
-        showNotification('Deleted locally', 'info');
+      if (!confirm('Are you sure you want to delete ' + name + '?')) return;
+      
+      try {
+        var result = await CharDB.remove(id);
+        if (result.error) throw result.error;
+        showNotification('Character deleted', 'info');
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
       }
     }
 
-    // ---- Import/Export ----
-    async function doExport() {
-      if (SupaDB.isConnected()) {
-        await SupaDB.exportJSON();
-      } else if (typeof CharDB !== 'undefined') {
-        CharDB.exportJSON();
-      }
+    function doExport() {
+      CharDB.exportJSON(allCharacters);
     }
 
-    async function handleImport(input) {
+    function handleImport(input) {
       if (!input.files || !input.files[0]) return;
+      var file = input.files[0];
       var reader = new FileReader();
       reader.onload = async function(e) {
         try {
           var data = JSON.parse(e.target.result);
-          if (!Array.isArray(data)) { showNotification('Invalid format: expected array', 'error'); return; }
-
-          if (SupaDB.isConnected()) {
-            var result = await SupaDB.bulkImport(data);
-            if (result.error) {
-              showNotification('Import failed: ' + result.error.message, 'error');
-            } else {
-              showNotification(data.length + ' characters imported to Supabase', 'success');
-              allCharacters = await SupaDB.fetchAll();
-              renderDashboard();
+          if (!Array.isArray(data)) throw new Error('Invalid format: expected array');
+          
+          if (confirm('Import ' + data.length + ' characters? This will merge with existing data.')) {
+            showNotification('Importing...', 'info');
+            for (var i = 0; i < data.length; i++) {
+              // Basic sanitization
+              delete data[i].id; // Let Supabase generate new IDs or use upsert
+              await SupaDB.insertCharacter(data[i]);
             }
-          } else {
-            showNotification('Supabase not connected. Cannot import.', 'error');
+            showNotification('Import complete!', 'success');
           }
         } catch (err) {
-          showNotification('Invalid JSON: ' + err.message, 'error');
+          alert('Import failed: ' + err.message);
         }
-        input.value = '';
       };
-      reader.readAsText(input.files[0]);
+      reader.readAsText(file);
     }
 
-    // ---- Notification ----
     function showNotification(msg, type) {
-      var notif = document.createElement('div');
-      notif.className = 'notification ' + (type || 'info');
-      notif.textContent = msg;
-      document.body.appendChild(notif);
-      setTimeout(function() { notif.classList.add('show'); }, 10);
+      var n = document.createElement('div');
+      n.style.position = 'fixed';
+      n.style.bottom = '20px';
+      n.style.right = '20px';
+      n.style.padding = '12px 24px';
+      n.style.borderRadius = '8px';
+      n.style.color = 'white';
+      n.style.zIndex = '10000';
+      n.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+      n.style.fontFamily = 'sans-serif';
+      n.style.fontSize = '14px';
+      n.style.animation = 'slideIn 0.3s ease-out';
+      
+      if (type === 'success') n.style.backgroundColor = '#16a34a';
+      else if (type === 'info') n.style.backgroundColor = '#3b82f6';
+      else n.style.backgroundColor = '#ef4444';
+      
+      n.textContent = msg;
+      document.body.appendChild(n);
+      
       setTimeout(function() {
-        notif.classList.remove('show');
-        setTimeout(function() { notif.remove(); }, 300);
+        n.style.opacity = '0';
+        n.style.transition = 'opacity 0.5s';
+        setTimeout(function() { n.remove(); }, 500);
       }, 3000);
     }
   </script>
+  <style>
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  </style>
 </body>
 </html>
