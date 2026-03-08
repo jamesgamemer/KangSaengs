@@ -224,6 +224,12 @@
 
     function buildGrid(chars) {
       var grid = document.getElementById('charactersGrid');
+      
+      if (!chars || chars.length === 0) {
+        grid.innerHTML = '<p class="loading-msg" style="grid-column:1/-1;">No characters found. Please check back later!</p>';
+        return;
+      }
+      
       var seen = {};
       var html = '';
       chars.forEach(function(c) {
@@ -231,14 +237,15 @@
         seen[c.name] = true;
         var typesStr = (c.types || []).map(function(t) { return t.toLowerCase().replace(/\s+/g, ''); }).join(',');
         var linkParam = 'slug=' + encodeURIComponent(c.slug);
+        var imgUrl = c.image || 'https://placehold.co/300x400?text=No+Image';
         html += '<a href="character.html?' + linkParam + '" class="card" data-name="' + c.name + '" data-types="' + typesStr + '">';
         html += '<div class="card-rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
-        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + c.name + '" loading="lazy" onerror="this.src=\'images/placeholder.png\'">';
+        html += '<img src="' + imgUrl + '" alt="' + c.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=Error\'">';
         html += '<div class="rarity ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
         html += '<div class="name">' + c.name + '</div>';
         html += '</a>';
       });
-      grid.innerHTML = html || '<p class="loading-msg" style="grid-column:1/-1;">No characters found</p>';
+      grid.innerHTML = html;
     }
 
     // ---- Initialize ----

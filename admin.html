@@ -256,6 +256,18 @@
     }
 
     function renderCharList(chars) {
+      // Handle empty state
+      if (!chars || chars.length === 0) {
+        document.getElementById('adminCharList').innerHTML = 
+          '<div style="text-align:center;padding:60px 20px;color:#64748b;">' +
+          '<p style="font-size:48px;margin-bottom:16px;">&#128683;</p>' +
+          '<p style="font-size:16px;font-weight:600;margin-bottom:8px;">No characters found</p>' +
+          '<p style="font-size:14px;margin-bottom:24px;">Use \'Add New Character\' or import JSON to populate the database.</p>' +
+          '<button class="btn btn-gold" onclick="showAddForm()" style="margin-top:12px;">+ Add New Character</button>' +
+          '</div>';
+        return;
+      }
+
       var html = '';
       chars.forEach(function(c) {
         var hasSkills = false;
@@ -266,10 +278,11 @@
         var statusText = hasSkills ? 'Complete' : 'Incomplete';
         var tierBadge = '<span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:' +
           getTierColor(c.tier) + ';color:#fff;margin-left:6px;">' + (c.tier || 'B') + '</span>';
+        var imgUrl = c.image || 'https://placehold.co/300x400?text=No+Image';
 
         html += '<div class="admin-char-row" data-name="' + (c.name || '').toLowerCase() + '">';
         html += '<div class="admin-char-info">';
-        html += '<img src="' + (c.image || 'images/placeholder.png') + '" alt="' + (c.name || '') + '" class="admin-char-thumb" onerror="this.src=\'images/placeholder.png\'">';
+        html += '<img src="' + imgUrl + '" alt="' + (c.name || '') + '" class="admin-char-thumb" onerror="this.src=\'https://placehold.co/300x400?text=Error\'">';
         html += '<div>';
         html += '<div class="admin-char-name">' + (c.name || 'Unknown') + tierBadge + '</div>';
         html += '<div class="admin-char-meta"><span class="rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</span>';
@@ -278,11 +291,11 @@
         html += '</div></div>';
         html += '<div class="admin-char-actions">';
         html += '<a href="character.html?slug=' + encodeURIComponent(c.slug) + '" class="action-btn view-btn" title="View">&#128065;</a>';
-        html += '<button class="action-btn edit-btn" title="Edit" onclick="editCharacter(\'' + c.id + '\')">&#9998;</button>';
-        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'' + c.id + '\',\'' + (c.name || '').replace(/'/g, "\\'") + '\')">&#128465;</button>';
+        html += '<button class="action-btn edit-btn" title="Edit" onclick="editCharacter(\'\' + c.id + '\'\')\">฿9998;</button>';
+        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'\' + c.id + '\',\'' + (c.name || '').replace(/'/g, "\\\'" ) + '\'\')\">฿128465;</button>';
         html += '</div></div>';
       });
-      document.getElementById('adminCharList').innerHTML = html || '<p style="color:#64748b;text-align:center;padding:40px;">No characters found</p>';
+      document.getElementById('adminCharList').innerHTML = html;
     }
 
     function getTierColor(tier) {

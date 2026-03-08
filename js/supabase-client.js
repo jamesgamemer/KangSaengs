@@ -20,7 +20,7 @@ var SupaDB = (function () {
     
     try {
       _client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      console.log("[SupaDB] Supabase connected");
+      console.log("[SupaDB] Supabase client initialized");
       return true;
     } catch (error) {
       console.error("[SupaDB] Initialization failed:", error.message);
@@ -49,13 +49,16 @@ var SupaDB = (function () {
       });
       if (result.error) {
         console.error("[SupaDB] Login failure reason:", result.error.message);
+        if (result.error.message.includes('fetch')) {
+            console.error("[SupaDB] Connection Error: Please check your Supabase URL, Internet connection, and CORS settings in Supabase dashboard.");
+        }
       } else {
         console.log("[SupaDB] Login successful");
       }
       return result;
     } catch (error) {
       console.error("[SupaDB] Login exception:", error.message);
-      return { error: error };
+      return { error: { message: "Network Error: Failed to connect to Supabase. Check your URL and CORS settings." } };
     }
   }
 

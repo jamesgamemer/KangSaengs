@@ -131,7 +131,8 @@
       var html = '<div class="char-detail-header">';
       html += '<div class="char-detail-portrait">';
       html += '<h1>' + esc(c.name) + '</h1>';
-      html += '<img src="' + esc(c.image || 'images/placeholder.png') + '" class="char-img" alt="' + esc(c.name) + '" onerror="this.src=\'images/placeholder.png\'">';
+      var imgUrl = c.image || 'https://placehold.co/300x400?text=No+Image';
+      html += '<img src="' + esc(imgUrl) + '" class="char-img" alt="' + esc(c.name) + '" onerror="this.src=\'https://placehold.co/300x400?text=Error\'">';
       html += '<div><span class="char-rarity-badge ' + rarityClass + '">' + esc(c.rarity) + '</span></div>';
       html += '</div>';
       html += '<div class="char-detail-info">';
@@ -157,6 +158,11 @@
         html += '<div class="no-data-msg">';
         html += '<p>&#128679; Skills data will be added soon.</p>';
         html += '</div>';
+      }
+
+      if (!c) {
+        document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">Character not found.</div>';
+        return;
       }
 
       document.getElementById('characterContent').innerHTML = html;

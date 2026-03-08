@@ -267,7 +267,8 @@
       div.className = 'char-chip';
       div.draggable = true;
       div.dataset.name = char.name;
-      div.innerHTML = '<img src="'+char.img+'" alt="'+char.name+'"><span class="char-chip-name">'+char.name+'</span>';
+      var imgUrl = char.img || 'https://placehold.co/100x100?text=No+Image';
+      div.innerHTML = '<img src="'+imgUrl+'" alt="'+char.name+'" onerror="this.src=\'https://placehold.co/100x100?text=Error\'"><span class="char-chip-name">'+char.name+'</span>';
 
       div.addEventListener('dragstart', function(e) {
         draggedEl = div;
@@ -300,6 +301,10 @@
     function initPool() {
       var pool = document.getElementById('characterPool');
       pool.innerHTML = '';
+      if (!allChars || allChars.length === 0) {
+        pool.innerHTML = '<p style="color:#64748b;padding:20px;text-align:center;">No characters available</p>';
+        return;
+      }
       allChars.forEach(function(c) { pool.appendChild(createChip(c)); });
     }
 
