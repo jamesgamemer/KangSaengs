@@ -5,22 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gilthunder - 7DS Origin</title>
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
-    .page-back:hover { color:var(--gold); }
-    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
-    .potentials-section { margin-top:32px; }
-    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
-    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
-    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
-    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
-    .costumes-section { margin-top:32px; }
-    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
-    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
-    .costume-card p { color:white;font-size:13px; }
-  </style>
+  <link rel="stylesheet" href="../css/character-detail.css">
 </head>
 <body>
 
@@ -37,26 +22,30 @@
 
   <div class="page-content">
     <div class="container">
-      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+      <a href="../characters.html" class="page-back-v2"><span class="arrow">&#8592;</span> Back to Characters</a>
 
-      <div class="character-layout">
-        <div class="character-card">
+      <div class="char-detail-header">
+        <div class="char-detail-portrait">
           <h1>Gilthunder</h1>
-          <img src="../images/Gilthunder.png" class="character-image" alt="Gilthunder">
-          <p class="title">SR</p>
+          <img src="../images/Gilthunder.png" class="char-img" alt="Gilthunder">
+          <div><span class="char-rarity-badge sr">SR</span></div>
         </div>
 
-        <div class="story-card">
-          <h2>Description</h2>
-          <p>A Holy Knight of the Kingdom of Liones, son of former Holy Knight Grandmaster Zaratras, and wielder of the magic of &quot;Thunderbolt.&quot; He regrets his past as a traitor to the kingdom, a fate he endured to protect his beloved. Together with Howzer and Griamore, he is known as one of the Trio of Troublemakers.</p>
-          <p><strong>Type:</strong> Longsword, Shield, Lance</p>
+        <div class="char-detail-info">
+          <div class="section-label">Description</div>
+          <p class="desc-text">A Holy Knight of the Kingdom of Liones, son of former Holy Knight Grandmaster Zaratras, and wielder of the magic of &quot;Thunderbolt.&quot; He regrets his past as a traitor to the kingdom, a fate he endured to protect his beloved. Together with Howzer and Griamore, he is known as one of the Trio of Troublemakers.</p>
+          <div class="char-types">
+            <span class="label">Weapon Types:</span>
+            <span class="type-pill">Longsword</span><span class="type-pill">Shield</span><span class="type-pill">Lance</span>
+          </div>
         </div>
       </div>
-
-      <div class="weapon-tabs">
-        <button onclick="showWeapon('longsword',this)" class="active">Longsword</button>
-        <button onclick="showWeapon('shield',this)">Shield</button>
-        <button onclick="showWeapon('lance',this)">Lance</button>
+      <div class="weapon-tabs-wrapper">
+        <div class="weapon-tabs">
+        <button onclick="showWeapon('Longsword',this)" class="active">Longsword</button>
+        <button onclick="showWeapon('Shield',this)">Shield</button>
+        <button onclick="showWeapon('Lance',this)">Lance</button>
+        </div>
       </div>
 
       <div id="weaponContent"></div>
@@ -69,90 +58,127 @@
 
   <script src="../js/navbar.js"></script>
   <script>
+    var charData = {"Longsword": {"skills": [{"name": "Thunderbolt", "type": "Adventure", "description": ""}, {"name": "Thunderbolt", "type": "Passive", "description": "Additionally increases Burst Gauge by 20 when hitting a Shocked enemy. When the hero activates Lightning Burst, the enemy's Lightning Defense decreases by 15% for 20 sec."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 108% of Attack. 1st hit: 16% 2nd hit: 17% 3rd hit: 28% 4th hit: 47%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 109% of Attack. Increases the enemy's Shock duration by 3 sec."}, {"name": "Lightning Sword", "type": "Skill", "description": "Inflicts damage equal to 176% of Attack and inflicts Shock for 10 sec. ※ Shock: Inflicts Lightning damage equal to 15% of Attack every 2 sec. Inflicts Shock on nearby enemies for 10 sec when hit."}, {"name": "Lightning Strike", "type": "Tag", "description": "Inflicts damage equal to 86% of Attack."}, {"name": "Lightning Flash", "type": "Ultimate", "description": "Inflicts damage equal to 281% of Attack. Decreases All Elemental Burst Resistance of enemies in range by 20%."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 65%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Changes the Normal Skill into a skill that can be used 2 time(s) and increases its damage dealt by 30%."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Increases the Ultimate Move's All Elemental Burst Resistance reduction by 50%."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Changes the Special Attack into a skill that can be used 2 time(s)."}], "costumes": ["Young Holy Knight", "Exemplary Holy Knight", "Holy Knight of Lightning", "Exemplary Adventure", "Promising Holy Knight"]}, "Shield": {"skills": [{"name": "Thunderbolt", "type": "Adventure", "description": ""}, {"name": "Thunderbolt", "type": "Passive", "description": "Decreases the hero's damage taken by 10% while a barrier is active. When the Normal Skill's Lightning Barrier is removed, it decreases the Lightning Defense of nearby enemies by 15% for 20 sec."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 111% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 47%"}, {"name": "Special Attack", "type": "Special", "description": "Taunts nearby enemies while the stance is maintained. Maintains stance for up to 10 sec. When hit 5 time(s) while the stance is maintained, the stance is removed, inflicting damage equal to 109% of Attack."}, {"name": "Judgment", "type": "Skill", "description": "Inflicts damage equal to 187% of Attack, then grants all allied heroes barriers equal to 20% of Max HP for 20 sec. Grants all allied heroes Lightning Barriers equal to 35% of HP for 20 sec if the enemy is Bound. ※ Lightning Barrier: Reflects 15% of damage taken."}, {"name": "Blue Lightning", "type": "Tag", "description": "Inflicts damage equal to 93% of Attack."}, {"name": "Shackles of the Lightning King", "type": "Ultimate", "description": "Inflicts damage equal to 334% of Attack on the enemy, Binds them for 8 sec, then pulls them toward the hero"}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 40% 4th hit: 66%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Decreases damage taken when using the Special Attack while the stance is maintained by 15%."}, {"tier": 6, "description": "Increases the Normal Skill's barrier by 50% and Lightning Barrier by 60%."}, {"tier": 7, "description": "Decreases the hero's damage taken while a barrier is active by 20%, and Lightning Defense reduction increases by 80% when the Lightning Barrier is removed."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Increases the number of Ultimate Move targets by 4."}], "costumes": ["Young Holy Knight", "Exemplary Holy Knight", "Holy Knight of Lightning", "Exemplary Adventure", "Promising Holy Knight"]}, "Lance": {"skills": [{"name": "Thunderbolt", "type": "Adventure", "description": ""}, {"name": "Thunderbolt", "type": "Passive", "description": "Increases damage dealt to Paralyzed enemies by 25%."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 129% of Attack. 1st hit: 19% 2nd hit: 21% 3rd hit: 33% 4th hit: 56%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 125% of Attack. Inflicts Paralysis on the enemy if they are Shocked. ※ Paralysis: Incapacitated. Decreases Lightning Defense by 15%. The effect remains if the target is Shocked."}, {"name": "Charge Electricity", "type": "Skill", "description": "Inflicts damage equal to 192% of Attack. Attacking an enemy with Lightning Burst activated decreases the Special Attack cooldown by 50%."}, {"name": "Lightning Spear", "type": "Tag", "description": "Inflicts damage equal to 94% of Attack."}, {"name": "Lightning Bolt", "type": "Ultimate", "description": "Inflicts damage equal to 309% of Attack and inflicts Shock for 10 sec. ※ Shock: Inflicts Lightning damage equal to 15% of Attack every 2 sec. Inflicts Shock on nearby enemies for 10 sec when hit."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 27% 2nd hit: 30% 3rd hit: 47% 4th hit: 79%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Inflicts damage equal to 15% of Attack to enemies in range every 0.5 sec for 4 sec when using the Ultimate Move."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "The Special Attack results in a Critical Hit when attacking an enemy with Lightning Burst activated."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Inflicts damage equal to 35% of Attack to nearby enemies every 1 sec for 5 sec when using the Normal Skill to attack an enemy with Lightning Burst activated."}], "costumes": ["Young Holy Knight", "Exemplary Holy Knight", "Holy Knight of Lightning", "Exemplary Adventure", "Promising Holy Knight"]}};
+
+    function getBadgeClass(type) {
+      var m = {
+        'adventure':'badge-adventure','passive':'badge-passive',
+        'normal':'badge-normal','normal attack':'badge-normal',
+        'special':'badge-special','skill':'badge-skill',
+        'tag':'badge-tag','ultimate':'badge-ultimate'
+      };
+      return m[(type||'').toLowerCase().trim()] || 'badge-normal';
+    }
+
+    function highlightNums(text) {
+      if (!text) return '';
+      var t = text;
+      t = t.replace(/(\d+(?:\.\d+)?%)/g, '<span class="hl-num">$1</span>');
+      t = t.replace(/(\d+)\s*(sec\b)/g, '<span class="hl-dur">$1 $2</span>');
+      return t;
+    }
+
+    function extractHits(desc) {
+      var hits = [];
+      var pattern = /(\d+(?:st|nd|rd|th)\s+hit:\s*\d+(?:\.\d+)?%)/gi;
+      var match;
+      var clean = desc;
+      while ((match = pattern.exec(desc)) !== null) {
+        hits.push(match[1]);
+        clean = clean.replace(match[1], '');
+      }
+      clean = clean.replace(/\s{2,}/g, ' ').trim();
+      return { clean: clean, hits: hits };
+    }
+
+    function renderSkillCard(sk) {
+      var stype = sk.type || 'Normal';
+      var badge = getBadgeClass(stype);
+      var isUlt = stype.toLowerCase() === 'ultimate';
+      var desc = sk.description || '';
+      var extracted = extractHits(desc);
+      var cleanDesc = extracted.clean;
+      var hits = extracted.hits;
+
+      var html = '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
+      html += '<div class="skill-header">';
+      html += '<div class="skill-name">' + (sk.name || '') + '</div>';
+      html += '<span class="skill-type-badge ' + badge + '">' + stype + '</span>';
+      html += '</div>';
+      if (cleanDesc) {
+        html += '<div class="skill-desc">' + highlightNums(cleanDesc) + '</div>';
+      }
+      if (hits.length > 0) {
+        html += '<div class="dmg-breakdown">';
+        for (var i = 0; i < hits.length; i++) {
+          var parts = hits[i].split(':');
+          if (parts.length >= 2) {
+            html += '<div class="dmg-box"><span class="dmg-label">' + parts[0].trim() + '</span><span class="dmg-value">' + parts[1].trim() + '</span></div>';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPotentials(pots) {
+      if (!pots || pots.length === 0) return '';
+      var html = '<div class="potentials-section-v2">';
+      html += '<div class="detail-section-title">Potentials</div>';
+      html += '<div class="detail-section-sub">Unlock powerful upgrades as you progress</div>';
+      html += '<div class="potentials-grid-v2">';
+      for (var i = 0; i < pots.length; i++) {
+        var p = pots[i];
+        var tier = p.tier || '';
+        var num = (tier.toString().match(/\d+/) || ['?'])[0];
+        var milestone = (num === '5' || num === '7' || num === '10') ? ' tier-milestone' : '';
+        html += '<div class="potential-card-v2' + milestone + '">';
+        html += '<div class="tier-label"><span class="tier-num">' + num + '</span> Tier ' + num + '</div>';
+        html += '<div class="tier-desc">' + highlightNums(p.description || '') + '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
+    function renderCostumes(costumes) {
+      if (!costumes || costumes.length === 0) return '';
+      var html = '<div class="costumes-section-v2">';
+      html += '<div class="detail-section-title">Costumes</div>';
+      html += '<div class="detail-section-sub">Available skins and outfits</div>';
+      html += '<div class="costumes-grid-v2">';
+      for (var i = 0; i < costumes.length; i++) {
+        var c = typeof costumes[i] === 'string' ? costumes[i] : (costumes[i].name || '');
+        html += '<div class="costume-card-v2">';
+        html += '<div class="costume-icon">&#128090;</div>';
+        html += '<p>' + c + '</p>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
     function showWeapon(type, btn) {
       document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var box = document.getElementById('weaponContent');
+      var d = charData[type];
+      if (!d) { box.innerHTML = '<div class="no-data-msg">No data available for this weapon.</div>'; return; }
 
-      if (type === 'longsword') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Thunderbolt</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Thunderbolt</h3><span class="skill-badge">Passive</span><p>Additionally increases Burst Gauge by 20 when hitting a Shocked enemy. When the hero activates Lightning Burst, the enemy\'s Lightning Defense decreases by 15% for 20 sec.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 108% of Attack. 1st hit: 16% 2nd hit: 17% 3rd hit: 28% 4th hit: 47%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 109% of Attack. Increases the enemy\'s Shock duration by 3 sec.</p></div>'
-          + '<div class="skill-card"><h3>Lightning Sword</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 176% of Attack and inflicts Shock for 10 sec. ※ Shock: Inflicts Lightning damage equal to 15% of Attack every 2 sec. Inflicts Shock on nearby enemies for 10 sec when hit.</p></div>'
-          + '<div class="skill-card"><h3>Lightning Strike</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 86% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Lightning Flash</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 281% of Attack. Decreases All Elemental Burst Resistance of enemies in range by 20%.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 65%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Changes the Normal Skill into a skill that can be used 2 time(s) and increases its damage dealt by 30%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases the Ultimate Move\'s All Elemental Burst Resistance reduction by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Changes the Special Attack into a skill that can be used 2 time(s).</p></div>'
-          + '</div></div>'
-          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
-          + '<div class="costume-card"><p>Young Holy Knight</p></div>'
-          + '<div class="costume-card"><p>Exemplary Holy Knight</p></div>'
-          + '<div class="costume-card"><p>Holy Knight of Lightning</p></div>'
-          + '<div class="costume-card"><p>Exemplary Adventure</p></div>'
-          + '<div class="costume-card"><p>Promising Holy Knight</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'shield') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Thunderbolt</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Thunderbolt</h3><span class="skill-badge">Passive</span><p>Decreases the hero\'s damage taken by 10% while a barrier is active. When the Normal Skill\'s Lightning Barrier is removed, it decreases the Lightning Defense of nearby enemies by 15% for 20 sec.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 111% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 47%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Taunts nearby enemies while the stance is maintained. Maintains stance for up to 10 sec. When hit 5 time(s) while the stance is maintained, the stance is removed, inflicting damage equal to 109% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Judgment</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 187% of Attack, then grants all allied heroes barriers equal to 20% of Max HP for 20 sec. Grants all allied heroes Lightning Barriers equal to 35% of HP for 20 sec if the enemy is Bound. ※ Lightning Barrier: Reflects 15% of damage taken.</p></div>'
-          + '<div class="skill-card"><h3>Blue Lightning</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 93% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Shackles of the Lightning King</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 334% of Attack on the enemy, Binds them for 8 sec, then pulls them toward the hero</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 40% 4th hit: 66%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Decreases damage taken when using the Special Attack while the stance is maintained by 15%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the Normal Skill\'s barrier by 50% and Lightning Barrier by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Decreases the hero\'s damage taken while a barrier is active by 20%, and Lightning Defense reduction increases by 80% when the Lightning Barrier is removed.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the number of Ultimate Move targets by 4.</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'lance') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Thunderbolt</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Thunderbolt</h3><span class="skill-badge">Passive</span><p>Increases damage dealt to Paralyzed enemies by 25%.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 129% of Attack. 1st hit: 19% 2nd hit: 21% 3rd hit: 33% 4th hit: 56%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 125% of Attack. Inflicts Paralysis on the enemy if they are Shocked. ※ Paralysis: Incapacitated. Decreases Lightning Defense by 15%. The effect remains if the target is Shocked.</p></div>'
-          + '<div class="skill-card"><h3>Charge Electricity</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 192% of Attack. Attacking an enemy with Lightning Burst activated decreases the Special Attack cooldown by 50%.</p></div>'
-          + '<div class="skill-card"><h3>Lightning Spear</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 94% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Lightning Bolt</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 309% of Attack and inflicts Shock for 10 sec. ※ Shock: Inflicts Lightning damage equal to 15% of Attack every 2 sec. Inflicts Shock on nearby enemies for 10 sec when hit.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 27% 2nd hit: 30% 3rd hit: 47% 4th hit: 79%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Inflicts damage equal to 15% of Attack to enemies in range every 0.5 sec for 4 sec when using the Ultimate Move.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>The Special Attack results in a Critical Hit when attacking an enemy with Lightning Burst activated.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Inflicts damage equal to 35% of Attack to nearby enemies every 1 sec for 5 sec when using the Normal Skill to attack an enemy with Lightning Burst activated.</p></div>'
-          + '</div></div>'
-          + '';
+      var html = '<div class="detail-section-title">Skills</div>';
+      html += '<div class="detail-section-sub">Combat abilities and techniques</div>';
+      html += '<div class="skills-grid">';
+      for (var i = 0; i < d.skills.length; i++) {
+        html += renderSkillCard(d.skills[i]);
       }
+      html += '</div>';
+      html += renderPotentials(d.potentials);
+      html += renderCostumes(d.costumes);
+      box.innerHTML = html;
     }
-    showWeapon('longsword', document.querySelector('.weapon-tabs button'));
+
+    showWeapon('Longsword', document.querySelector('.weapon-tabs button'));
   </script>
 </body>
 </html>

@@ -5,22 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dreydrin - 7DS Origin</title>
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
-    .page-back:hover { color:var(--gold); }
-    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
-    .potentials-section { margin-top:32px; }
-    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
-    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
-    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
-    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
-    .costumes-section { margin-top:32px; }
-    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
-    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
-    .costume-card p { color:white;font-size:13px; }
-  </style>
+  <link rel="stylesheet" href="../css/character-detail.css">
 </head>
 <body>
 
@@ -37,26 +22,30 @@
 
   <div class="page-content">
     <div class="container">
-      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+      <a href="../characters.html" class="page-back-v2"><span class="arrow">&#8592;</span> Back to Characters</a>
 
-      <div class="character-layout">
-        <div class="character-card">
+      <div class="char-detail-header">
+        <div class="char-detail-portrait">
           <h1>Dreydrin</h1>
-          <img src="../images/Dreydrin.png" class="character-image" alt="Dreydrin">
-          <p class="title">SR</p>
+          <img src="../images/Dreydrin.png" class="char-img" alt="Dreydrin">
+          <div><span class="char-rarity-badge sr">SR</span></div>
         </div>
 
-        <div class="story-card">
-          <h2>Description</h2>
-          <p>An Apprentice Holy Knight of the Kingdom of Liones, he proved his exceptional skill by earning the title at just thirteen years old. He is a gentle soul who has a deep fondness for flowers and plants.</p>
-          <p><strong>Type:</strong> Axe, Shield, Rapier</p>
+        <div class="char-detail-info">
+          <div class="section-label">Description</div>
+          <p class="desc-text">An Apprentice Holy Knight of the Kingdom of Liones, he proved his exceptional skill by earning the title at just thirteen years old. He is a gentle soul who has a deep fondness for flowers and plants.</p>
+          <div class="char-types">
+            <span class="label">Weapon Types:</span>
+            <span class="type-pill">Axe</span><span class="type-pill">Shield</span><span class="type-pill">Rapier</span>
+          </div>
         </div>
       </div>
-
-      <div class="weapon-tabs">
-        <button onclick="showWeapon('axe',this)" class="active">Axe</button>
-        <button onclick="showWeapon('shield',this)">Shield</button>
-        <button onclick="showWeapon('rapier',this)">Rapier</button>
+      <div class="weapon-tabs-wrapper">
+        <div class="weapon-tabs">
+        <button onclick="showWeapon('Axe',this)" class="active">Axe</button>
+        <button onclick="showWeapon('Shield',this)">Shield</button>
+        <button onclick="showWeapon('Rapier',this)">Rapier</button>
+        </div>
       </div>
 
       <div id="weaponContent"></div>
@@ -69,90 +58,127 @@
 
   <script src="../js/navbar.js"></script>
   <script>
+    var charData = {"Axe": {"skills": [{"name": "Garden of Vitality", "type": "Adventure", "description": "No description available."}, {"name": "Strong Determination", "type": "Passive", "description": "Attacking an enemy affected by Petrify, Freeze, Stun, or Paralysis decreases their Defense by 10% for 5 sec."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 142% of Attack. 1st hit: 15% 2nd hit: 17% 3rd hit: 23% 4th hit: 36% 5th hit: 51%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 108% / 154% of Attack according to the charge level. Landing a charged attack Stuns the enemy for 5 sec."}, {"name": "Battle Cry", "type": "Skill", "description": "Inflicts damage equal to 163% of Attack. Restores the Tag Gauge by 300 when attacking an enemy affected by Petrify, Freeze, Stun, or Paralysis."}, {"name": "Axe Uppercut", "type": "Tag", "description": "Inflicts damage equal to 83% of Attack."}, {"name": "Giant's Cry", "type": "Ultimate", "description": "Inflicts damage equal to 282% of Attack. Increases damage dealt to an enemy affected by Petrify, Freeze, Stun, or Paralysis by 30%."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 20% 2nd hit: 23% 3rd hit: 33% 4th hit: 51% 5th hit: 71%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases Special Attack damage by 35% / 50% based on the charge level."}, {"tier": 5, "description": "Slightly increases the range of the Normal Skill."}, {"tier": 6, "description": "Increases the duration of the Special Attack's Stun by 3 sec."}, {"tier": 7, "description": "Increases the Passive's Defense reduction by 100% and increases its duration by 5 sec."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Landing the Tag Skill inflicts Stun on the enemy for 6 sec."}], "costumes": ["Friendly Apprentice Holy Knight", "A Nice Day Off", "Descendant of Royalty", "Thorough Preparation", "Solid Defense"]}, "Shield": {"skills": [{"name": "Garden of Vitality", "type": "Adventure", "description": "No description available."}, {"name": "Strong Determination", "type": "Passive", "description": "When the hero is hit while HP is 30% or lower, grants all allied heroes barriers equal to 50% of Max HP for 20 sec. (Cooldown: 60 sec)"}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 147% of Attack. 1st hit: 14% 2nd hit: 17% 3rd hit: 25% 4th hit: 40% 5th hit: 51%"}, {"name": "Special Attack", "type": "Special", "description": "Gains a barrier equal to 50% of Defense while the stance is maintained. The stance lasts up to 10 sec, and is removed when the barrier is removed. When hit while the stance is maintained, the attacking enemy's Burst Gauge increases by 100, and all allied heroes' Defense increases by 5% for 20 sec. (Max: 25%)"}, {"name": "Shield Crush", "type": "Skill", "description": "Inflicts damage equal to 80% of Attack. If the attack lands, attacks once more to inflict damage equal to 104% of Attack. Each hit additionally inflicts damage equal to 30% of the hero's Defense."}, {"name": "Sword Landing", "type": "Tag", "description": "Inflicts damage equal to 92% of Attack."}, {"name": "Pure Garden", "type": "Ultimate", "description": "Increases the hero's Max HP equal to 100% of Defense for 20 sec."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 20% 2nd hit: 24% 3rd hit: 35% 4th hit: 56% 5th hit: 71%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases the Defense boost gained when hit while the Special Attack's stance is maintained by 100%."}, {"tier": 5, "description": "Increases the damage taken reduction by 70% and slightly increases Movement Speed while the Special Attack's stance is maintained."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Restores HP of nearby allies by 10% of Defense every 1 sec for 10 sec when using the Ultimate Move."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases the Ultimate Move's Max HP boost to 200% of the hero's Defense."}, {"tier": 10, "description": "Increases the HP of barriers from the Passive to 100% of Max HP. Restores HP by 50% of Max HP when gaining a barrier."}], "costumes": ["Friendly Apprentice Holy Knight", "A Nice Day Off", "Descendant of Royalty", "Thorough Preparation", "Solid Defense"]}, "Rapier": {"skills": [{"name": "Garden of Vitality", "type": "Adventure", "description": "No description available."}, {"name": "Strong Determination", "type": "Passive", "description": "Attacking an enemy with Burst activated decreases Normal Skill cooldown by 2 sec."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 109% of Attack. 1st hit: 16% 2nd hit: 18% 3rd hit: 28% 4th hit: 47%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 105% of Attack. Increases all allied heroes' Magic Charging Efficiency by 15% for 20 sec."}, {"name": "Divine Will", "type": "Skill", "description": "Inflicts damage equal to 216% of Attack. Each hit restores the hero's Magic by 50."}, {"name": "Spear of Light", "type": "Tag", "description": "Inflicts damage equal to 100% of Attack."}, {"name": "Divine Combat", "type": "Ultimate", "description": "Increases Holy and Fire Attack of allies in range by 10% for 15 sec."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 40% 4th hit: 66%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Changes the Special Attack into a skill that can be used 2 time(s), and changes the Magic Charging Efficiency boost effect to be applied up to 3 times."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Increases the Magic Charging Efficiency of allies in range of the Normal Skill by 20%."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases the Ultimate Move's Attack boost by 100%."}, {"tier": 10, "description": "Increases the Ultimate Move's Attack boost zone duration by 10 sec."}], "costumes": ["Friendly Apprentice Holy Knight", "A Nice Day Off", "Descendant of Royalty", "Thorough Preparation", "Solid Defense"]}};
+
+    function getBadgeClass(type) {
+      var m = {
+        'adventure':'badge-adventure','passive':'badge-passive',
+        'normal':'badge-normal','normal attack':'badge-normal',
+        'special':'badge-special','skill':'badge-skill',
+        'tag':'badge-tag','ultimate':'badge-ultimate'
+      };
+      return m[(type||'').toLowerCase().trim()] || 'badge-normal';
+    }
+
+    function highlightNums(text) {
+      if (!text) return '';
+      var t = text;
+      t = t.replace(/(\d+(?:\.\d+)?%)/g, '<span class="hl-num">$1</span>');
+      t = t.replace(/(\d+)\s*(sec\b)/g, '<span class="hl-dur">$1 $2</span>');
+      return t;
+    }
+
+    function extractHits(desc) {
+      var hits = [];
+      var pattern = /(\d+(?:st|nd|rd|th)\s+hit:\s*\d+(?:\.\d+)?%)/gi;
+      var match;
+      var clean = desc;
+      while ((match = pattern.exec(desc)) !== null) {
+        hits.push(match[1]);
+        clean = clean.replace(match[1], '');
+      }
+      clean = clean.replace(/\s{2,}/g, ' ').trim();
+      return { clean: clean, hits: hits };
+    }
+
+    function renderSkillCard(sk) {
+      var stype = sk.type || 'Normal';
+      var badge = getBadgeClass(stype);
+      var isUlt = stype.toLowerCase() === 'ultimate';
+      var desc = sk.description || '';
+      var extracted = extractHits(desc);
+      var cleanDesc = extracted.clean;
+      var hits = extracted.hits;
+
+      var html = '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
+      html += '<div class="skill-header">';
+      html += '<div class="skill-name">' + (sk.name || '') + '</div>';
+      html += '<span class="skill-type-badge ' + badge + '">' + stype + '</span>';
+      html += '</div>';
+      if (cleanDesc) {
+        html += '<div class="skill-desc">' + highlightNums(cleanDesc) + '</div>';
+      }
+      if (hits.length > 0) {
+        html += '<div class="dmg-breakdown">';
+        for (var i = 0; i < hits.length; i++) {
+          var parts = hits[i].split(':');
+          if (parts.length >= 2) {
+            html += '<div class="dmg-box"><span class="dmg-label">' + parts[0].trim() + '</span><span class="dmg-value">' + parts[1].trim() + '</span></div>';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPotentials(pots) {
+      if (!pots || pots.length === 0) return '';
+      var html = '<div class="potentials-section-v2">';
+      html += '<div class="detail-section-title">Potentials</div>';
+      html += '<div class="detail-section-sub">Unlock powerful upgrades as you progress</div>';
+      html += '<div class="potentials-grid-v2">';
+      for (var i = 0; i < pots.length; i++) {
+        var p = pots[i];
+        var tier = p.tier || '';
+        var num = (tier.toString().match(/\d+/) || ['?'])[0];
+        var milestone = (num === '5' || num === '7' || num === '10') ? ' tier-milestone' : '';
+        html += '<div class="potential-card-v2' + milestone + '">';
+        html += '<div class="tier-label"><span class="tier-num">' + num + '</span> Tier ' + num + '</div>';
+        html += '<div class="tier-desc">' + highlightNums(p.description || '') + '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
+    function renderCostumes(costumes) {
+      if (!costumes || costumes.length === 0) return '';
+      var html = '<div class="costumes-section-v2">';
+      html += '<div class="detail-section-title">Costumes</div>';
+      html += '<div class="detail-section-sub">Available skins and outfits</div>';
+      html += '<div class="costumes-grid-v2">';
+      for (var i = 0; i < costumes.length; i++) {
+        var c = typeof costumes[i] === 'string' ? costumes[i] : (costumes[i].name || '');
+        html += '<div class="costume-card-v2">';
+        html += '<div class="costume-icon">&#128090;</div>';
+        html += '<p>' + c + '</p>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
     function showWeapon(type, btn) {
       document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var box = document.getElementById('weaponContent');
+      var d = charData[type];
+      if (!d) { box.innerHTML = '<div class="no-data-msg">No data available for this weapon.</div>'; return; }
 
-      if (type === 'axe') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Garden of Vitality</h3><span class="skill-badge">Adventure</span><p>No description available.</p></div>'
-          + '<div class="skill-card"><h3>Strong Determination</h3><span class="skill-badge">Passive</span><p>Attacking an enemy affected by Petrify, Freeze, Stun, or Paralysis decreases their Defense by 10% for 5 sec.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 142% of Attack. 1st hit: 15% 2nd hit: 17% 3rd hit: 23% 4th hit: 36% 5th hit: 51%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 108% / 154% of Attack according to the charge level. Landing a charged attack Stuns the enemy for 5 sec.</p></div>'
-          + '<div class="skill-card"><h3>Battle Cry</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 163% of Attack. Restores the Tag Gauge by 300 when attacking an enemy affected by Petrify, Freeze, Stun, or Paralysis.</p></div>'
-          + '<div class="skill-card"><h3>Axe Uppercut</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 83% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Giant\'s Cry</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 282% of Attack. Increases damage dealt to an enemy affected by Petrify, Freeze, Stun, or Paralysis by 30%.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 20% 2nd hit: 23% 3rd hit: 33% 4th hit: 51% 5th hit: 71%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases Special Attack damage by 35% / 50% based on the charge level.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Normal Skill.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the duration of the Special Attack\'s Stun by 3 sec.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases the Passive\'s Defense reduction by 100% and increases its duration by 5 sec.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Landing the Tag Skill inflicts Stun on the enemy for 6 sec.</p></div>'
-          + '</div></div>'
-          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
-          + '<div class="costume-card"><p>Friendly Apprentice Holy Knight</p></div>'
-          + '<div class="costume-card"><p>A Nice Day Off</p></div>'
-          + '<div class="costume-card"><p>Descendant of Royalty</p></div>'
-          + '<div class="costume-card"><p>Thorough Preparation</p></div>'
-          + '<div class="costume-card"><p>Solid Defense</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'shield') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Garden of Vitality</h3><span class="skill-badge">Adventure</span><p>No description available.</p></div>'
-          + '<div class="skill-card"><h3>Strong Determination</h3><span class="skill-badge">Passive</span><p>When the hero is hit while HP is 30% or lower, grants all allied heroes barriers equal to 50% of Max HP for 20 sec. (Cooldown: 60 sec)</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 147% of Attack. 1st hit: 14% 2nd hit: 17% 3rd hit: 25% 4th hit: 40% 5th hit: 51%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Gains a barrier equal to 50% of Defense while the stance is maintained. The stance lasts up to 10 sec, and is removed when the barrier is removed. When hit while the stance is maintained, the attacking enemy\'s Burst Gauge increases by 100, and all allied heroes\' Defense increases by 5% for 20 sec. (Max: 25%)</p></div>'
-          + '<div class="skill-card"><h3>Shield Crush</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 80% of Attack. If the attack lands, attacks once more to inflict damage equal to 104% of Attack. Each hit additionally inflicts damage equal to 30% of the hero\'s Defense.</p></div>'
-          + '<div class="skill-card"><h3>Sword Landing</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 92% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Pure Garden</h3><span class="skill-badge">Ultimate</span><p>Increases the hero\'s Max HP equal to 100% of Defense for 20 sec.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 20% 2nd hit: 24% 3rd hit: 35% 4th hit: 56% 5th hit: 71%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases the Defense boost gained when hit while the Special Attack\'s stance is maintained by 100%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Increases the damage taken reduction by 70% and slightly increases Movement Speed while the Special Attack\'s stance is maintained.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Restores HP of nearby allies by 10% of Defense every 1 sec for 10 sec when using the Ultimate Move.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases the Ultimate Move\'s Max HP boost to 200% of the hero\'s Defense.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the HP of barriers from the Passive to 100% of Max HP. Restores HP by 50% of Max HP when gaining a barrier.</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'rapier') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Garden of Vitality</h3><span class="skill-badge">Adventure</span><p>No description available.</p></div>'
-          + '<div class="skill-card"><h3>Strong Determination</h3><span class="skill-badge">Passive</span><p>Attacking an enemy with Burst activated decreases Normal Skill cooldown by 2 sec.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 109% of Attack. 1st hit: 16% 2nd hit: 18% 3rd hit: 28% 4th hit: 47%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 105% of Attack. Increases all allied heroes\' Magic Charging Efficiency by 15% for 20 sec.</p></div>'
-          + '<div class="skill-card"><h3>Divine Will</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 216% of Attack. Each hit restores the hero\'s Magic by 50.</p></div>'
-          + '<div class="skill-card"><h3>Spear of Light</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 100% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Divine Combat</h3><span class="skill-badge">Ultimate</span><p>Increases Holy and Fire Attack of allies in range by 10% for 15 sec.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 40% 4th hit: 66%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Changes the Special Attack into a skill that can be used 2 time(s), and changes the Magic Charging Efficiency boost effect to be applied up to 3 times.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases the Magic Charging Efficiency of allies in range of the Normal Skill by 20%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases the Ultimate Move\'s Attack boost by 100%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the Ultimate Move\'s Attack boost zone duration by 10 sec.</p></div>'
-          + '</div></div>'
-          + '';
+      var html = '<div class="detail-section-title">Skills</div>';
+      html += '<div class="detail-section-sub">Combat abilities and techniques</div>';
+      html += '<div class="skills-grid">';
+      for (var i = 0; i < d.skills.length; i++) {
+        html += renderSkillCard(d.skills[i]);
       }
+      html += '</div>';
+      html += renderPotentials(d.potentials);
+      html += renderCostumes(d.costumes);
+      box.innerHTML = html;
     }
-    showWeapon('axe', document.querySelector('.weapon-tabs button'));
+
+    showWeapon('Axe', document.querySelector('.weapon-tabs button'));
   </script>
 </body>
 </html>

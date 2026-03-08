@@ -5,22 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guila - 7DS Origin</title>
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
-    .page-back:hover { color:var(--gold); }
-    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
-    .potentials-section { margin-top:32px; }
-    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
-    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
-    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
-    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
-    .costumes-section { margin-top:32px; }
-    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
-    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
-    .costume-card p { color:white;font-size:13px; }
-  </style>
+  <link rel="stylesheet" href="../css/character-detail.css">
 </head>
 <body>
 
@@ -37,26 +22,30 @@
 
   <div class="page-content">
     <div class="container">
-      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+      <a href="../characters.html" class="page-back-v2"><span class="arrow">&#8592;</span> Back to Characters</a>
 
-      <div class="character-layout">
-        <div class="character-card">
+      <div class="char-detail-header">
+        <div class="char-detail-portrait">
           <h1>Guila</h1>
-          <img src="../images/Guila.png" class="character-image" alt="Guila">
-          <p class="title">SSR</p>
+          <img src="../images/Guila.png" class="char-img" alt="Guila">
+          <div><span class="char-rarity-badge ssr">SSR</span></div>
         </div>
 
-        <div class="story-card">
-          <h2>Description</h2>
-          <p>The Vice Grandmaster of the Kingdom of Liones. She was appointed to the position at just 22 years old due to her exceptional skills. She is prepared to do anything for Zeal, her only family.</p>
-          <p><strong>Type:</strong> Shield, Lance, Rapier</p>
+        <div class="char-detail-info">
+          <div class="section-label">Description</div>
+          <p class="desc-text">The Vice Grandmaster of the Kingdom of Liones. She was appointed to the position at just 22 years old due to her exceptional skills. She is prepared to do anything for Zeal, her only family.</p>
+          <div class="char-types">
+            <span class="label">Weapon Types:</span>
+            <span class="type-pill">Shield</span><span class="type-pill">Lance</span><span class="type-pill">Rapier</span>
+          </div>
         </div>
       </div>
-
-      <div class="weapon-tabs">
-        <button onclick="showWeapon('shield',this)" class="active">Shield</button>
-        <button onclick="showWeapon('lance',this)">Lance</button>
-        <button onclick="showWeapon('rapier',this)">Rapier</button>
+      <div class="weapon-tabs-wrapper">
+        <div class="weapon-tabs">
+        <button onclick="showWeapon('Shield',this)" class="active">Shield</button>
+        <button onclick="showWeapon('Lance',this)">Lance</button>
+        <button onclick="showWeapon('Rapier',this)">Rapier</button>
+        </div>
       </div>
 
       <div id="weaponContent"></div>
@@ -69,89 +58,127 @@
 
   <script src="../js/navbar.js"></script>
   <script>
+    var charData = {"Shield": {"skills": [{"name": "Flare Charge", "type": "Adventure", "description": ""}, {"name": "Blazing Devil", "type": "Passive", "description": "Increases all allied heroes' Fire Attack by 25% if a barrier the hero applied to self is active."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 113% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 49%"}, {"name": "Special Attack", "type": "Special", "description": "Becomes immune to Reactions and Taunts nearby enemies while the stance is maintained. Reflects 30% of damage taken when hit while the stance is maintained. Maintains stance for up to 10 sec. When hit 5 time(s) while the stance is maintained, the stance is removed, inflicting damage equal to 102% of Attack."}, {"name": "Killer Mines", "type": "Skill", "description": "Inflicts damage equal to 174% of Attack. Grants all allied heroes barriers equal to 30% of Max HP for 20 sec when the attack lands."}, {"name": "Shield Drop", "type": "Tag", "description": "Inflicts damage equal to 93% of Attack."}, {"name": "Brilliant Detonation", "type": "Ultimate", "description": "Inflicts damage equal to 287% of Attack. Increases Fire damage taken by enemies in range by 20%."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 24% 2nd hit: 26% 3rd hit: 41% 4th hit: 68%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Slightly increases the range of the Ultimate Move."}, {"tier": 6, "description": "Increases the Normal Skill's barrier by 50% and increases its duration by 10 sec."}, {"tier": 7, "description": "Inflicts damage equal to 35% of Attack on nearby enemies every 1 sec when using the Special Attack while the stance is maintained."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Changes barriers from the Normal Skill to Fire Barriers. ※ Fire Barrier: Inflicts damage equal to 15% of Attack on nearby enemies every 0.5 sec."}], "costumes": ["One and Only Holy Knight", "Family Time", "Holy Knight of Explosions", "Light Footsteps", "Crimson Flame's Trail"]}, "Lance": {"skills": [{"name": "Blazing Devil", "type": "Passive", "description": "Gains Impulse for 20 sec when successfully attacking an enemy while not in Demon Form. (Max: 10) ※ Impulse: Increases Crit Chance by 3% per 1 effect(s) while in Demon Form. If the hero has the maximum number of Impulse effects, Normal Skill cooldown decreases by 1 sec when attacking an enemy with Fire Burst activated."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 135% of Attack. 1st hit: 20% 2nd hit: 22% 3rd hit: 35% 4th hit: 58% Inflicts damage equal to 148% of Attack while in Demon Form. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 63%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 139% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 160% of Attack and decreases the Normal Skill cooldown by 50% when landing a Critical Hit while in Demon Form."}, {"name": "Shot Bombs", "type": "Skill", "description": "Inflicts damage equal to 198% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 211% of Attack and increases damage dealt to enemies with Fire Burst activated by 30% while in Demon Form."}, {"name": "Fire Drop", "type": "Tag", "description": "Inflicts damage equal to 119% of Attack."}, {"name": "Demon Form", "type": "Ultimate", "description": "Enters Demon Form for 20 sec."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 64% Increases damage dealt with Normal Attacks by 50% while in Demon Form. 1st hit: 26% 2nd hit: 28% 3rd hit: 44% 4th hit: 75%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%. Increases damage dealt with the Special Attack by 65% while in Demon Form."}, {"tier": 5, "description": "Slightly increases the range of the Normal Skill while in Demon Form."}, {"tier": 6, "description": "Increases the Normal Skill's Fire Defense reduction by 50% and Fire Damage boost by 60%."}, {"tier": 7, "description": "Increases the Special Attack's Magic gain by 80% and the Burst Gauge by 100%."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Normal Skill by 90%. Increases damage dealt with the Normal Skill by 110% while in Demon Form."}, {"tier": 10, "description": "Increases Burn duration by 1 sec when attacking a Burned enemy while in Demon Form."}], "costumes": ["One and Only Holy Knight", "Family Time", "Holy Knight of Explosions", "Light Footsteps", "Crimson Flame's Trail"]}, "Rapier": {"skills": [{"name": "Flare Charge", "type": "Adventure", "description": ""}, {"name": "Blazing Devil", "type": "Passive", "description": "Gains Impulse for 20 sec when successfully attacking an enemy while not in Demon Form. (Max: 10) ※ Impulse: Increases Crit Chance by 3% per 1 effect(s) while in Demon Form. If the hero has the maximum number of Impulse effects, Normal Skill cooldown decreases by 1 sec when attacking an enemy with Fire Burst activated."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 135% of Attack. 1st hit: 20% 2nd hit: 22% 3rd hit: 35% 4th hit: 58% Inflicts damage equal to 148% of Attack while in Demon Form. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 63%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 139% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 160% of Attack and decreases the Normal Skill cooldown by 50% when landing a Critical Hit while in Demon Form."}, {"name": "Shot Bombs", "type": "Skill", "description": "Inflicts damage equal to 198% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 211% of Attack and increases damage dealt to enemies with Fire Burst activated by 30% while in Demon Form."}, {"name": "Fire Drop", "type": "Tag", "description": "Inflicts damage equal to 119% of Attack."}, {"name": "Demon Form", "type": "Ultimate", "description": "Enters Demon Form for 20 sec."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 64% Increases damage dealt with Normal Attacks by 50% while in Demon Form. 1st hit: 26% 2nd hit: 28% 3rd hit: 44% 4th hit: 75%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%. Increases damage dealt with the Special Attack by 65% while in Demon Form."}, {"tier": 5, "description": "Slightly increases the range of the Normal Skill while in Demon Form."}, {"tier": 6, "description": "Increases the Normal Skill's Fire Defense reduction by 50% and Fire Damage boost by 60%."}, {"tier": 7, "description": "Increases the Special Attack's Magic gain by 80% and the Burst Gauge by 100%."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Normal Skill by 90%. Increases damage dealt with the Normal Skill by 110% while in Demon Form."}, {"tier": 10, "description": "Increases Burn duration by 1 sec when attacking a Burned enemy while in Demon Form."}], "costumes": ["One and Only Holy Knight", "Family Time", "Holy Knight of Explosions", "Light Footsteps", "Crimson Flame's Trail"]}};
+
+    function getBadgeClass(type) {
+      var m = {
+        'adventure':'badge-adventure','passive':'badge-passive',
+        'normal':'badge-normal','normal attack':'badge-normal',
+        'special':'badge-special','skill':'badge-skill',
+        'tag':'badge-tag','ultimate':'badge-ultimate'
+      };
+      return m[(type||'').toLowerCase().trim()] || 'badge-normal';
+    }
+
+    function highlightNums(text) {
+      if (!text) return '';
+      var t = text;
+      t = t.replace(/(\d+(?:\.\d+)?%)/g, '<span class="hl-num">$1</span>');
+      t = t.replace(/(\d+)\s*(sec\b)/g, '<span class="hl-dur">$1 $2</span>');
+      return t;
+    }
+
+    function extractHits(desc) {
+      var hits = [];
+      var pattern = /(\d+(?:st|nd|rd|th)\s+hit:\s*\d+(?:\.\d+)?%)/gi;
+      var match;
+      var clean = desc;
+      while ((match = pattern.exec(desc)) !== null) {
+        hits.push(match[1]);
+        clean = clean.replace(match[1], '');
+      }
+      clean = clean.replace(/\s{2,}/g, ' ').trim();
+      return { clean: clean, hits: hits };
+    }
+
+    function renderSkillCard(sk) {
+      var stype = sk.type || 'Normal';
+      var badge = getBadgeClass(stype);
+      var isUlt = stype.toLowerCase() === 'ultimate';
+      var desc = sk.description || '';
+      var extracted = extractHits(desc);
+      var cleanDesc = extracted.clean;
+      var hits = extracted.hits;
+
+      var html = '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
+      html += '<div class="skill-header">';
+      html += '<div class="skill-name">' + (sk.name || '') + '</div>';
+      html += '<span class="skill-type-badge ' + badge + '">' + stype + '</span>';
+      html += '</div>';
+      if (cleanDesc) {
+        html += '<div class="skill-desc">' + highlightNums(cleanDesc) + '</div>';
+      }
+      if (hits.length > 0) {
+        html += '<div class="dmg-breakdown">';
+        for (var i = 0; i < hits.length; i++) {
+          var parts = hits[i].split(':');
+          if (parts.length >= 2) {
+            html += '<div class="dmg-box"><span class="dmg-label">' + parts[0].trim() + '</span><span class="dmg-value">' + parts[1].trim() + '</span></div>';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPotentials(pots) {
+      if (!pots || pots.length === 0) return '';
+      var html = '<div class="potentials-section-v2">';
+      html += '<div class="detail-section-title">Potentials</div>';
+      html += '<div class="detail-section-sub">Unlock powerful upgrades as you progress</div>';
+      html += '<div class="potentials-grid-v2">';
+      for (var i = 0; i < pots.length; i++) {
+        var p = pots[i];
+        var tier = p.tier || '';
+        var num = (tier.toString().match(/\d+/) || ['?'])[0];
+        var milestone = (num === '5' || num === '7' || num === '10') ? ' tier-milestone' : '';
+        html += '<div class="potential-card-v2' + milestone + '">';
+        html += '<div class="tier-label"><span class="tier-num">' + num + '</span> Tier ' + num + '</div>';
+        html += '<div class="tier-desc">' + highlightNums(p.description || '') + '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
+    function renderCostumes(costumes) {
+      if (!costumes || costumes.length === 0) return '';
+      var html = '<div class="costumes-section-v2">';
+      html += '<div class="detail-section-title">Costumes</div>';
+      html += '<div class="detail-section-sub">Available skins and outfits</div>';
+      html += '<div class="costumes-grid-v2">';
+      for (var i = 0; i < costumes.length; i++) {
+        var c = typeof costumes[i] === 'string' ? costumes[i] : (costumes[i].name || '');
+        html += '<div class="costume-card-v2">';
+        html += '<div class="costume-icon">&#128090;</div>';
+        html += '<p>' + c + '</p>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
     function showWeapon(type, btn) {
       document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var box = document.getElementById('weaponContent');
+      var d = charData[type];
+      if (!d) { box.innerHTML = '<div class="no-data-msg">No data available for this weapon.</div>'; return; }
 
-      if (type === 'shield') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Flare Charge</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Blazing Devil</h3><span class="skill-badge">Passive</span><p>Increases all allied heroes\' Fire Attack by 25% if a barrier the hero applied to self is active.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 113% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 49%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Becomes immune to Reactions and Taunts nearby enemies while the stance is maintained. Reflects 30% of damage taken when hit while the stance is maintained. Maintains stance for up to 10 sec. When hit 5 time(s) while the stance is maintained, the stance is removed, inflicting damage equal to 102% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Killer Mines</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 174% of Attack. Grants all allied heroes barriers equal to 30% of Max HP for 20 sec when the attack lands.</p></div>'
-          + '<div class="skill-card"><h3>Shield Drop</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 93% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Brilliant Detonation</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 287% of Attack. Increases Fire damage taken by enemies in range by 20%.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 24% 2nd hit: 26% 3rd hit: 41% 4th hit: 68%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Ultimate Move.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the Normal Skill\'s barrier by 50% and increases its duration by 10 sec.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Inflicts damage equal to 35% of Attack on nearby enemies every 1 sec when using the Special Attack while the stance is maintained.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Changes barriers from the Normal Skill to Fire Barriers. ※ Fire Barrier: Inflicts damage equal to 15% of Attack on nearby enemies every 0.5 sec.</p></div>'
-          + '</div></div>'
-          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
-          + '<div class="costume-card"><p>One and Only Holy Knight</p></div>'
-          + '<div class="costume-card"><p>Family Time</p></div>'
-          + '<div class="costume-card"><p>Holy Knight of Explosions</p></div>'
-          + '<div class="costume-card"><p>Light Footsteps</p></div>'
-          + '<div class="costume-card"><p>Crimson Flame\'s Trail</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'lance') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Blazing Devil</h3><span class="skill-badge">Passive</span><p>Gains Impulse for 20 sec when successfully attacking an enemy while not in Demon Form. (Max: 10) ※ Impulse: Increases Crit Chance by 3% per 1 effect(s) while in Demon Form. If the hero has the maximum number of Impulse effects, Normal Skill cooldown decreases by 1 sec when attacking an enemy with Fire Burst activated.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 135% of Attack. 1st hit: 20% 2nd hit: 22% 3rd hit: 35% 4th hit: 58% Inflicts damage equal to 148% of Attack while in Demon Form. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 63%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 139% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 160% of Attack and decreases the Normal Skill cooldown by 50% when landing a Critical Hit while in Demon Form.</p></div>'
-          + '<div class="skill-card"><h3>Shot Bombs</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 198% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 211% of Attack and increases damage dealt to enemies with Fire Burst activated by 30% while in Demon Form.</p></div>'
-          + '<div class="skill-card"><h3>Fire Drop</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 119% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Demon Form</h3><span class="skill-badge">Ultimate</span><p>Enters Demon Form for 20 sec.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 64% Increases damage dealt with Normal Attacks by 50% while in Demon Form. 1st hit: 26% 2nd hit: 28% 3rd hit: 44% 4th hit: 75%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%. Increases damage dealt with the Special Attack by 65% while in Demon Form.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Normal Skill while in Demon Form.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the Normal Skill\'s Fire Defense reduction by 50% and Fire Damage boost by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases the Special Attack\'s Magic gain by 80% and the Burst Gauge by 100%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Normal Skill by 90%. Increases damage dealt with the Normal Skill by 110% while in Demon Form.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases Burn duration by 1 sec when attacking a Burned enemy while in Demon Form.</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'rapier') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Flare Charge</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Blazing Devil</h3><span class="skill-badge">Passive</span><p>Gains Impulse for 20 sec when successfully attacking an enemy while not in Demon Form. (Max: 10) ※ Impulse: Increases Crit Chance by 3% per 1 effect(s) while in Demon Form. If the hero has the maximum number of Impulse effects, Normal Skill cooldown decreases by 1 sec when attacking an enemy with Fire Burst activated.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 135% of Attack. 1st hit: 20% 2nd hit: 22% 3rd hit: 35% 4th hit: 58% Inflicts damage equal to 148% of Attack while in Demon Form. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 63%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 139% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 160% of Attack and decreases the Normal Skill cooldown by 50% when landing a Critical Hit while in Demon Form.</p></div>'
-          + '<div class="skill-card"><h3>Shot Bombs</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 198% of Attack, then gains 2 Impulse effect(s). Inflicts damage equal to 211% of Attack and increases damage dealt to enemies with Fire Burst activated by 30% while in Demon Form.</p></div>'
-          + '<div class="skill-card"><h3>Fire Drop</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 119% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Demon Form</h3><span class="skill-badge">Ultimate</span><p>Enters Demon Form for 20 sec.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 64% Increases damage dealt with Normal Attacks by 50% while in Demon Form. 1st hit: 26% 2nd hit: 28% 3rd hit: 44% 4th hit: 75%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%. Increases damage dealt with the Special Attack by 65% while in Demon Form.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Normal Skill while in Demon Form.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the Normal Skill\'s Fire Defense reduction by 50% and Fire Damage boost by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases the Special Attack\'s Magic gain by 80% and the Burst Gauge by 100%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Normal Skill by 90%. Increases damage dealt with the Normal Skill by 110% while in Demon Form.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases Burn duration by 1 sec when attacking a Burned enemy while in Demon Form.</p></div>'
-          + '</div></div>'
-          + '';
+      var html = '<div class="detail-section-title">Skills</div>';
+      html += '<div class="detail-section-sub">Combat abilities and techniques</div>';
+      html += '<div class="skills-grid">';
+      for (var i = 0; i < d.skills.length; i++) {
+        html += renderSkillCard(d.skills[i]);
       }
+      html += '</div>';
+      html += renderPotentials(d.potentials);
+      html += renderCostumes(d.costumes);
+      box.innerHTML = html;
     }
-    showWeapon('shield', document.querySelector('.weapon-tabs button'));
+
+    showWeapon('Shield', document.querySelector('.weapon-tabs button'));
   </script>
 </body>
 </html>

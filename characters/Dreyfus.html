@@ -5,22 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dreyfus - 7DS Origin</title>
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
-    .page-back:hover { color:var(--gold); }
-    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
-    .potentials-section { margin-top:32px; }
-    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
-    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
-    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
-    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
-    .costumes-section { margin-top:32px; }
-    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
-    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
-    .costume-card p { color:white;font-size:13px; }
-  </style>
+  <link rel="stylesheet" href="../css/character-detail.css">
 </head>
 <body>
 
@@ -37,26 +22,30 @@
 
   <div class="page-content">
     <div class="container">
-      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+      <a href="../characters.html" class="page-back-v2"><span class="arrow">&#8592;</span> Back to Characters</a>
 
-      <div class="character-layout">
-        <div class="character-card">
+      <div class="char-detail-header">
+        <div class="char-detail-portrait">
           <h1>Dreyfus</h1>
-          <img src="../images/Dreyfus.png" class="character-image" alt="Dreyfus">
-          <p class="title">SR</p>
+          <img src="../images/Dreyfus.png" class="char-img" alt="Dreyfus">
+          <div><span class="char-rarity-badge sr">SR</span></div>
         </div>
 
-        <div class="story-card">
-          <h2>Description</h2>
-          <p>A swordsmanship instructor in the Kingdom of Liones. In the past, he served as a Grandmaster of the Holy Knights, but spent ten years possessed by Fraudrin, a Demon. Now, he dedicates himself to training the next generation in the royal capital. He is the father of Griamore and grandfather of Dredrin.</p>
-          <p><strong>Type:</strong> Longsword, Lance, Rapier</p>
+        <div class="char-detail-info">
+          <div class="section-label">Description</div>
+          <p class="desc-text">A swordsmanship instructor in the Kingdom of Liones. In the past, he served as a Grandmaster of the Holy Knights, but spent ten years possessed by Fraudrin, a Demon. Now, he dedicates himself to training the next generation in the royal capital. He is the father of Griamore and grandfather of Dredrin.</p>
+          <div class="char-types">
+            <span class="label">Weapon Types:</span>
+            <span class="type-pill">Longsword</span><span class="type-pill">Lance</span><span class="type-pill">Rapier</span>
+          </div>
         </div>
       </div>
-
-      <div class="weapon-tabs">
-        <button onclick="showWeapon('longsword',this)" class="active">Longsword</button>
-        <button onclick="showWeapon('lance',this)">Lance</button>
-        <button onclick="showWeapon('rapier',this)">Rapier</button>
+      <div class="weapon-tabs-wrapper">
+        <div class="weapon-tabs">
+        <button onclick="showWeapon('Longsword',this)" class="active">Longsword</button>
+        <button onclick="showWeapon('Lance',this)">Lance</button>
+        <button onclick="showWeapon('Rapier',this)">Rapier</button>
+        </div>
       </div>
 
       <div id="weaponContent"></div>
@@ -69,90 +58,127 @@
 
   <script src="../js/navbar.js"></script>
   <script>
+    var charData = {"Longsword": {"skills": [{"name": "One-Shot Breaker", "type": "Adventure", "description": ""}, {"name": "Grandmaster's Honor", "type": "Passive", "description": "Increases damage dealt to enemies with Earth Burst activated by 30%."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 98% of Attack. 1st hit: 23% 2nd hit: 28% 3rd hit: 47%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 143% of Attack and inflicts Pride for 20 sec. ※ Pride: Increases damage taken from the hero by 20%."}, {"name": "Earth Blade", "type": "Skill", "description": "Inflicts damage equal to 249% of Attack. Decreases the Normal Skill cooldown by 50% when attacking an enemy affected by Pride."}, {"name": "Angled Earth Slash", "type": "Tag", "description": "Inflicts damage equal to 116% of Attack."}, {"name": "Earth Break", "type": "Ultimate", "description": "Inflicts damage equal to 367% of Attack. Increases damage dealt to Petrified enemies by 50%."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 32% 2nd hit: 39% 3rd hit: 66%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Landing the Normal Skill decreases the enemy's Earth Defense by 20% for 20 sec."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Slightly increases the range of the Ultimate Move and Stuns the enemy for 4 sec when landing the final strike of the Ultimate Move."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Increases the damage boost from the Passive by 80%."}], "costumes": ["Kingdom Sword Art Instructor", "Royal Butler", "Old Soldier's Honor", "Simple Attire", "Honorable Knight"]}, "Lance": {"skills": [{"name": "One-Shot Breaker", "type": "Adventure", "description": ""}, {"name": "Grandmaster's Honor", "type": "Passive", "description": "Increases damage dealt by 30% when attacking an enemy with a barrier."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 142% of Attack. 61% chance to gain 1 Surge effect(s) for 10 sec. 1st hit: 21% 2nd hit: 23% 3rd hit: 37% 4th hit: 61% ※ Surge: Increases Crit Damage by 8%. (Max: 40%) At max stacks, changes to Enhanced Surge which increases Crit Damage by 40%."}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 144% of Attack and gains 1 Surge effect(s) for 10 sec. Hitting an enemy with a Burst activated additionally grants 1 Surge effect(s). ※ Surge: Increases Crit Damage by 8%. (Max: 40%) At max stacks, changes to Enhanced Surge which increases Crit Damage by 40%."}, {"name": "Pillar of Light", "type": "Skill", "description": "Inflicts damage equal to 264% of Attack. Stuns enemies in range for 5 sec if the hero has Surge."}, {"name": "Spear Fall", "type": "Tag", "description": "Inflicts damage equal to 118% of Attack."}, {"name": "Light Spear", "type": "Ultimate", "description": "Inflicts damage equal to 452% of Attack, resulting in a Critical Hit if the hero has Enhanced Surge. Enhanced Surge is then removed from the hero."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 29% 2nd hit: 32% 3rd hit: 52% 4th hit: 85%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Inflicts damage equal to 34% of Attack to enemies in range every 0.5 sec for 5 sec when using the Normal Skill."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Changes the Special Attack into a skill that can be used 2 time(s)."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Additionally inflicts damage equal to 476% of Attack after the final strike of the Ultimate Move."}], "costumes": ["Kingdom Sword Art Instructor", "Royal Butler", "Old Soldier's Honor", "Simple Attire", "Honorable Knight"]}, "Rapier": {"skills": [{"name": "One-Shot Breaker", "type": "Adventure", "description": ""}, {"name": "Grandmaster's Honor", "type": "Passive", "description": "Increases all allied heroes' DoT by 15%. Decreases the DoT interval by 50% for 5 sec when the hero attacks a Stunned or Paralyzed enemy."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 111% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 28% 4th hit: 48%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 114% of Attack. Landing the final strike inflicts 1 Weaken effect(s) for 20 sec. ※ Weaken: Increases DoT damage taken by 5%. (Max: 25%)"}, {"name": "Piercing Lightning", "type": "Skill", "description": "Inflicts damage equal to 180% of Attack. Restores the Tag Gauge by 150 for every 1 Weaken effect(s) on the enemy."}, {"name": "Flash Drop", "type": "Tag", "description": "Inflicts damage equal to 95% of Attack. Inflicts 2 Weaken effect(s) for 20 sec if the enemy is affected by Shock, Bleed, or Chill. ※ Weaken: Increases DoT damage taken by 5%. (Max: 25%)"}, {"name": "Light Bomber", "type": "Ultimate", "description": "Inflicts damage equal to 271% of Attack. When the Weaken effect on the enemy reaches max stacks, it Stuns them for 5 sec."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 40% 4th hit: 68%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Changes the Special Attack into a skill that can be used 2 time(s)."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Increases damage dealt with the Normal Skill by 35% and the number of hits by 4. Increases the Tag Gauge recovery by 40 for every 1 Weaken effect(s) on the enemy."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Inflicts damage equal to 30% of Attack to enemies in range every 1 sec for 5 sec when using the Ultimate Move."}], "costumes": ["Kingdom Sword Art Instructor", "Royal Butler", "Old Soldier's Honor", "Simple Attire", "Honorable Knight"]}};
+
+    function getBadgeClass(type) {
+      var m = {
+        'adventure':'badge-adventure','passive':'badge-passive',
+        'normal':'badge-normal','normal attack':'badge-normal',
+        'special':'badge-special','skill':'badge-skill',
+        'tag':'badge-tag','ultimate':'badge-ultimate'
+      };
+      return m[(type||'').toLowerCase().trim()] || 'badge-normal';
+    }
+
+    function highlightNums(text) {
+      if (!text) return '';
+      var t = text;
+      t = t.replace(/(\d+(?:\.\d+)?%)/g, '<span class="hl-num">$1</span>');
+      t = t.replace(/(\d+)\s*(sec\b)/g, '<span class="hl-dur">$1 $2</span>');
+      return t;
+    }
+
+    function extractHits(desc) {
+      var hits = [];
+      var pattern = /(\d+(?:st|nd|rd|th)\s+hit:\s*\d+(?:\.\d+)?%)/gi;
+      var match;
+      var clean = desc;
+      while ((match = pattern.exec(desc)) !== null) {
+        hits.push(match[1]);
+        clean = clean.replace(match[1], '');
+      }
+      clean = clean.replace(/\s{2,}/g, ' ').trim();
+      return { clean: clean, hits: hits };
+    }
+
+    function renderSkillCard(sk) {
+      var stype = sk.type || 'Normal';
+      var badge = getBadgeClass(stype);
+      var isUlt = stype.toLowerCase() === 'ultimate';
+      var desc = sk.description || '';
+      var extracted = extractHits(desc);
+      var cleanDesc = extracted.clean;
+      var hits = extracted.hits;
+
+      var html = '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
+      html += '<div class="skill-header">';
+      html += '<div class="skill-name">' + (sk.name || '') + '</div>';
+      html += '<span class="skill-type-badge ' + badge + '">' + stype + '</span>';
+      html += '</div>';
+      if (cleanDesc) {
+        html += '<div class="skill-desc">' + highlightNums(cleanDesc) + '</div>';
+      }
+      if (hits.length > 0) {
+        html += '<div class="dmg-breakdown">';
+        for (var i = 0; i < hits.length; i++) {
+          var parts = hits[i].split(':');
+          if (parts.length >= 2) {
+            html += '<div class="dmg-box"><span class="dmg-label">' + parts[0].trim() + '</span><span class="dmg-value">' + parts[1].trim() + '</span></div>';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPotentials(pots) {
+      if (!pots || pots.length === 0) return '';
+      var html = '<div class="potentials-section-v2">';
+      html += '<div class="detail-section-title">Potentials</div>';
+      html += '<div class="detail-section-sub">Unlock powerful upgrades as you progress</div>';
+      html += '<div class="potentials-grid-v2">';
+      for (var i = 0; i < pots.length; i++) {
+        var p = pots[i];
+        var tier = p.tier || '';
+        var num = (tier.toString().match(/\d+/) || ['?'])[0];
+        var milestone = (num === '5' || num === '7' || num === '10') ? ' tier-milestone' : '';
+        html += '<div class="potential-card-v2' + milestone + '">';
+        html += '<div class="tier-label"><span class="tier-num">' + num + '</span> Tier ' + num + '</div>';
+        html += '<div class="tier-desc">' + highlightNums(p.description || '') + '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
+    function renderCostumes(costumes) {
+      if (!costumes || costumes.length === 0) return '';
+      var html = '<div class="costumes-section-v2">';
+      html += '<div class="detail-section-title">Costumes</div>';
+      html += '<div class="detail-section-sub">Available skins and outfits</div>';
+      html += '<div class="costumes-grid-v2">';
+      for (var i = 0; i < costumes.length; i++) {
+        var c = typeof costumes[i] === 'string' ? costumes[i] : (costumes[i].name || '');
+        html += '<div class="costume-card-v2">';
+        html += '<div class="costume-icon">&#128090;</div>';
+        html += '<p>' + c + '</p>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
     function showWeapon(type, btn) {
       document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var box = document.getElementById('weaponContent');
+      var d = charData[type];
+      if (!d) { box.innerHTML = '<div class="no-data-msg">No data available for this weapon.</div>'; return; }
 
-      if (type === 'longsword') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>One-Shot Breaker</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Grandmaster\'s Honor</h3><span class="skill-badge">Passive</span><p>Increases damage dealt to enemies with Earth Burst activated by 30%.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 98% of Attack. 1st hit: 23% 2nd hit: 28% 3rd hit: 47%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 143% of Attack and inflicts Pride for 20 sec. ※ Pride: Increases damage taken from the hero by 20%.</p></div>'
-          + '<div class="skill-card"><h3>Earth Blade</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 249% of Attack. Decreases the Normal Skill cooldown by 50% when attacking an enemy affected by Pride.</p></div>'
-          + '<div class="skill-card"><h3>Angled Earth Slash</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 116% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Earth Break</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 367% of Attack. Increases damage dealt to Petrified enemies by 50%.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 32% 2nd hit: 39% 3rd hit: 66%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Landing the Normal Skill decreases the enemy\'s Earth Defense by 20% for 20 sec.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Slightly increases the range of the Ultimate Move and Stuns the enemy for 4 sec when landing the final strike of the Ultimate Move.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the damage boost from the Passive by 80%.</p></div>'
-          + '</div></div>'
-          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
-          + '<div class="costume-card"><p>Kingdom Sword Art Instructor</p></div>'
-          + '<div class="costume-card"><p>Royal Butler</p></div>'
-          + '<div class="costume-card"><p>Old Soldier\'s Honor</p></div>'
-          + '<div class="costume-card"><p>Simple Attire</p></div>'
-          + '<div class="costume-card"><p>Honorable Knight</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'lance') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>One-Shot Breaker</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Grandmaster\'s Honor</h3><span class="skill-badge">Passive</span><p>Increases damage dealt by 30% when attacking an enemy with a barrier.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 142% of Attack. 61% chance to gain 1 Surge effect(s) for 10 sec. 1st hit: 21% 2nd hit: 23% 3rd hit: 37% 4th hit: 61% ※ Surge: Increases Crit Damage by 8%. (Max: 40%) At max stacks, changes to Enhanced Surge which increases Crit Damage by 40%.</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 144% of Attack and gains 1 Surge effect(s) for 10 sec. Hitting an enemy with a Burst activated additionally grants 1 Surge effect(s). ※ Surge: Increases Crit Damage by 8%. (Max: 40%) At max stacks, changes to Enhanced Surge which increases Crit Damage by 40%.</p></div>'
-          + '<div class="skill-card"><h3>Pillar of Light</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 264% of Attack. Stuns enemies in range for 5 sec if the hero has Surge.</p></div>'
-          + '<div class="skill-card"><h3>Spear Fall</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 118% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Light Spear</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 452% of Attack, resulting in a Critical Hit if the hero has Enhanced Surge. Enhanced Surge is then removed from the hero.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 29% 2nd hit: 32% 3rd hit: 52% 4th hit: 85%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Inflicts damage equal to 34% of Attack to enemies in range every 0.5 sec for 5 sec when using the Normal Skill.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Changes the Special Attack into a skill that can be used 2 time(s).</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Additionally inflicts damage equal to 476% of Attack after the final strike of the Ultimate Move.</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'rapier') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>One-Shot Breaker</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Grandmaster\'s Honor</h3><span class="skill-badge">Passive</span><p>Increases all allied heroes\' DoT by 15%. Decreases the DoT interval by 50% for 5 sec when the hero attacks a Stunned or Paralyzed enemy.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 111% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 28% 4th hit: 48%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 114% of Attack. Landing the final strike inflicts 1 Weaken effect(s) for 20 sec. ※ Weaken: Increases DoT damage taken by 5%. (Max: 25%)</p></div>'
-          + '<div class="skill-card"><h3>Piercing Lightning</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 180% of Attack. Restores the Tag Gauge by 150 for every 1 Weaken effect(s) on the enemy.</p></div>'
-          + '<div class="skill-card"><h3>Flash Drop</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 95% of Attack. Inflicts 2 Weaken effect(s) for 20 sec if the enemy is affected by Shock, Bleed, or Chill. ※ Weaken: Increases DoT damage taken by 5%. (Max: 25%)</p></div>'
-          + '<div class="skill-card"><h3>Light Bomber</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 271% of Attack. When the Weaken effect on the enemy reaches max stacks, it Stuns them for 5 sec.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 40% 4th hit: 68%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Changes the Special Attack into a skill that can be used 2 time(s).</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases damage dealt with the Normal Skill by 35% and the number of hits by 4. Increases the Tag Gauge recovery by 40 for every 1 Weaken effect(s) on the enemy.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Inflicts damage equal to 30% of Attack to enemies in range every 1 sec for 5 sec when using the Ultimate Move.</p></div>'
-          + '</div></div>'
-          + '';
+      var html = '<div class="detail-section-title">Skills</div>';
+      html += '<div class="detail-section-sub">Combat abilities and techniques</div>';
+      html += '<div class="skills-grid">';
+      for (var i = 0; i < d.skills.length; i++) {
+        html += renderSkillCard(d.skills[i]);
       }
+      html += '</div>';
+      html += renderPotentials(d.potentials);
+      html += renderCostumes(d.costumes);
+      box.innerHTML = html;
     }
-    showWeapon('longsword', document.querySelector('.weapon-tabs button'));
+
+    showWeapon('Longsword', document.querySelector('.weapon-tabs button'));
   </script>
 </body>
 </html>

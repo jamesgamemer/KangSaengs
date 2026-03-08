@@ -5,22 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Howzer - 7DS Origin</title>
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
-    .page-back:hover { color:var(--gold); }
-    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
-    .potentials-section { margin-top:32px; }
-    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
-    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
-    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
-    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
-    .costumes-section { margin-top:32px; }
-    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
-    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
-    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
-    .costume-card p { color:white;font-size:13px; }
-  </style>
+  <link rel="stylesheet" href="../css/character-detail.css">
 </head>
 <body>
 
@@ -37,26 +22,30 @@
 
   <div class="page-content">
     <div class="container">
-      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+      <a href="../characters.html" class="page-back-v2"><span class="arrow">&#8592;</span> Back to Characters</a>
 
-      <div class="character-layout">
-        <div class="character-card">
+      <div class="char-detail-header">
+        <div class="char-detail-portrait">
           <h1>Howzer</h1>
-          <img src="../images/Howzer.png" class="character-image" alt="Howzer">
-          <p class="title">SR</p>
+          <img src="../images/Howzer.png" class="char-img" alt="Howzer">
+          <div><span class="char-rarity-badge sr">SR</span></div>
         </div>
 
-        <div class="story-card">
-          <h2>Description</h2>
-          <p>The current Grandmaster of the Holy Knights of the Kingdom of Liones. His techniques use his magic of 「Tempest」. He was born a commoner but climbed the ranks to become the Grandmaster of the Holy Knights. He has a strong sense of duty to protect the kingdom, determined to safeguard its peace and honor the comrades who sacrificed themselves to protect it.</p>
-          <p><strong>Type:</strong> Lance, Gauntlets, Cudgel</p>
+        <div class="char-detail-info">
+          <div class="section-label">Description</div>
+          <p class="desc-text">The current Grandmaster of the Holy Knights of the Kingdom of Liones. His techniques use his magic of 「Tempest」. He was born a commoner but climbed the ranks to become the Grandmaster of the Holy Knights. He has a strong sense of duty to protect the kingdom, determined to safeguard its peace and honor the comrades who sacrificed themselves to protect it.</p>
+          <div class="char-types">
+            <span class="label">Weapon Types:</span>
+            <span class="type-pill">Lance</span><span class="type-pill">Gauntlets</span><span class="type-pill">Cudgel</span>
+          </div>
         </div>
       </div>
-
-      <div class="weapon-tabs">
-        <button onclick="showWeapon('lance',this)" class="active">Lance</button>
-        <button onclick="showWeapon('gauntlets',this)">Gauntlets</button>
-        <button onclick="showWeapon('cudgel',this)">Cudgel</button>
+      <div class="weapon-tabs-wrapper">
+        <div class="weapon-tabs">
+        <button onclick="showWeapon('Lance',this)" class="active">Lance</button>
+        <button onclick="showWeapon('Gauntlets',this)">Gauntlets</button>
+        <button onclick="showWeapon('Cudgel',this)">Cudgel</button>
+        </div>
       </div>
 
       <div id="weaponContent"></div>
@@ -69,90 +58,127 @@
 
   <script src="../js/navbar.js"></script>
   <script>
+    var charData = {"Lance": {"skills": [{"name": "Updraft", "type": "Adventure", "description": ""}, {"name": "Eye of the Storm", "type": "Passive", "description": "Attacking an enemy with Wind Burst activated increases the hero's Wind Attack by 3% for 20 sec. (Max: 10 times)"}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 127% of Attack. 1st hit: 18% 2nd hit: 19% 3rd hit: 34% 4th hit: 56%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 120% of Attack, and the hero gains Gust for 20 sec. Gust: Inflicts additional damage equal to 30% of the damage dealt with the Normal Skill or Ultimate Move."}, {"name": "Pulling Gust", "type": "Skill", "description": "Inflicts damage equal to 224% of Attack. Inflicts Bleed for 20 sec if the hero has Gust. Bleed: Inflicts Wind damage equal to 10% of the damage dealt every 1 sec. Decreases Healing Efficiency by 20%. Additionally decreases Healing Efficiency by 6% when landing a Critical Hit. (Max: 10 times)"}, {"name": "Wind Drop", "type": "Tag", "description": "Inflicts damage equal to 110% of Attack."}, {"name": "Super Cyclone", "type": "Ultimate", "description": "Inflicts damage equal to 329% of Attack on the enemy and pulls them toward the center. Results in a Critical Hit if the enemy is Bleeding"}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with the Special Attack by 40%."}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Tag Skill by 60%."}, {"tier": 5, "description": "Additionally inflicts damage equal to 170% of Attack when using the Normal Skill."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Additionally inflicts damage equal to 12% of Attack to enemies in the center of the Ultimate Move range."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Additionally inflicts damage equal to 225% of Attack with the final strike of the Ultimate Move, and renders the enemy airborne."}], "costumes": ["Trusted Grandmaster", "End-of-Day Mug of Ale", "Holy Knight of Storms", "Secure Adventure", "Grandmaster's Dignity"]}, "Gauntlets": {"skills": [{"name": "Updraft", "type": "Adventure", "description": ""}, {"name": "Eye of the Storm", "type": "Passive", "description": "Increases all allied heroes' Wind damage dealt to Bleeding enemies by 30%."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 115% of Attack. 50% chance to reset the Special Attack cooldown on the final strike. 1st hit: 17% 2nd hit: 19% 3rd hit: 30% 4th hit: 49%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 84% of Attack. The second strike decreases Crit Resistance by 5% for 20 sec if the enemy is Bleeding. (Max: 3 times)"}, {"name": "Combo", "type": "Skill", "description": "Inflicts damage equal to 192% of Attack. 50% chance to reset the Special Attack cooldown."}, {"name": "Rising Fist", "type": "Tag", "description": "Inflicts damage equal to 95% of Attack."}, {"name": "Whirl Shock", "type": "Ultimate", "description": "Increases the hero's Crit Damage by 30% for 20 sec, then inflicts damage equal to 322% of Attack."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with the Special Attack by 40%."}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Tag Skill by 60%."}, {"tier": 5, "description": "Using the Ultimate Move creates a whirlwind that deals damage equal to 187% of Attack."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "Greatly increases the range of the Special Attack and increases its Crit Resistance reduction by 100%."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Inflicts additional damage equal to 65% of Attack per tornado when using the Normal Skill."}], "costumes": ["Trusted Grandmaster", "End-of-Day Mug of Ale", "Holy Knight of Storms", "Secure Adventure", "Grandmaster's Dignity"]}, "Cudgel": {"skills": [{"name": "Updraft", "type": "Adventure", "description": ""}, {"name": "Eye of the Storm", "type": "Passive", "description": "Attacking an enemy with Wind Burst activated decreases their Wind Defense by 20% for 30 sec."}, {"name": "Normal Attack", "type": "Normal Attack", "description": "Inflicts damage equal to 113% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 30% 4th hit: 48%"}, {"name": "Special Attack", "type": "Special", "description": "Inflicts damage equal to 109% of Attack and pulls the enemy toward the hero, then stuns them for 4 sec."}, {"name": "Precise Stab", "type": "Skill", "description": "Inflicts damage equal to 5% of Attack on nearby enemies while the stance is maintained, and decreases their Crit Resistance by 1% for 20 sec with each attack. (Max: 20%) The last attack inflicts damage equal to 96% of Attack and restores the Tag Gauge by 200."}, {"name": "Chain Uppercut", "type": "Tag", "description": "Inflicts damage equal to 94% of Attack. Restores the Tag gauge by 250 when landing a Critical Hit."}, {"name": "Gust", "type": "Ultimate", "description": "Inflicts damage equal to 276% of Attack. Results in a Critical Hit if the enemy is Stunned."}], "potentials": [{"tier": 1, "description": "Increases Attack by 10%, Defense by 8%, and Max HP by 3%."}, {"tier": 2, "description": "Increases damage dealt with Normal Attacks by 40%. 1st hit: 24% 2nd hit: 25% 3rd hit: 42% 4th hit: 67%"}, {"tier": 3, "description": "Increases Attack by 15%, Defense by 12%, and Max HP by 5%."}, {"tier": 4, "description": "Increases damage dealt with the Special Attack by 50%."}, {"tier": 5, "description": "Additionally inflicts damage equal to 160% of Attack when using the Ultimate Move."}, {"tier": 6, "description": "Increases damage dealt with the Normal Skill by 60%."}, {"tier": 7, "description": "The Normal Skill's final strike inflicts Stun on the target for 4 sec."}, {"tier": 8, "description": "Increases Attack by 25%, Defense by 20%, and Max HP by 8%."}, {"tier": 9, "description": "Increases damage dealt with the Ultimate Move by 50%."}, {"tier": 10, "description": "Increases the Passive's Wind Defense reduction by 100%."}], "costumes": ["Trusted Grandmaster", "End-of-Day Mug of Ale", "Holy Knight of Storms", "Secure Adventure", "Grandmaster's Dignity"]}};
+
+    function getBadgeClass(type) {
+      var m = {
+        'adventure':'badge-adventure','passive':'badge-passive',
+        'normal':'badge-normal','normal attack':'badge-normal',
+        'special':'badge-special','skill':'badge-skill',
+        'tag':'badge-tag','ultimate':'badge-ultimate'
+      };
+      return m[(type||'').toLowerCase().trim()] || 'badge-normal';
+    }
+
+    function highlightNums(text) {
+      if (!text) return '';
+      var t = text;
+      t = t.replace(/(\d+(?:\.\d+)?%)/g, '<span class="hl-num">$1</span>');
+      t = t.replace(/(\d+)\s*(sec\b)/g, '<span class="hl-dur">$1 $2</span>');
+      return t;
+    }
+
+    function extractHits(desc) {
+      var hits = [];
+      var pattern = /(\d+(?:st|nd|rd|th)\s+hit:\s*\d+(?:\.\d+)?%)/gi;
+      var match;
+      var clean = desc;
+      while ((match = pattern.exec(desc)) !== null) {
+        hits.push(match[1]);
+        clean = clean.replace(match[1], '');
+      }
+      clean = clean.replace(/\s{2,}/g, ' ').trim();
+      return { clean: clean, hits: hits };
+    }
+
+    function renderSkillCard(sk) {
+      var stype = sk.type || 'Normal';
+      var badge = getBadgeClass(stype);
+      var isUlt = stype.toLowerCase() === 'ultimate';
+      var desc = sk.description || '';
+      var extracted = extractHits(desc);
+      var cleanDesc = extracted.clean;
+      var hits = extracted.hits;
+
+      var html = '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
+      html += '<div class="skill-header">';
+      html += '<div class="skill-name">' + (sk.name || '') + '</div>';
+      html += '<span class="skill-type-badge ' + badge + '">' + stype + '</span>';
+      html += '</div>';
+      if (cleanDesc) {
+        html += '<div class="skill-desc">' + highlightNums(cleanDesc) + '</div>';
+      }
+      if (hits.length > 0) {
+        html += '<div class="dmg-breakdown">';
+        for (var i = 0; i < hits.length; i++) {
+          var parts = hits[i].split(':');
+          if (parts.length >= 2) {
+            html += '<div class="dmg-box"><span class="dmg-label">' + parts[0].trim() + '</span><span class="dmg-value">' + parts[1].trim() + '</span></div>';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function renderPotentials(pots) {
+      if (!pots || pots.length === 0) return '';
+      var html = '<div class="potentials-section-v2">';
+      html += '<div class="detail-section-title">Potentials</div>';
+      html += '<div class="detail-section-sub">Unlock powerful upgrades as you progress</div>';
+      html += '<div class="potentials-grid-v2">';
+      for (var i = 0; i < pots.length; i++) {
+        var p = pots[i];
+        var tier = p.tier || '';
+        var num = (tier.toString().match(/\d+/) || ['?'])[0];
+        var milestone = (num === '5' || num === '7' || num === '10') ? ' tier-milestone' : '';
+        html += '<div class="potential-card-v2' + milestone + '">';
+        html += '<div class="tier-label"><span class="tier-num">' + num + '</span> Tier ' + num + '</div>';
+        html += '<div class="tier-desc">' + highlightNums(p.description || '') + '</div>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
+    function renderCostumes(costumes) {
+      if (!costumes || costumes.length === 0) return '';
+      var html = '<div class="costumes-section-v2">';
+      html += '<div class="detail-section-title">Costumes</div>';
+      html += '<div class="detail-section-sub">Available skins and outfits</div>';
+      html += '<div class="costumes-grid-v2">';
+      for (var i = 0; i < costumes.length; i++) {
+        var c = typeof costumes[i] === 'string' ? costumes[i] : (costumes[i].name || '');
+        html += '<div class="costume-card-v2">';
+        html += '<div class="costume-icon">&#128090;</div>';
+        html += '<p>' + c + '</p>';
+        html += '</div>';
+      }
+      html += '</div></div>';
+      return html;
+    }
+
     function showWeapon(type, btn) {
       document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       var box = document.getElementById('weaponContent');
+      var d = charData[type];
+      if (!d) { box.innerHTML = '<div class="no-data-msg">No data available for this weapon.</div>'; return; }
 
-      if (type === 'lance') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Updraft</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Eye of the Storm</h3><span class="skill-badge">Passive</span><p>Attacking an enemy with Wind Burst activated increases the hero\'s Wind Attack by 3% for 20 sec. (Max: 10 times)</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 127% of Attack. 1st hit: 18% 2nd hit: 19% 3rd hit: 34% 4th hit: 56%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 120% of Attack, and the hero gains Gust for 20 sec. Gust: Inflicts additional damage equal to 30% of the damage dealt with the Normal Skill or Ultimate Move.</p></div>'
-          + '<div class="skill-card"><h3>Pulling Gust</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 224% of Attack. Inflicts Bleed for 20 sec if the hero has Gust. Bleed: Inflicts Wind damage equal to 10% of the damage dealt every 1 sec. Decreases Healing Efficiency by 20%. Additionally decreases Healing Efficiency by 6% when landing a Critical Hit. (Max: 10 times)</p></div>'
-          + '<div class="skill-card"><h3>Wind Drop</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 110% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Super Cyclone</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 329% of Attack on the enemy and pulls them toward the center. Results in a Critical Hit if the enemy is Bleeding</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with the Special Attack by 40%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Tag Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Additionally inflicts damage equal to 170% of Attack when using the Normal Skill.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Additionally inflicts damage equal to 12% of Attack to enemies in the center of the Ultimate Move range.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Additionally inflicts damage equal to 225% of Attack with the final strike of the Ultimate Move, and renders the enemy airborne.</p></div>'
-          + '</div></div>'
-          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
-          + '<div class="costume-card"><p>Trusted Grandmaster</p></div>'
-          + '<div class="costume-card"><p>End-of-Day Mug of Ale</p></div>'
-          + '<div class="costume-card"><p>Holy Knight of Storms</p></div>'
-          + '<div class="costume-card"><p>Secure Adventure</p></div>'
-          + '<div class="costume-card"><p>Grandmaster\'s Dignity</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'gauntlets') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Updraft</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Eye of the Storm</h3><span class="skill-badge">Passive</span><p>Increases all allied heroes\' Wind damage dealt to Bleeding enemies by 30%.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 115% of Attack. 50% chance to reset the Special Attack cooldown on the final strike. 1st hit: 17% 2nd hit: 19% 3rd hit: 30% 4th hit: 49%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 84% of Attack. The second strike decreases Crit Resistance by 5% for 20 sec if the enemy is Bleeding. (Max: 3 times)</p></div>'
-          + '<div class="skill-card"><h3>Combo</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 192% of Attack. 50% chance to reset the Special Attack cooldown.</p></div>'
-          + '<div class="skill-card"><h3>Rising Fist</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 95% of Attack.</p></div>'
-          + '<div class="skill-card"><h3>Whirl Shock</h3><span class="skill-badge">Ultimate</span><p>Increases the hero\'s Crit Damage by 30% for 20 sec, then inflicts damage equal to 322% of Attack.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with the Special Attack by 40%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Tag Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Using the Ultimate Move creates a whirlwind that deals damage equal to 187% of Attack.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>Greatly increases the range of the Special Attack and increases its Crit Resistance reduction by 100%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Inflicts additional damage equal to 65% of Attack per tornado when using the Normal Skill.</p></div>'
-          + '</div></div>'
-          + '';
-      } else if (type === 'cudgel') {
-        box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Updraft</h3><span class="skill-badge">Adventure</span><p></p></div>'
-          + '<div class="skill-card"><h3>Eye of the Storm</h3><span class="skill-badge">Passive</span><p>Attacking an enemy with Wind Burst activated decreases their Wind Defense by 20% for 30 sec.</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 113% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 30% 4th hit: 48%</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 109% of Attack and pulls the enemy toward the hero, then stuns them for 4 sec.</p></div>'
-          + '<div class="skill-card"><h3>Precise Stab</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 5% of Attack on nearby enemies while the stance is maintained, and decreases their Crit Resistance by 1% for 20 sec with each attack. (Max: 20%) The last attack inflicts damage equal to 96% of Attack and restores the Tag Gauge by 200.</p></div>'
-          + '<div class="skill-card"><h3>Chain Uppercut</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 94% of Attack. Restores the Tag gauge by 250 when landing a Critical Hit.</p></div>'
-          + '<div class="skill-card"><h3>Gust</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 276% of Attack. Results in a Critical Hit if the enemy is Stunned.</p></div>'
-          + '</div>'
-          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
-          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 24% 2nd hit: 25% 3rd hit: 42% 4th hit: 67%</p></div>'
-          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 5</h4><p>Additionally inflicts damage equal to 160% of Attack when using the Ultimate Move.</p></div>'
-          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 7</h4><p>The Normal Skill\'s final strike inflicts Stun on the target for 4 sec.</p></div>'
-          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
-          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the Passive\'s Wind Defense reduction by 100%.</p></div>'
-          + '</div></div>'
-          + '';
+      var html = '<div class="detail-section-title">Skills</div>';
+      html += '<div class="detail-section-sub">Combat abilities and techniques</div>';
+      html += '<div class="skills-grid">';
+      for (var i = 0; i < d.skills.length; i++) {
+        html += renderSkillCard(d.skills[i]);
       }
+      html += '</div>';
+      html += renderPotentials(d.potentials);
+      html += renderCostumes(d.costumes);
+      box.innerHTML = html;
     }
-    showWeapon('lance', document.querySelector('.weapon-tabs button'));
+
+    showWeapon('Lance', document.querySelector('.weapon-tabs button'));
   </script>
 </body>
 </html>
