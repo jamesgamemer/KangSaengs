@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/navbar-auth.css">
+</head>
+<body>
+
+  <!-- Admin Bar -->
+  <div class="admin-bar" id="adminBar">
+    <div class="admin-bar-left">
+      <span class="admin-badge">ADMIN PANEL</span>
+      <a href="characters.html" class="admin-bar-link">View Site</a>
+    </div>
+    <div class="admin-bar-right">
+      <span id="adminEmail" style="color:#94a3b8;font-size:13px;margin-right:12px;"></span>
+      <button class="admin-bar-btn" onclick="Auth.logout()">Logout</button>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html">&#9876; Characters</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content" style="padding-top:104px;">
+    <div class="container">
+
+      <!-- Connection Status -->
+      <div id="connectionStatus" style="margin-bottom:16px;"></div>
+
+      <!-- Dashboard Header -->
+      <div class="admin-header">
+        <h1>&#128736; Character Management</h1>
+        <p>Add, edit, and manage all character data via Supabase</p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="admin-actions">
+        <button class="btn btn-gold" onclick="showAddForm()">&#10133; Add New Character</button>
+        <button class="btn btn-blue" onclick="doExport()">&#128190; Export JSON</button>
+        <label class="btn btn-outline" style="cursor:pointer;">
+          &#128194; Import JSON
+          <input type="file" accept=".json" style="display:none;" onchange="handleImport(event)">
+        </label>
+      </div>
+
+      <!-- Stats -->
+      <div class="admin-stats" id="adminStats"></div>
+
+      <!-- Character List -->
+      <div class="admin-section">
+        <div class="admin-section-header">
+          <h2>All Characters</h2>
+          <input type="text" id="adminSearch" class="admin-search" placeholder="Search characters..." oninput="filterAdminList()">
+        </div>
+        <div class="admin-char-list" id="adminCharList"></div>
+      </div>
+
+      <!-- Add/Edit Form Modal -->
+      <div class="admin-form-overlay" id="formOverlay" style="display:none;" onclick="closeFormOverlay(event)">
+        <div class="admin-form-modal" onclick="event.stopPropagation();">
+          <div class="form-modal-header">
+            <h2 id="formTitle">Add New Character</h2>
+            <button class="form-close-btn" onclick="hideForm()">&times;</button>
+          </div>
+
+          <div class="form-modal-body">
+            <input type="hidden" id="editId">
+
+            <!-- Basic Info -->
+            <div class="form-section">
+              <h3>Basic Information</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Character Name *</label>
+                  <input type="text" id="charName" placeholder="e.g. Meliodas" required>
+                </div>
+                <div class="form-group">
+                  <label>Rarity *</label>
+                  <select id="charRarity">
+                    <option value="SSR">SSR</option>
+                    <option value="SR">SR</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Tier</label>
+                  <select id="charTier">
+                    <option value="S">S</option>
+                    <option value="A">A</option>
+                    <option value="B" selected>B</option>
+                    <option value="C">C</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Slug (auto-generated)</label>
+                  <input type="text" id="charSlug" placeholder="auto-generated-from-name" readonly style="opacity:0.6;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="charDesc" rows="3" placeholder="Character background story..."></textarea>
+              </div>
+              <div class="form-group">
+                <label>Character Image</label>
+                <div class="image-upload-area" id="imageUploadArea">
+                  <input type="file" id="charImage" accept="image/*" onchange="handleImageUpload(this)" style="display:none;">
+                  <div class="image-preview" id="imagePreview" style="display:none;">
+                    <img id="previewImg" src="" alt="Preview">
+                  </div>
+                  <div class="image-upload-prompt" id="imagePrompt" onclick="document.getElementById('charImage').click();">
+                    <span>&#128247;</span>
+                    <p>Click to upload image</p>
+                    <p class="small">PNG, JPG (recommended: 256x256)</p>
+                    <p class="small" style="color:#60a5fa;">Images are uploaded to Supabase Storage</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weapon Types -->
+            <div class="form-section">
+              <h3>Weapon Types</h3>
+              <div class="form-group">
+                <label>Select up to 3 weapon types</label>
+                <div class="weapon-checkboxes" id="weaponCheckboxes"></div>
+              </div>
+            </div>
+
+            <!-- Skills (per weapon) -->
+            <div class="form-section">
+              <h3>Skills</h3>
+              <p class="form-hint">Configure skills for each selected weapon type</p>
+              <div class="weapon-skills-tabs" id="weaponSkillsTabs"></div>
+              <div id="skillsEditor"></div>
+            </div>
+
+            <!-- Potentials (per weapon) -->
+            <div class="form-section">
+              <h3>Potentials</h3>
+              <p class="form-hint">10 tiers per weapon type</p>
+              <div class="weapon-potentials-tabs" id="weaponPotentialsTabs"></div>
+              <div id="potentialsEditor"></div>
+            </div>
+
+            <!-- Costumes -->
+            <div class="form-section">
+              <h3>Costumes</h3>
+              <div id="costumesEditor"></div>
+              <button type="button" class="btn-add-item" onclick="addCostumeField()">+ Add Costume</button>
+            </div>
+          </div>
+
+          <div class="form-modal-footer">
+            <button class="btn btn-outline" onclick="hideForm()">Cancel</button>
+            <button class="btn btn-gold" id="saveBtn" onclick="saveCharacter()">
+              <span id="saveBtnText">Save Character</span>
+              <span id="saveBtnLoading" style="display:none;">Saving...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Admin Panel &mdash; Powered by Supabase</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    // ---- Constants ----
+    var ALL_WEAPONS = ['Axe','Book','Cudgel','Dual Swords','Gauntlets','Greatsword','Lance','Longsword','Rapier','Shield','Staff','Wand'];
+    var SKILL_TYPES = ['Adventure','Passive','Normal Attack','Special','Skill','Tag','Ultimate'];
+    var editingId = null;
+    var currentSkillWeapon = null;
+    var currentPotWeapon = null;
+    var tempSkills = {};
+    var tempPotentials = {};
+    var tempImageFile = null;
+    var allCharacters = [];
+
+    // ---- Init ----
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Auth check
+      const admin = await Auth.isLoggedIn();
+      if (!admin) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Connection status
+      if (SupaDB.isConnected()) {
+        const session = await SupaDB.getSession();
+        document.getElementById('adminEmail').textContent = session.user.email;
+        document.getElementById('connectionStatus').innerHTML =
+          '<div style="padding:12px 16px;background:#052e16;border:1px solid #16a34a;border-radius:8px;color:#86efac;font-size:14px;">' +
+          '&#9989; Connected to Supabase &mdash; Data is saved to the cloud' +
+          '</div>';
+      } else {
+        document.getElementById('connectionStatus').innerHTML =
+          '<div style="padding:12px 16px;background:#7f1d1d;border:1px solid #dc2626;border-radius:8px;color:#fca5a5;font-size:14px;">' +
+          '&#9888; Supabase initialization failed. Check console for errors.' +
+          '</div>';
+      }
+
+      // Load characters
+      allCharacters = await CharDB.loadAll();
+      renderDashboard();
+
+      // Realtime updates
+      SupaDB.subscribeToChanges(async () => {
+        allCharacters = await CharDB.loadAll();
+        renderDashboard();
+        showNotification('Data updated (realtime)', 'info');
+      });
+    });
+
+    // ---- Dashboard ----
+    function renderDashboard() {
+      var chars = allCharacters;
+      var ssrCount = chars.filter(function(c) { return c.rarity === 'SSR'; }).length;
+      var srCount = chars.filter(function(c) { return c.rarity === 'SR'; }).length;
+      var withSkills = chars.filter(function(c) {
+        if (!c.skills || typeof c.skills !== 'object') return false;
+        for (var k in c.skills) { if (c.skills[k] && c.skills[k].length > 0) return true; }
+        return false;
+      }).length;
+
+      document.getElementById('adminStats').innerHTML =
+        '<div class="stat-card"><div class="stat-num">' + chars.length + '</div><div class="stat-label">Total Characters</div></div>' +
+        '<div class="stat-card ssr"><div class="stat-num">' + ssrCount + '</div><div class="stat-label">SSR</div></div>' +
+        '<div class="stat-card sr"><div class="stat-num">' + srCount + '</div><div class="stat-label">SR</div></div>' +
+        '<div class="stat-card"><div class="stat-num">' + withSkills + '</div><div class="stat-label">With Skills</div></div>';
+
+      renderCharList(chars);
+    }
+
+    function renderCharList(chars) {
+      // Handle empty state
+      if (!chars || chars.length === 0) {
+        document.getElementById('adminCharList').innerHTML = 
+          '<div style="text-align:center;padding:60px 20px;color:#64748b;">' +
+          '<p style="font-size:48px;margin-bottom:16px;">&#128683;</p>' +
+          '<p style="font-size:16px;font-weight:600;margin-bottom:8px;">No characters found</p>' +
+          '<p style="font-size:14px;margin-bottom:24px;">Use \'Add New Character\' or import JSON to populate the database.</p>' +
+          '<button class="btn btn-gold" onclick="showAddForm()" style="margin-top:12px;">+ Add New Character</button>' +
+          '</div>';
+        return;
+      }
+
+      var html = '';
+      chars.forEach(function(c) {
+        var hasSkills = false;
+        if (c.skills && typeof c.skills === 'object') {
+          for (var k in c.skills) { if (c.skills[k] && c.skills[k].length > 0) { hasSkills = true; break; } }
+        }
+        var statusClass = hasSkills ? 'status-complete' : 'status-incomplete';
+        var statusText = hasSkills ? 'Complete' : 'Incomplete';
+        var tierBadge = '<span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;background:' +
+          getTierColor(c.tier) + ';color:#fff;margin-left:6px;">' + (c.tier || 'B') + '</span>';
+        var imgUrl = c.image || 'https://placehold.co/300x400?text=No+Image';
+
+        html += '<div class="admin-char-row" data-name="' + (c.name || '').toLowerCase() + '">';
+        html += '<div class="admin-char-info">';
+        html += '<img src="' + imgUrl + '" alt="' + (c.name || '') + '" class="admin-char-thumb" onerror="this.src=\'https://placehold.co/300x400?text=Error\'">';
+        html += '<div>';
+        html += '<div class="admin-char-name">' + (c.name || 'Unknown') + tierBadge + '</div>';
+        html += '<div class="admin-char-meta"><span class="rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</span>';
+        html += ' &bull; ' + (c.types || []).join(', ');
+        html += ' &bull; <span class="' + statusClass + '">' + statusText + '</span></div>';
+        html += '</div></div>';
+        html += '<div class="admin-char-actions">';
+        html += '<a href="character.html?slug=' + encodeURIComponent(c.slug) + '" class="action-btn view-btn" title="View">&#128065;</a>';
+        html += '<button class="action-btn edit-btn" title="Edit" onclick="editCharacter(\'' + c.id + '\')">&#9998;</button>';
+        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'' + c.id + '\',\'' + (c.name || '').replace(/'/g, "\\\'" ) + '\')">&#128465;</button>';
+        html += '</div></div>';
+      });
+      document.getElementById('adminCharList').innerHTML = html;
+    }
+
+    function getTierColor(tier) {
+      var colors = { S: '#dc2626', A: '#f59e0b', B: '#3b82f6', C: '#6b7280' };
+      return colors[tier] || colors.B;
+    }
+
+    function filterAdminList() {
+      var search = document.getElementById('adminSearch').value.toLowerCase();
+      document.querySelectorAll('.admin-char-row').forEach(function(row) {
+        var name = row.getAttribute('data-name') || '';
+        row.style.display = name.indexOf(search) !== -1 ? '' : 'none';
+      });
+    }
+
+    // ---- Form Management ----
+    function showAddForm() {
+      editingId = null;
+      document.getElementById('formTitle').textContent = 'Add New Character';
+      document.getElementById('editId').value = '';
+      document.getElementById('charName').value = '';
+      document.getElementById('charRarity').value = 'SSR';
+      document.getElementById('charTier').value = 'B';
+      document.getElementById('charSlug').value = '';
+      document.getElementById('charDesc').value = '';
+      tempImageFile = null;
+      document.getElementById('imagePreview').style.display = 'none';
+      document.getElementById('imagePrompt').style.display = '';
+      tempSkills = {};
+      tempPotentials = {};
+      buildWeaponCheckboxes([]);
+      document.getElementById('skillsEditor').innerHTML = '';
+      document.getElementById('potentialsEditor').innerHTML = '';
+      document.getElementById('costumesEditor').innerHTML = '';
+      document.getElementById('weaponSkillsTabs').innerHTML = '';
+      document.getElementById('weaponPotentialsTabs').innerHTML = '';
+      document.getElementById('formOverlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function editCharacter(id) {
+      var c = allCharacters.find(function(ch) { return ch.id === id; });
+      if (!c) return;
+      editingId = id;
+      document.getElementById('formTitle').textContent = 'Edit: ' + c.name;
+      document.getElementById('editId').value = id;
+      document.getElementById('charName').value = c.name || '';
+      document.getElementById('charRarity').value = c.rarity || 'SSR';
+      document.getElementById('charTier').value = c.tier || 'B';
+      document.getElementById('charSlug').value = c.slug || '';
+      document.getElementById('charDesc').value = c.description || '';
+
+      // Image
+      tempImageFile = null;
+      if (c.image) {
+        document.getElementById('previewImg').src = c.image;
+        document.getElementById('imagePreview').style.display = '';
+        document.getElementById('imagePrompt').style.display = 'none';
+      } else {
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('imagePrompt').style.display = '';
+      }
+
+      // Deep copy skills and potentials
+      tempSkills = JSON.parse(JSON.stringify(c.skills || {}));
+      tempPotentials = JSON.parse(JSON.stringify(c.potentials || {}));
+
+      buildWeaponCheckboxes(c.types || []);
+      updateSkillsTabs();
+      updatePotentialsTabs();
+
+      // Costumes
+      var costumesHtml = '';
+      (c.costumes || []).forEach(function(cos) {
+        var name = (typeof cos === 'string') ? cos : (cos.name || '');
+        costumesHtml += '<div class="costume-input-row"><input type="text" class="costume-input" value="' + name.replace(/"/g, '&quot;') + '" placeholder="Costume name"><button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button></div>';
+      });
+      document.getElementById('costumesEditor').innerHTML = costumesHtml;
+      document.getElementById('formOverlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideForm() {
+      document.getElementById('formOverlay').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function closeFormOverlay(e) {
+      if (e.target.id === 'formOverlay') hideForm();
+    }
+
+    // ---- Form Helpers ----
+    function buildWeaponCheckboxes(selected) {
+      var container = document.getElementById('weaponCheckboxes');
+      var html = '';
+      ALL_WEAPONS.forEach(function(w) {
+        var checked = selected.indexOf(w) !== -1 ? 'checked' : '';
+        html += '<label class="weapon-checkbox"><input type="checkbox" value="' + w + '" ' + checked + ' onchange="onWeaponChange()"> ' + w + '</label>';
+      });
+      container.innerHTML = html;
+    }
+
+    function onWeaponChange() {
+      var selected = [];
+      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selected.push(cb.value); });
+      
+      // Update tabs
+      updateSkillsTabs();
+      updatePotentialsTabs();
+    }
+
+    function updateSkillsTabs() {
+      var selected = [];
+      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selected.push(cb.value); });
+      
+      var container = document.getElementById('weaponSkillsTabs');
+      var html = '';
+      selected.forEach(function(w) {
+        var active = (w === currentSkillWeapon) ? 'active' : '';
+        html += '<button class="weapon-tab ' + active + '" onclick="showSkillEditor(\'' + w + '\')">' + w + '</button>';
+      });
+      container.innerHTML = html;
+
+      if (selected.length > 0) {
+        if (!currentSkillWeapon || selected.indexOf(currentSkillWeapon) === -1) {
+          showSkillEditor(selected[0]);
+        } else {
+          showSkillEditor(currentSkillWeapon);
+        }
+      } else {
+        document.getElementById('skillsEditor').innerHTML = '<p class="form-hint">Select a weapon type first</p>';
+      }
+    }
+
+    function showSkillEditor(weapon) {
+      currentSkillWeapon = weapon;
+      document.querySelectorAll('#weaponSkillsTabs .weapon-tab').forEach(function(t) {
+        t.classList.toggle('active', t.textContent === weapon);
+      });
+
+      var skills = tempSkills[weapon] || [];
+      // Ensure basic skills exist
+      if (skills.length === 0) {
+        skills = [
+          { name: 'Normal Attack', type: 'Normal Attack', description: '' },
+          { name: 'Skill 1', type: 'Skill', description: '' },
+          { name: 'Skill 2', type: 'Skill', description: '' },
+          { name: 'Ultimate', type: 'Ultimate', description: '' }
+        ];
+        tempSkills[weapon] = skills;
+      }
+
+      var html = '';
+      skills.forEach(function(sk, i) {
+        html += '<div class="skill-input-group">';
+        html += '<div class="form-row">';
+        html += '<div class="form-group"><label>Skill Name</label><input type="text" value="' + (sk.name||'').replace(/"/g,'&quot;') + '" oninput="updateTempSkill(' + i + ',\'name\',this.value)"></div>';
+        html += '<div class="form-group"><label>Type</label><select onchange="updateTempSkill(' + i + ',\'type\',this.value)">';
+        SKILL_TYPES.forEach(function(t) {
+          var sel = (sk.type === t) ? 'selected' : '';
+          html += '<option value="' + t + '" ' + sel + '>' + t + '</option>';
+        });
+        html += '</select></div>';
+        html += '</div>';
+        html += '<div class="form-group"><label>Description</label><textarea rows="2" oninput="updateTempSkill(' + i + ',\'description\',this.value)">' + (sk.description||'') + '</textarea></div>';
+        html += '<button class="btn-remove-item" onclick="removeTempSkill(' + i + ')">Remove Skill</button>';
+        html += '</div>';
+      });
+      html += '<button type="button" class="btn-add-item" onclick="addTempSkill()">+ Add Skill</button>';
+      document.getElementById('skillsEditor').innerHTML = html;
+    }
+
+    function updateTempSkill(idx, field, val) {
+      if (!tempSkills[currentSkillWeapon]) tempSkills[currentSkillWeapon] = [];
+      tempSkills[currentSkillWeapon][idx][field] = val;
+    }
+
+    function addTempSkill() {
+      if (!tempSkills[currentSkillWeapon]) tempSkills[currentSkillWeapon] = [];
+      tempSkills[currentSkillWeapon].push({ name: '', type: 'Skill', description: '' });
+      showSkillEditor(currentSkillWeapon);
+    }
+
+    function removeTempSkill(idx) {
+      tempSkills[currentSkillWeapon].splice(idx, 1);
+      showSkillEditor(currentSkillWeapon);
+    }
+
+    function updatePotentialsTabs() {
+      var selected = [];
+      document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selected.push(cb.value); });
+      
+      var container = document.getElementById('weaponPotentialsTabs');
+      var html = '';
+      selected.forEach(function(w) {
+        var active = (w === currentPotWeapon) ? 'active' : '';
+        html += '<button class="weapon-tab ' + active + '" onclick="showPotentialsEditor(\'' + w + '\')">' + w + '</button>';
+      });
+      container.innerHTML = html;
+
+      if (selected.length > 0) {
+        if (!currentPotWeapon || selected.indexOf(currentPotWeapon) === -1) {
+          showPotentialsEditor(selected[0]);
+        } else {
+          showPotentialsEditor(currentPotWeapon);
+        }
+      } else {
+        document.getElementById('potentialsEditor').innerHTML = '<p class="form-hint">Select a weapon type first</p>';
+      }
+    }
+
+    function showPotentialsEditor(weapon) {
+      currentPotWeapon = weapon;
+      document.querySelectorAll('#weaponPotentialsTabs .weapon-tab').forEach(function(t) {
+        t.classList.toggle('active', t.textContent === weapon);
+      });
+
+      var pots = tempPotentials[weapon] || [];
+      if (pots.length === 0) {
+        for (var i = 1; i <= 10; i++) pots.push({ tier: 'Tier ' + i, description: '' });
+        tempPotentials[weapon] = pots;
+      }
+
+      var html = '<div class="potentials-input-grid">';
+      pots.forEach(function(p, i) {
+        html += '<div class="pot-input-group">';
+        html += '<label>Tier ' + (i+1) + '</label>';
+        html += '<textarea rows="2" placeholder="Bonus effect..." oninput="updateTempPot(' + i + ',this.value)">' + (p.description||'') + '</textarea>';
+        html += '</div>';
+      });
+      html += '</div>';
+      document.getElementById('potentialsEditor').innerHTML = html;
+    }
+
+    function updateTempPot(idx, val) {
+      tempPotentials[currentPotWeapon][idx].description = val;
+    }
+
+    function addCostumeField() {
+      var div = document.createElement('div');
+      div.className = 'costume-input-row';
+      div.innerHTML = '<input type="text" class="costume-input" placeholder="Costume name"><button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button>';
+      document.getElementById('costumesEditor').appendChild(div);
+    }
+
+    // ---- Image Upload ----
+    function handleImageUpload(input) {
+      if (input.files && input.files[0]) {
+        tempImageFile = input.files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImg').src = e.target.result;
+          document.getElementById('imagePreview').style.display = '';
+          document.getElementById('imagePrompt').style.display = 'none';
+        };
+        reader.readAsDataURL(tempImageFile);
+      }
+    }
+
+    // ---- Actions ----
+    async function saveCharacter() {
+      var name = document.getElementById('charName').value.trim();
+      if (!name) { alert('Name is required'); return; }
+
+      var saveBtn = document.getElementById('saveBtn');
+      var saveBtnText = document.getElementById('saveBtnText');
+      var saveBtnLoading = document.getElementById('saveBtnLoading');
+
+      saveBtn.disabled = true;
+      saveBtnText.style.display = 'none';
+      saveBtnLoading.style.display = 'inline';
+
+      try {
+        var selectedTypes = [];
+        document.querySelectorAll('#weaponCheckboxes input:checked').forEach(function(cb) { selectedTypes.push(cb.value); });
+
+        var costumes = [];
+        document.querySelectorAll('.costume-input').forEach(function(input) {
+          if (input.value.trim()) costumes.push(input.value.trim());
+        });
+
+        // Clean up skills/potentials for unselected weapons
+        var finalSkills = {};
+        var finalPotentials = {};
+        selectedTypes.forEach(function(w) {
+          if (tempSkills[w]) finalSkills[w] = tempSkills[w];
+          if (tempPotentials[w]) finalPotentials[w] = tempPotentials[w];
+        });
+
+        var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        
+        var charData = {
+          name: name,
+          rarity: document.getElementById('charRarity').value,
+          tier: document.getElementById('charTier').value,
+          slug: slug,
+          description: document.getElementById('charDesc').value,
+          types: selectedTypes,
+          skills: finalSkills,
+          potentials: finalPotentials,
+          costumes: costumes
+        };
+
+        // Upload image if changed
+        if (tempImageFile) {
+          var upload = await SupaDB.uploadImage(tempImageFile, slug);
+          if (upload.error) throw upload.error;
+          charData.image = upload.url;
+        } else if (editingId) {
+          // Keep existing image
+          var existing = allCharacters.find(function(c){ return c.id === editingId; });
+          if (existing) charData.image = existing.image;
+        }
+
+        var result;
+        if (editingId) {
+          result = await CharDB.update(editingId, charData);
+        } else {
+          result = await CharDB.add(charData);
+        }
+
+        if (result.error) throw result.error;
+
+        showNotification('Character saved successfully!', 'success');
+        hideForm();
+      } catch (err) {
+        console.error('Save failed:', err);
+        alert('Failed to save: ' + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtnText.style.display = 'inline';
+        saveBtnLoading.style.display = 'none';
+      }
+    }
+
+    async function deleteCharacter(id, name) {
+      if (!confirm('Are you sure you want to delete ' + name + '?')) return;
+      
+      try {
+        var result = await CharDB.remove(id);
+        if (result.error) throw result.error;
+        showNotification('Character deleted', 'info');
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
+      }
+    }
+
+    function doExport() {
+      CharDB.exportJSON(allCharacters);
+    }
+
+    function handleImport(event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          var data = JSON.parse(e.target.result);
+          if (!Array.isArray(data)) {
+            alert('Invalid JSON format. Expected an array of characters.');
+            return;
+          }
+          var result = await SupaDB.bulkImport(data);
+          if (result.error) {
+            console.error(result.error);
+            alert('Import failed. Check console.');
+          } else {
+            alert('Characters imported successfully.');
+            location.reload();
+          }
+        } catch (err) {
+          console.error(err);
+          alert('JSON parsing error.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function showNotification(msg, type) {
+      var n = document.createElement('div');
+      n.style.position = 'fixed';
+      n.style.bottom = '20px';
+      n.style.right = '20px';
+      n.style.padding = '12px 24px';
+      n.style.borderRadius = '8px';
+      n.style.color = 'white';
+      n.style.zIndex = '10000';
+      n.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+      n.style.fontFamily = 'sans-serif';
+      n.style.fontSize = '14px';
+      n.style.animation = 'slideIn 0.3s ease-out';
+      
+      if (type === 'success') n.style.backgroundColor = '#16a34a';
+      else if (type === 'info') n.style.backgroundColor = '#3b82f6';
+      else n.style.backgroundColor = '#ef4444';
+      
+      n.textContent = msg;
+      document.body.appendChild(n);
+      
+      setTimeout(function() {
+        n.style.opacity = '0';
+        n.style.transition = 'opacity 0.5s';
+        setTimeout(function() { n.remove(); }, 500);
+      }, 3000);
+    }
+  </script>
+  <style>
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  </style>
+</body>
+</html>

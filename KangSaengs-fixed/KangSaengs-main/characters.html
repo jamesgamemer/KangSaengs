@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Characters - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/navbar-auth.css">
+  <style>
+    .page-header {
+      background: linear-gradient(180deg, #0d1f4a 0%, var(--dark2) 100%);
+      padding: 80px 20px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(96,165,250,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(96,165,250,0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .page-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(32px, 6vw, 56px);
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 30px var(--glow-gold);
+      position: relative;
+      z-index: 1;
+    }
+    .page-header-sub {
+      color: var(--muted);
+      font-size: 15px;
+      letter-spacing: 2px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .search-bar {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--dark3);
+      color: white;
+      margin-bottom: 20px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+    .search-bar:focus { outline: none; border-color: var(--gold); }
+    .search-bar::placeholder { color: var(--muted); }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 30px;
+    }
+    .filters button {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--dark3);
+      color: var(--muted);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .filters button:hover,
+    .filters button.active-filter {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(240,192,64,0.08);
+    }
+    #charactersGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--dark3);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: center;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--gold);
+      box-shadow: 0 8px 24px rgba(240,192,64,0.18);
+    }
+    .card img { width: 100%; display: block; }
+    .rarity { font-size: 10px; padding: 3px; font-weight: 700; }
+    .name   { font-size: 12px; padding: 6px; font-weight: 600; }
+    a { text-decoration: none; color: white; }
+    .card-rarity-tag {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      z-index: 2;
+    }
+    .card-rarity-tag.SSR {
+      background: rgba(250,204,21,0.2);
+      color: var(--ssr);
+      border: 1px solid rgba(250,204,21,0.3);
+    }
+    .card-rarity-tag.SR {
+      background: rgba(167,139,250,0.2);
+      color: var(--sr);
+      border: 1px solid rgba(167,139,250,0.3);
+    }
+    .loading-msg { text-align:center; padding:60px; color:var(--muted); font-size:16px; }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Bar -->
+  <div class="admin-bar" id="adminBar" style="display:none;">
+    <div class="admin-bar-left">
+      <span class="admin-badge">ADMIN</span>
+      <a href="admin.html" class="admin-bar-link">Dashboard</a>
+      <a href="admin.html" class="admin-bar-link">+ Add Character</a>
+    </div>
+    <div class="admin-bar-right">
+      <button class="admin-bar-btn" onclick="Auth.logout()">Logout</button>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div class="page-header-title">&#9876; Characters</div>
+      <div class="page-header-sub">Browse All Heroes &bull; Filter by Weapon</div>
+    </div>
+
+    <div class="container">
+      <input id="searchInput" class="search-bar" placeholder="&#128269; Search a character..." oninput="applyFilters()">
+      <div class="filters" id="filterButtons"></div>
+      <div id="charactersGrid">
+        <div class="loading-msg" style="grid-column:1/-1;">Loading characters...</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+    <p style="margin-top:8px;">
+      <a href="index.html">Home</a> &nbsp;&bull;&nbsp;
+      <a href="characters.html">Characters</a> &nbsp;&bull;&nbsp;
+      <a href="tierlist.html">Tier List</a> &nbsp;&bull;&nbsp;
+      <a href="events.html">Events</a>
+    </p>
+  </footer>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    var currentFilter = 'all';
+    var allCharacters = [];
+
+    function filterWeapon(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.filters button').forEach(function(b) { b.classList.remove('active-filter'); });
+      btn.classList.add('active-filter');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      var search = document.getElementById('searchInput').value.toLowerCase();
+      var cards = document.querySelectorAll('.card');
+      cards.forEach(function(card) {
+        var name = (card.getAttribute('data-name') || '').toLowerCase();
+        var types = (card.getAttribute('data-types') || '').toLowerCase();
+        var matchSearch = name.indexOf(search) !== -1;
+        var matchFilter = currentFilter === 'all' || types.indexOf(currentFilter) !== -1;
+        card.style.display = (matchSearch && matchFilter) ? '' : 'none';
+      });
+    }
+
+    function buildFilters(chars) {
+      var typesMap = {};
+      chars.forEach(function(c) {
+        (c.types || []).forEach(function(t) { typesMap[t] = true; });
+      });
+      var types = Object.keys(typesMap).sort();
+      var container = document.getElementById('filterButtons');
+      var html = '<button onclick="filterWeapon(\'all\',this)" class="active-filter">All</button>';
+      types.forEach(function(t) {
+        var key = t.toLowerCase().replace(/\s+/g, '');
+        html += '<button onclick="filterWeapon(\'' + key + '\',this)">' + t + '</button>';
+      });
+      container.innerHTML = html;
+    }
+
+    function buildGrid(chars) {
+      var grid = document.getElementById('charactersGrid');
+      
+      if (!chars || chars.length === 0) {
+        grid.innerHTML = '<p class="loading-msg" style="grid-column:1/-1;">No characters found. Please check back later!</p>';
+        return;
+      }
+      
+      var seen = {};
+      var html = '';
+      chars.forEach(function(c) {
+        if (seen[c.name]) return;
+        seen[c.name] = true;
+        var typesStr = (c.types || []).map(function(t) { return t.toLowerCase().replace(/\s+/g, ''); }).join(',');
+        var linkParam = 'slug=' + encodeURIComponent(c.slug);
+        var imgUrl = c.image || 'https://placehold.co/300x400?text=No+Image';
+        html += '<a href="character.html?' + linkParam + '" class="card" data-name="' + c.name + '" data-types="' + typesStr + '">';
+        html += '<div class="card-rarity-tag ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
+        html += '<img src="' + imgUrl + '" alt="' + c.name + '" loading="lazy" onerror="this.src=\'https://placehold.co/300x400?text=Error\'">';
+        html += '<div class="rarity ' + (c.rarity || 'SR') + '">' + (c.rarity || 'SR') + '</div>';
+        html += '<div class="name">' + c.name + '</div>';
+        html += '</a>';
+      });
+      grid.innerHTML = html;
+    }
+
+    // ---- Initialize ----
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Auth check
+      const admin = await Auth.isLoggedIn();
+      if (admin) {
+        document.getElementById('adminBar').style.display = 'flex';
+      }
+
+      // Load characters
+      allCharacters = await CharDB.loadAll();
+      buildFilters(allCharacters);
+      buildGrid(allCharacters);
+
+      // Realtime updates
+      SupaDB.subscribeToChanges(async () => {
+        allCharacters = await CharDB.loadAll();
+        buildFilters(allCharacters);
+        buildGrid(allCharacters);
+        applyFilters();
+      });
+    });
+  </script>
+</body>
+</html>

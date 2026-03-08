@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar-auth.css?v=20260308">
+  <style>
+    .page-header {
+      background: linear-gradient(180deg, #0d1f4a 0%, var(--dark2) 100%);
+      padding: 80px 20px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(96,165,250,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(96,165,250,0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .page-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(32px, 6vw, 56px);
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 30px var(--glow-gold);
+      position: relative;
+      z-index: 1;
+    }
+    .page-header-sub {
+      color: var(--muted);
+      font-size: 15px;
+      letter-spacing: 2px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .filter-tab {
+      padding: 9px 22px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--dark3);
+      color: var(--muted);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .filter-tab:hover, .filter-tab.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(240,192,64,0.08);
+    }
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .event-card {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .event-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--gold);
+      box-shadow: 0 10px 30px rgba(240,192,64,0.15);
+    }
+    .event-card-banner { height: 8px; }
+    .event-card-body { padding: 24px; }
+    .event-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+    .status-active   { background: rgba(11,232,129,0.15); color: #0be881; }
+    .status-upcoming { background: rgba(59,130,246,0.15);  color: var(--blue); }
+    .status-ended    { background: rgba(148,163,184,0.15); color: var(--muted); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status-active .status-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.4); }
+    }
+    .event-title {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .event-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .event-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+    .event-rewards { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .reward-tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      background: rgba(240,192,64,0.12);
+      color: var(--gold);
+      border: 1px solid rgba(240,192,64,0.25);
+      font-weight: 600;
+    }
+    .countdown { display: flex; gap: 12px; margin-top: 14px; }
+    .cd-block {
+      text-align: center;
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 8px 12px;
+      min-width: 52px;
+    }
+    .cd-num {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gold);
+      display: block;
+    }
+    .cd-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html">&#9876; Characters</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html" class="active">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div class="page-header-title">&#127881; Events</div>
+      <div class="page-header-sub">Current &amp; Upcoming In-Game Events</div>
+    </div>
+
+    <div class="container">
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterEvents('all',this)">All</button>
+        <button class="filter-tab" onclick="filterEvents('active',this)">Active</button>
+        <button class="filter-tab" onclick="filterEvents('upcoming',this)">Upcoming</button>
+        <button class="filter-tab" onclick="filterEvents('ended',this)">Ended</button>
+      </div>
+      <div class="events-grid" id="eventsGrid"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+    <p style="margin-top:8px;">
+      <a href="index.html">Home</a> &nbsp;&bull;&nbsp;
+      <a href="characters.html">Characters</a> &nbsp;&bull;&nbsp;
+      <a href="tierlist.html">Tier List</a> &nbsp;&bull;&nbsp;
+      <a href="events.html">Events</a>
+    </p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navbar.js?v=20260308"></script>
+  <script>
+    var events = [
+      { id:1, status:'active',   title:'Holy War Raid',        desc:'Team up with allies to defeat the Demon King in the limited-time Holy War Raid. Earn exclusive SSR shards and rare equipment.',                                start:'Mar 1, 2026',  end:'Mar 15, 2026', endDate:new Date('2026-03-15T23:59:59'), color:'linear-gradient(90deg,#3b82f6,#60a5fa)', rewards:['SSR Shard x3','Gold x50,000','Raid Medal x20'] },
+      { id:2, status:'active',   title:'New Character: Tristan',desc:'The son of Meliodas and Elizabeth joins the battle. Limited banner available for a short time with boosted SSR rates.',                                     start:'Mar 5, 2026',  end:'Mar 20, 2026', endDate:new Date('2026-03-20T23:59:59'), color:'linear-gradient(90deg,#f0c040,#ffd966)', rewards:['Tristan SSR','Summon Ticket x10','Gems x500'] },
+      { id:3, status:'active',   title:'Daily Login Bonus',     desc:'Log in every day during March to collect cumulative rewards including gems, tickets, and rare materials.',                                                     start:'Mar 1, 2026',  end:'Mar 31, 2026', endDate:new Date('2026-03-31T23:59:59'), color:'linear-gradient(90deg,#0be881,#34d399)', rewards:['Gems x1,200','Summon Ticket x5','EXP Potion x30'] },
+      { id:4, status:'upcoming', title:'Guild War Season 4',    desc:'Compete against guilds worldwide in the new Guild War season. Climb the leaderboard to earn exclusive guild rewards.',                                        start:'Mar 20, 2026', end:'Apr 5, 2026',  endDate:new Date('2026-04-05T23:59:59'), color:'linear-gradient(90deg,#a78bfa,#c4b5fd)', rewards:['Guild Crest','Gems x2,000','Exclusive Title'] },
+      { id:5, status:'upcoming', title:'Spring Festival',       desc:'Celebrate the spring season with special story quests, limited cosmetics, and a special gacha banner featuring seasonal costumes.',                           start:'Mar 25, 2026', end:'Apr 10, 2026', endDate:new Date('2026-04-10T23:59:59'), color:'linear-gradient(90deg,#f472b6,#fb7185)', rewards:['Spring Costume','Gems x800','Flower Tokens x100'] },
+      { id:6, status:'ended',    title:"Valentine's Day Event", desc:"A special event celebrating Valentine's Day with exclusive story content and limited cosmetics.",                                                             start:'Feb 10, 2026', end:'Feb 28, 2026', endDate:new Date('2026-02-28T23:59:59'), color:'linear-gradient(90deg,#f43f5e,#fb7185)', rewards:['Heart Charm','Gems x600','Valentine Frame'] },
+    ];
+
+    var currentFilter = 'all';
+
+    function filterEvents(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-tab').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderEvents();
+    }
+
+    function pad(n){ return n < 10 ? '0'+n : n; }
+
+    function renderEvents() {
+      var grid = document.getElementById('eventsGrid');
+      var filtered = currentFilter === 'all' ? events : events.filter(function(e){ return e.status === currentFilter; });
+
+      grid.innerHTML = filtered.map(function(ev) {
+        var statusLabel = ev.status === 'active' ? 'Active' : ev.status === 'upcoming' ? 'Upcoming' : 'Ended';
+        var statusCls   = 'status-' + ev.status;
+        var rewardTags  = ev.rewards.map(function(r){ return '<span class="reward-tag">'+r+'</span>'; }).join('');
+
+        var countdownHTML = '';
+        if (ev.status !== 'ended') {
+          var now  = new Date();
+          var diff = ev.endDate - now;
+          if (diff > 0) {
+            var days  = Math.floor(diff / 86400000);
+            var hours = Math.floor((diff % 86400000) / 3600000);
+            var mins  = Math.floor((diff % 3600000) / 60000);
+            var secs  = Math.floor((diff % 60000) / 1000);
+            countdownHTML = '<div style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:14px;text-transform:uppercase;">Time Remaining</div>'
+              + '<div class="countdown">'
+              + '<div class="cd-block"><span class="cd-num" id="cd-d-'+ev.id+'">'+days+'</span><span class="cd-label">Days</span></div>'
+              + '<div class="cd-block"><span class="cd-num" id="cd-h-'+ev.id+'">'+hours+'</span><span class="cd-label">Hrs</span></div>'
+              + '<div class="cd-block"><span class="cd-num" id="cd-m-'+ev.id+'">'+mins+'</span><span class="cd-label">Min</span></div>'
+              + '<div class="cd-block"><span class="cd-num" id="cd-s-'+ev.id+'">'+secs+'</span><span class="cd-label">Sec</span></div>'
+              + '</div>';
+          }
+        }
+
+        return '<div class="event-card reveal" data-status="'+ev.status+'">'
+          + '<div class="event-card-banner" style="background:'+ev.color+';"></div>'
+          + '<div class="event-card-body">'
+          + '<div class="event-status '+statusCls+'"><span class="status-dot"></span>'+statusLabel+'</div>'
+          + '<div class="event-title">'+ev.title+'</div>'
+          + '<div class="event-desc">'+ev.desc+'</div>'
+          + '<div class="event-meta"><div>&#128197; '+ev.start+'</div><div>&#8594; '+ev.end+'</div></div>'
+          + '<div class="event-rewards">'+rewardTags+'</div>'
+          + countdownHTML
+          + '</div></div>';
+      }).join('');
+
+      var obs = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+      }, { threshold: 0.08 });
+      document.querySelectorAll('.event-card.reveal').forEach(function(el){ obs.observe(el); });
+    }
+
+    renderEvents();
+
+    setInterval(function(){
+      events.forEach(function(ev){
+        if(ev.status === 'ended') return;
+        var now = new Date();
+        var diff = ev.endDate - now;
+        if(diff <= 0) return;
+        var days  = Math.floor(diff / 86400000);
+        var hours = Math.floor((diff % 86400000) / 3600000);
+        var mins  = Math.floor((diff % 3600000) / 60000);
+        var secs  = Math.floor((diff % 60000) / 1000);
+        var d = document.getElementById('cd-d-'+ev.id);
+        var h = document.getElementById('cd-h-'+ev.id);
+        var m = document.getElementById('cd-m-'+ev.id);
+        var s = document.getElementById('cd-s-'+ev.id);
+        if(d) d.textContent = days;
+        if(h) h.textContent = hours;
+        if(m) m.textContent = mins;
+        if(s) s.textContent = secs;
+      });
+    }, 1000);
+  </script>
+</body>
+</html>

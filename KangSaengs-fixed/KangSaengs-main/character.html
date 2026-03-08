@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/character-detail.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/navbar-auth.css">
+</head>
+<body>
+
+  <!-- Admin Bar -->
+  <div class="admin-bar" id="adminBar" style="display:none;">
+    <div class="admin-bar-left">
+      <span class="admin-badge">ADMIN</span>
+      <a href="admin.html" class="admin-bar-link">Dashboard</a>
+    </div>
+    <div class="admin-bar-right">
+      <button class="admin-bar-btn" onclick="Auth.logout()">Logout</button>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="characters.html" class="page-back-v2"><span class="arrow">&#8592;</span> Back to Characters</a>
+      <div id="characterContent">
+        <div class="no-data-msg">Loading character data...</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    var charData = null;
+    var currentWeapon = null;
+
+    // ---- Utility Functions ----
+    function esc(str) {
+      if (!str) return '';
+      var div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function getBadgeClass(type) {
+      var m = {
+        'adventure':'badge-adventure','passive':'badge-passive',
+        'normal':'badge-normal','normal attack':'badge-normal',
+        'special':'badge-special','skill':'badge-skill',
+        'tag':'badge-tag','ultimate':'badge-ultimate'
+      };
+      return m[(type||'').toLowerCase().trim()] || 'badge-normal';
+    }
+
+    function highlightNums(text) {
+      if (!text) return '';
+      var t = esc(text);
+      t = t.replace(/(\d+(?:\.\d+)?%)/g, '<span class="hl-num">$1</span>');
+      t = t.replace(/(\d+)\s*(sec\b)/g, '<span class="hl-dur">$1 $2</span>');
+      return t;
+    }
+
+    function extractHits(desc) {
+      var hits = [];
+      var pattern = /(\d+(?:st|nd|rd|th)\s+hit:\s*\d+(?:\.\d+)?%)/gi;
+      var match;
+      var clean = desc || '';
+      while ((match = pattern.exec(desc)) !== null) {
+        hits.push(match[1]);
+      }
+      hits.forEach(function(h) { clean = clean.replace(h, ''); });
+      clean = clean.replace(/\s{2,}/g, ' ').trim();
+      return { clean: clean, hits: hits };
+    }
+
+    // ---- Render Functions ----
+    function renderPage(c) {
+      charData = c;
+      document.title = c.name + ' - 7DS Origin';
+
+      var hasSkills = false;
+      if (c.skills && typeof c.skills === 'object') {
+        for (var k in c.skills) {
+          if (c.skills[k] && c.skills[k].length > 0) { hasSkills = true; break; }
+        }
+      }
+
+      var weaponKeys = [];
+      if (hasSkills) {
+        var skillKeys = Object.keys(c.skills);
+        (c.types || []).forEach(function(t) {
+          var tNorm = t.toLowerCase().replace(/\s+/g, '');
+          skillKeys.forEach(function(sk) {
+            var skNorm = sk.toLowerCase().replace(/[\s_]+/g, '');
+            if (skNorm === tNorm && weaponKeys.indexOf(sk) === -1) weaponKeys.push(sk);
+          });
+        });
+        skillKeys.forEach(function(sk) {
+          if (weaponKeys.indexOf(sk) === -1 && c.skills[sk] && c.skills[sk].length > 0) weaponKeys.push(sk);
+        });
+      }
+
+      var rarityClass = (c.rarity === 'SSR') ? 'ssr' : 'sr';
+      var typePills = (c.types || []).map(function(t) {
+        return '<span class="type-pill">' + esc(t) + '</span>';
+      }).join('');
+
+      var html = '<div class="char-detail-header">';
+      html += '<div class="char-detail-portrait">';
+      html += '<h1>' + esc(c.name) + '</h1>';
+      var imgUrl = c.image || 'https://placehold.co/300x400?text=No+Image';
+      html += '<img src="' + esc(imgUrl) + '" class="char-img" alt="' + esc(c.name) + '" onerror="this.src=\'https://placehold.co/300x400?text=Error\'">';
+      html += '<div><span class="char-rarity-badge ' + rarityClass + '">' + esc(c.rarity) + '</span></div>';
+      html += '</div>';
+      html += '<div class="char-detail-info">';
+      html += '<div class="section-label">Description</div>';
+      html += '<p class="desc-text">' + esc(c.description) + '</p>';
+      html += '<div class="char-types"><span class="label">Weapon Types:</span>' + typePills + '</div>';
+      html += '</div></div>';
+
+      if (hasSkills && weaponKeys.length > 0) {
+        html += '<div class="weapon-tabs-wrapper"><div class="weapon-tabs">';
+        weaponKeys.forEach(function(wk, i) {
+          var display = wk.replace(/_/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+          (c.types || []).forEach(function(t) {
+            if (t.toLowerCase().replace(/\s+/g, '') === wk.toLowerCase().replace(/[\s_]+/g, '')) display = t;
+          });
+          var active = (i === 0) ? ' class="active"' : '';
+          html += '<button onclick="showWeapon(\'' + esc(wk) + '\',this)"' + active + '>' + esc(display) + '</button>';
+        });
+        html += '</div></div>';
+        html += '<div id="weaponContent"></div>';
+        currentWeapon = weaponKeys[0];
+      } else {
+        html += '<div class="no-data-msg">';
+        html += '<p>&#128679; Skills data will be added soon.</p>';
+        html += '</div>';
+      }
+
+      if (!c) {
+        document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">Character not found.</div>';
+        return;
+      }
+
+      document.getElementById('characterContent').innerHTML = html;
+
+      if (hasSkills && weaponKeys.length > 0) {
+        showWeapon(weaponKeys[0], document.querySelector('.weapon-tabs button'));
+      }
+    }
+
+    function showWeapon(type, btn) {
+      currentWeapon = type;
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+
+      var skills = (charData.skills && charData.skills[type]) || [];
+      var pots = (charData.potentials && charData.potentials[type]) || [];
+      var costumes = charData.costumes || [];
+
+      var html = '<div class="skills-grid-v2">';
+      skills.forEach(function(sk, i) {
+        var stype = sk.type || 'Normal';
+        var badge = getBadgeClass(stype);
+        var isUlt = stype.toLowerCase() === 'ultimate';
+        var extracted = extractHits(sk.description || '');
+
+        html += '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
+        html += '<div class="skill-header"><div class="skill-name">' + esc(sk.name) + '</div><span class="skill-type-badge ' + badge + '">' + esc(stype) + '</span></div>';
+        if (extracted.clean) html += '<div class="skill-desc">' + highlightNums(extracted.clean) + '</div>';
+        if (extracted.hits.length > 0) {
+          html += '<div class="dmg-breakdown">';
+          extracted.hits.forEach(function(h) {
+            var parts = h.split(':');
+            if (parts.length >= 2) html += '<div class="dmg-box"><span class="dmg-label">' + esc(parts[0].trim()) + '</span><span class="dmg-value">' + esc(parts[1].trim()) + '</span></div>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+
+      if (pots.length > 0) {
+        html += '<div class="potentials-section-v2"><div class="detail-section-title">Potentials</div><div class="potentials-grid-v2">';
+        pots.forEach(function(p, i) {
+          var num = (p.tier || '').toString().match(/\d+/) || [i+1];
+          html += '<div class="potential-card-v2"><div class="tier-label">Tier ' + num + '</div><div class="tier-desc">' + highlightNums(p.description || '') + '</div></div>';
+        });
+        html += '</div></div>';
+      }
+
+      if (costumes.length > 0) {
+        html += '<div class="costumes-section-v2"><div class="detail-section-title">Costumes</div><div class="costumes-grid-v2">';
+        costumes.forEach(function(c) {
+          var name = (typeof c === 'string') ? c : (c.name || '');
+          html += '<div class="costume-card-v2"><div class="costume-icon">&#128090;</div><p>' + esc(name) + '</p></div>';
+        });
+        html += '</div></div>';
+      }
+
+      document.getElementById('weaponContent').innerHTML = html;
+    }
+
+    // ---- Initialize ----
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Auth check
+      if (await Auth.isLoggedIn()) {
+        document.getElementById('adminBar').style.display = 'flex';
+      }
+
+      // Get slug from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get('slug');
+
+      if (slug) {
+        const character = await CharDB.getBySlug(slug);
+        if (character) {
+          renderPage(character);
+        } else {
+          document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">Character not found.</div>';
+        }
+      } else {
+        document.getElementById('characterContent').innerHTML = '<div class="no-data-msg">No character selected.</div>';
+      }
+    });
+  </script>
+</body>
+</html>

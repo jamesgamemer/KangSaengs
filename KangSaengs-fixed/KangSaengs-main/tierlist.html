@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tier List - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar-auth.css?v=20260308">
+  <style>
+    .page-header {
+      background: linear-gradient(180deg, #0d1f4a 0%, var(--dark2) 100%);
+      padding: 80px 20px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(96,165,250,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(96,165,250,0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .page-header-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(32px, 6vw, 56px);
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 30px var(--glow-gold);
+      position: relative;
+      z-index: 1;
+    }
+    .page-header-sub {
+      color: var(--muted);
+      font-size: 15px;
+      letter-spacing: 2px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Tier rows */
+    .tier-table { margin-bottom: 16px; }
+
+    .tier-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .tier-label-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      min-height: 80px;
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .tier-s-bg { background: rgba(255,107,107,0.15); color: #ff6b6b; border-right: 3px solid #ff6b6b; }
+    .tier-a-bg { background: rgba(255,159,67,0.15);  color: #ff9f43; border-right: 3px solid #ff9f43; }
+    .tier-b-bg { background: rgba(255,211,42,0.15);  color: #ffd32a; border-right: 3px solid #ffd32a; }
+    .tier-c-bg { background: rgba(11,232,129,0.15);  color: #0be881; border-right: 3px solid #0be881; }
+    .tier-d-bg { background: rgba(75,207,250,0.15);  color: #4bcffa; border-right: 3px solid #4bcffa; }
+
+    .tier-drop-zone {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--dark3);
+      min-height: 80px;
+      align-items: center;
+    }
+
+    .tier-drop-zone.drag-over {
+      background: rgba(240,192,64,0.06);
+      outline: 2px dashed rgba(240,192,64,0.4);
+    }
+
+    /* Character pool */
+    .pool-title {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      color: var(--gold);
+      margin: 32px 0 16px;
+      letter-spacing: 1px;
+    }
+
+    #characterPool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      min-height: 80px;
+    }
+
+    /* Draggable character chip */
+    .char-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .char-chip:active { cursor: grabbing; opacity: 0.7; }
+
+    .char-chip img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      pointer-events: none;
+      transition: border-color 0.2s;
+    }
+
+    .char-chip:hover img { border-color: var(--gold); }
+
+    .char-chip-name {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+      max-width: 60px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .char-chip.dragging { opacity: 0.4; }
+
+    /* Reset button */
+    .reset-btn {
+      margin-top: 20px;
+    }
+
+    /* Hint */
+    .drag-hint {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html">&#9876; Characters</a></li>
+      <li><a href="tierlist.html" class="active">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="page-header">
+      <div class="page-header-title">&#127942; Tier List</div>
+      <div class="page-header-sub">Drag &amp; Drop Characters to Build Your Tier List</div>
+    </div>
+
+    <div class="container">
+      <p class="drag-hint">&#128073; Drag characters from the pool below into any tier row. Drag back to the pool to remove.</p>
+
+      <!-- Tier rows -->
+      <div class="tier-table" id="tierTable">
+        <div class="tier-row">
+          <div class="tier-label-cell tier-s-bg">S</div>
+          <div class="tier-drop-zone" id="tier-S" data-tier="S"></div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-label-cell tier-a-bg">A</div>
+          <div class="tier-drop-zone" id="tier-A" data-tier="A"></div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-label-cell tier-b-bg">B</div>
+          <div class="tier-drop-zone" id="tier-B" data-tier="B"></div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-label-cell tier-c-bg">C</div>
+          <div class="tier-drop-zone" id="tier-C" data-tier="C"></div>
+        </div>
+        <div class="tier-row">
+          <div class="tier-label-cell tier-d-bg">D</div>
+          <div class="tier-drop-zone" id="tier-D" data-tier="D"></div>
+        </div>
+      </div>
+
+      <div class="pool-title">Character Pool</div>
+      <div id="characterPool"></div>
+
+      <div class="reset-btn">
+        <button class="btn btn-outline" onclick="resetTierList()">&#8635; Reset Tier List</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+    <p style="margin-top:8px;">
+      <a href="index.html">Home</a> &nbsp;&bull;&nbsp;
+      <a href="characters.html">Characters</a> &nbsp;&bull;&nbsp;
+      <a href="tierlist.html">Tier List</a> &nbsp;&bull;&nbsp;
+      <a href="events.html">Events</a>
+    </p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navbar.js?v=20260308"></script>
+  <script>
+    var allChars = [
+      {name:"Meliodas",  img:"../images/Meliodas.png"},
+      {name:"Escanor",   img:"../images/Escanor.png"},
+      {name:"Daisy",     img:"../images/Daisy.png"},
+      {name:"Tristan",   img:"../images/Tristan.png"},
+      {name:"Elizabeth", img:"../images/Elizabeth.png"},
+      {name:"Merlin",    img:"../images/Merlin.png"},
+      {name:"Derieri",   img:"../images/Derieri.png"},
+      {name:"King",      img:"../images/King.png"},
+      {name:"Diane",     img:"../images/Diane.png"},
+      {name:"Gowther",   img:"../images/Gowther.png"},
+      {name:"Ban",       img:"../images/Ban.png"},
+      {name:"Tioreh",    img:"../images/Tioreh.png"},
+      {name:"Gilthunder",img:"../images/Gilthunder.png"},
+      {name:"Hendrickson",img:"../images/Hendrickson.png"},
+      {name:"Jericho",   img:"../images/Jericho.png"},
+      {name:"Griamore",  img:"../images/Griamore.png"},
+      {name:"Howzer",    img:"../images/Howzer.png"},
+      {name:"Dreyfus",   img:"../images/Dreyfus.png"},
+      {name:"Elaine",    img:"../images/Elaine.png"},
+      {name:"Guila",     img:"../images/Guila.png"},
+      {name:"Dreydrin",  img:"../images/Dreydrin.png"},
+      {name:"Klotho",    img:"../images/Klotho.png"},
+      {name:"Manny",     img:"../images/Manny.png"},
+      {name:"Drake",     img:"../images/Drake.png"},
+      {name:"Bug",       img:"../images/Bug.png"},
+      {name:"Slader",    img:"../images/Slader.png"},
+    ];
+
+    var draggedEl = null;
+
+    function createChip(char) {
+      var div = document.createElement('div');
+      div.className = 'char-chip';
+      div.draggable = true;
+      div.dataset.name = char.name;
+      var imgUrl = char.img || 'https://placehold.co/100x100?text=No+Image';
+      div.innerHTML = '<img src="'+imgUrl+'" alt="'+char.name+'" onerror="this.src=\'https://placehold.co/100x100?text=Error\'"><span class="char-chip-name">'+char.name+'</span>';
+
+      div.addEventListener('dragstart', function(e) {
+        draggedEl = div;
+        div.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      div.addEventListener('dragend', function() {
+        div.classList.remove('dragging');
+        draggedEl = null;
+        document.querySelectorAll('.tier-drop-zone, #characterPool').forEach(function(z){ z.classList.remove('drag-over'); });
+      });
+      return div;
+    }
+
+    function setupDropZone(zone) {
+      zone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', function() {
+        zone.classList.remove('drag-over');
+      });
+      zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        if (draggedEl) zone.appendChild(draggedEl);
+      });
+    }
+
+    function initPool() {
+      var pool = document.getElementById('characterPool');
+      pool.innerHTML = '';
+      if (!allChars || allChars.length === 0) {
+        pool.innerHTML = '<p style="color:#64748b;padding:20px;text-align:center;">No characters available</p>';
+        return;
+      }
+      allChars.forEach(function(c) { pool.appendChild(createChip(c)); });
+    }
+
+    function resetTierList() {
+      document.querySelectorAll('.tier-drop-zone').forEach(function(z){ z.innerHTML = ''; });
+      initPool();
+    }
+
+    /* Setup all drop zones */
+    document.querySelectorAll('.tier-drop-zone').forEach(setupDropZone);
+    setupDropZone(document.getElementById('characterPool'));
+
+    initPool();
+  </script>
+</body>
+</html>

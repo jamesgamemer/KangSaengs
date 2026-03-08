@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/navbar-auth.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html">&#9876; Characters</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-icon">&#128272;</div>
+          <h1>Admin Login</h1>
+          <p>Sign in to manage character data</p>
+        </div>
+
+        <div id="modeIndicator" style="text-align:center;margin-bottom:16px;font-size:12px;color:#64748b;"></div>
+
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="Enter admin email" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password" required autocomplete="current-password">
+          </div>
+          <div id="loginError" class="login-error" style="display:none;"></div>
+          <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+        </form>
+
+        <div class="login-footer">
+          <a href="characters.html">&#8592; Back to Characters</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Configuration and Client -->
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    async function handleLogin(e) {
+      e.preventDefault();
+      var email = document.getElementById('loginEmail').value.trim();
+      var password = document.getElementById('loginPassword').value;
+      var errorEl = document.getElementById('loginError');
+      var btn = document.getElementById('loginBtn');
+
+      errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+
+      // Supabase Auth
+      var result = await Auth.login(email, password);
+      
+      if (result !== true) {
+        errorEl.textContent = result.error.message || 'Invalid email or password';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        document.getElementById('loginPassword').value = '';
+      }
+      return false;
+    }
+
+    // Additional check on load
+    document.addEventListener("DOMContentLoaded", async () => {
+      const indicator = document.getElementById('modeIndicator');
+      if (SupaDB.isConnected()) {
+        indicator.textContent = 'Supabase connected';
+        indicator.style.color = '#22c55e';
+        
+        // If already logged in, redirect
+        if (await Auth.isLoggedIn()) {
+          window.location.href = 'admin.html';
+        }
+      } else {
+        indicator.textContent = 'Supabase initialization failed';
+        indicator.style.color = '#ef4444';
+      }
+    });
+  </script>
+</body>
+</html>
