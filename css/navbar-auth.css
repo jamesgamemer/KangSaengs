@@ -1,0 +1,120 @@
+/* ============================================================
+   NAVBAR - Login / Admin Button Styles
+   ============================================================ */
+
+.nav-auth-item {
+  margin-left: 8px;
+}
+
+.nav-login-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  color: var(--gold) !important;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1.5px solid var(--gold);
+  border-radius: 20px;
+  background: rgba(240,192,64,0.08);
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.nav-login-btn:hover {
+  background: rgba(240,192,64,0.2);
+  box-shadow: 0 0 12px rgba(240,192,64,0.3);
+  color: #fff !important;
+}
+
+.nav-login-btn::after {
+  display: none !important;
+}
+
+.nav-login-icon {
+  font-size: 14px;
+}
+
+.nav-auth-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.nav-admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  color: #4ade80 !important;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1.5px solid #4ade80;
+  border-radius: 20px 0 0 20px;
+  background: rgba(74,222,128,0.08);
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.nav-admin-btn:hover {
+  background: rgba(74,222,128,0.2);
+  box-shadow: 0 0 12px rgba(74,222,128,0.3);
+  color: #fff !important;
+}
+
+.nav-admin-btn::after {
+  display: none !important;
+}
+
+.nav-admin-icon {
+  font-size: 14px;
+}
+
+.nav-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  color: #f87171;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1.5px solid #4ade80;
+  border-left: none;
+  border-radius: 0 20px 20px 0;
+  background: rgba(248,113,113,0.06);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.nav-logout-btn:hover {
+  background: rgba(248,113,113,0.2);
+  color: #fff;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .nav-auth-item {
+    margin-left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  .nav-auth-group {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .nav-login-btn {
+    justify-content: center;
+    margin: 0 20px;
+    border-radius: 8px;
+  }
+}
