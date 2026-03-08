@@ -605,9 +605,15 @@
 
         // Upload image if changed
         if (tempImageFile) {
-          var upload = await SupaDB.uploadImage(tempImageFile, slug);
-          if (upload.error) throw upload.error;
-          charData.image = upload.url;
+          try {
+            var upload = await SupaDB.uploadImage(tempImageFile, slug);
+            if (upload.error) throw upload.error;
+            charData.image = upload.url;
+          } catch (uploadErr) {
+            console.warn('[Save] Image upload failed, falling back to name-based path:', uploadErr);
+            showNotification('Image upload failed (Storage RLS). Using local path instead.', 'info');
+            charData.image = 'images/' + name + '.png'; // Fallback
+          }
         } else if (editingId) {
           // Keep existing image
           var existing = allCharacters.find(function(c){ return c.id === editingId; });
