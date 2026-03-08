@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Griamore - 7DS Origin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
+    .page-back:hover { color:var(--gold); }
+    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
+    .potentials-section { margin-top:32px; }
+    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
+    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
+    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
+    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
+    .costumes-section { margin-top:32px; }
+    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
+    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
+    .costume-card p { color:white;font-size:13px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="../index.html">&#127968; Home</a></li>
+      <li><a href="../characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="../tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="../events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Griamore</h1>
+          <img src="../images/Griamore.png" class="character-image" alt="Griamore">
+          <p class="title">SR</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Description</h2>
+          <p>A Holy Knight of Liones, the son of former Holy Knight Grandmaster Dreyfus, and wielder of the magic known as &quot;Wall.&quot; He is prepared to do anything for Princess Veronica. Together with Howzer and Gilthunder, he is known as one of the Trio of Troublemakers.</p>
+          <p><strong>Type:</strong> Shield, Cudgel, Gauntlets</p>
+        </div>
+      </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('shield',this)" class="active">Shield</button>
+        <button onclick="showWeapon('cudgel',this)">Cudgel</button>
+        <button onclick="showWeapon('gauntlets',this)">Gauntlets</button>
+      </div>
+
+      <div id="weaponContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'shield') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Speed Star</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Wall Master</h3><span class="skill-badge">Passive</span><p>Increases Defense by 15% when all allied heroes have barriers.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 113% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 49%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Increases Defense by 25% while the stance is maintained. Restores the hero\'s Tag Gauge by 100 when hit while the stance is maintained. The stance lasts up to 10 sec, and it is removed when hit 5 time(s).</p></div>'
+          + '<div class="skill-card"><h3>Drop Attack</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 195% of Attack and additional damage equal to 45% of Defense.</p></div>'
+          + '<div class="skill-card"><h3>Shell Drop</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 88% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Perfect Shell</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 284% of Attack and decreases the enemy\'s Shatter Resistance by 5% for 20 sec.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 26% 3rd hit: 41% 4th hit: 69%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases Special Attack\'s Defense boost by 40%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Using the Normal Skill increases the hero\'s Defense by 20% for 15 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Gains a barrier equal to 20% of Max HP while the Special Attack\'s stance is maintained.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Landing the Ultimate Move inflicts additional damage equal to 150% of Defense.</p></div>'
+          + '</div></div>'
+          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
+          + '<div class="costume-card"><p>Princess\'s Guardian Knight</p></div>'
+          + '<div class="costume-card"><p>Casual Outing</p></div>'
+          + '<div class="costume-card"><p>Holy Knight of the Iron Wall</p></div>'
+          + '<div class="costume-card"><p>Makeshift Barricade</p></div>'
+          + '<div class="costume-card"><p>Impregnable Iron Fortress</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'cudgel') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Speed Star</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Wall Master</h3><span class="skill-badge">Passive</span><p>Restores the Tag Gauge by 250 when the hero\'s Special Attack grants a barrier.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 141% of Attack. 1st hit: 21% 2nd hit: 23% 3rd hit: 37%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 149% of Attack. Removes the hero\'s barrier to increase their Attack by 15% for 10 sec. Gains a barrier equal to 85% of Attack for 5 sec when the attack lands.</p></div>'
+          + '<div class="skill-card"><h3>Wall Push</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 239% of Attack. Decreases the Special Attack cooldown by 75% if the hero has a barrier.</p></div>'
+          + '<div class="skill-card"><h3>Wall Rising</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 113% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Wall Crash</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 386% of Attack. Removes the hero\'s barrier to increase their Ultimate Move damage by 50% and Stuns the enemy for 5 sec.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Inflicts damage equal to 40% of Attack. 1st hit: 30% 2nd hit: 33% 3rd hit: 51% 4th hit: 84%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Special Attack.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases damage dealt with the Normal Skill by 45%. Decreases the Special Attack cooldown even if no barrier is active.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Slightly increases the range of the Ultimate Move.</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'gauntlets') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Speed Star</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Wall Master</h3><span class="skill-badge">Passive</span><p>Increases Burst Efficiency by 20% when all allied heroes have barriers. Restores 2 Magic Points when the hero activates a Burst. (Cooldown: 60 sec)</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 103% of Attack. 1st hit: 15% 2nd hit: 17% 3rd hit: 27%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 104% of Attack and Stuns for 5 sec.</p></div>'
+          + '<div class="skill-card"><h3>Shield Rush</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 164% of Attack and increases their Stun duration by 3 sec. Inflicts additional damage equal to 55% of Defense if the hero has a barrier.</p></div>'
+          + '<div class="skill-card"><h3>Shield Fist</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 84% of Attack and grants all allied heroes barriers equal to 10% of Max HP for 15 sec.</p></div>'
+          + '<div class="skill-card"><h3>Emission Shield</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 254% of Attack. Additionally increases Burst Gauge on Stunned enemies by 250</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Inflicts damage equal to 40% of Attack. 1st hit: 22% 2nd hit: 23% 3rd hit: 37% 4th hit: 61%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Changes the Special Attack into a skill that can be used 2 time(s).</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Landing the Tag Skill inflicts Stun for 8 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Additionally inflicts damage equal to 120% of Attack when using the Ultimate Move.</p></div>'
+          + '</div></div>'
+          + '';
+      }
+    }
+    showWeapon('shield', document.querySelector('.weapon-tabs button'));
+  </script>
+</body>
+</html>

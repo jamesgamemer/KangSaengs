@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diane - 7DS Origin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
+    .page-back:hover { color:var(--gold); }
+    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
+    .potentials-section { margin-top:32px; }
+    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
+    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
+    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
+    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
+    .costumes-section { margin-top:32px; }
+    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
+    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
+    .costume-card p { color:white;font-size:13px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="../index.html">&#127968; Home</a></li>
+      <li><a href="../characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="../tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="../events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Diane</h1>
+          <img src="../images/Diane.png" class="character-image" alt="Diane">
+          <p class="title">SSR</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Description</h2>
+          <p>A member of &lt;The Seven Deadly Sins&gt; bearing the mark of Envy. In the past, she was falsely accused of treason and went into hiding, eventually settling in the Forest of White Dreams. She has a fondness for Meliodas, the leader of &lt;The Seven Deadly Sins&gt;.</p>
+          <p><strong>Type:</strong> Gauntlets, Axe, Cudgel</p>
+        </div>
+      </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('gauntlets',this)" class="active">Gauntlets</button>
+        <button onclick="showWeapon('axe',this)">Axe</button>
+        <button onclick="showWeapon('cudgel',this)">Cudgel</button>
+      </div>
+
+      <div id="weaponContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'gauntlets') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Giant Girl</h3><span class="skill-badge">Passive</span><p>Additionally inflicts damage equal to 10% of Defense when attacking the enemy.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal</span><p>Inflicts damage equal to 111% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 47%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 120% of Attack. 50% chance to reset the Normal Skill cooldown on the final strike.</p></div>'
+          + '<div class="skill-card"><h3>Martial Drive</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 192% of Attack. Increases the hero\'s Defense by 30% for 10 sec.</p></div>'
+          + '<div class="skill-card"><h3>Rock Down</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 94% of Attack and Taunts for 3 sec.</p></div>'
+          + '<div class="skill-card"><h3>Metal Drop</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 286% of Attack and gains Heavy Metal for 15 sec. ※ Heavy Metal: Becomes immune to Reactions. Increases the enemy\'s Burst Gauge by 50 and increases the hero\'s Shatter Resistance by 3% for 20 sec. (Max: 30%)</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 41% 4th hit: 67%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>100% chance to reset the Normal Skill cooldown and increase damage dealt with the Normal Skill by 50% once when landing the final strike of the Special Attack.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Additionally inflicts damage equal to 270% of Attack when using the Ultimate Move.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases damage dealt by the Special Attack\'s final strike by 300% and decreases the enemy\'s Earth Defense by 30% for 20 sec.</p></div>'
+          + '</div></div>'
+          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
+          + '<div class="costume-card"><p>Giant Girl in Love</p></div>'
+          + '<div class="costume-card"><p>Tavern Hostess</p></div>'
+          + '<div class="costume-card"><p><The Serpent Sin of Envy></p></div>'
+          + '<div class="costume-card"><p>Cheerful Girl</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'axe') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Giant Girl</h3><span class="skill-badge">Passive</span><p>Increases damage dealt by 40% when attacking an enemy with Earth Burst activated, and inflicts Breaker for 10 sec when attacking them 3 time(s). ※ Breaker: Inflicts Stun for 4 sec the first time the effect is inflicted. Inflicts damage equal to 150% of the caster\'s Defense. Increases damage taken from the caster by 30%.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal</span><p>Inflicts damage equal to 88% of Attack. 1st hit: 21% 2nd hit: 25% 3rd hit: 42%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 114% / 167% of Attack based on the charge level. Decreases the cooldown by 50% when attacking an enemy affected by Breaker.</p></div>'
+          + '<div class="skill-card"><h3>Charged Slash</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 215% of Attack. Increases damage dealt to enemies affected by Breaker by 100%.</p></div>'
+          + '<div class="skill-card"><h3>Ground Down</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 113% of Attack, and inflicts Breaker for 10 sec if the enemy is Petrified. ※ Breaker: Inflicts Stun for 4 sec the first time the effect is inflicted. Inflicts damage equal to 150% of the caster\'s Defense. Increases damage taken from the caster by 30%.</p></div>'
+          + '<div class="skill-card"><h3>Rock Blast</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 283% of Attack and inflicts Breaker for 10 sec. ※ Breaker: Inflicts Stun for 4 sec the first time the effect is inflicted. Inflicts damage equal to 150% of the caster\'s Defense. Increases damage taken from the caster by 30%.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 29% 2nd hit: 35% 3rd hit: 58%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Inflicts damage equal to 240% of Defense 3 sec after landing the Normal Skill on an enemy. Increases damage dealt by 100% if they are affected by Breaker.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Slightly increases the range of the Special Attack and increases damage dealt by 20%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases Breaker\'s damage dealt by 100% and the hero\'s damage dealt by 50%</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'cudgel') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Giant Girl</h3><span class="skill-badge">Passive</span><p>Taunts enemies for 5 sec and grants all allied heroes Heart of the Land for 20 sec when activating Earth Burst. ※ Heart of the Land: Grants a barrier equal to 30% of Max HP and restores HP equal to 10% of Defense every 0.5 sec.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal</span><p>Inflicts damage equal to 111% of Attack. 1st hit: 16% 2nd hit: 18% 3rd hit: 29% 4th hit: 48%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 124% of Attack. Increases damage dealt to Petrified enemies by 50%.</p></div>'
+          + '<div class="skill-card"><h3>Desert Sands</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 210% of Attack and decreases the Movement Speed of enemies in range by 40%. Enemies hit 5 time(s) are Petrified for 6 sec. ※ Petrify: Incapacitated. Increases Physical and Earth damage taken by 50%, and decreases damage taken from elements other than Physical and Earth by 75%.</p></div>'
+          + '<div class="skill-card"><h3>Crushing Art</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 92% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Ground Rising</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 282% of Attack. Additionally increases the Burst Gauge by 500 if the enemy\'s Movement Speed is decreased.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 39% 4th hit: 67%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Normal Skill and pulls enemies toward the center. The enemies in the central area additionally take damage equal to 45% of Attack.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Decreases damage dealt with the Special Attack by 70% and increases the number of boulders to 8.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the Heart of the Land\'s barrier by 233% and Earth damage dealt by 30%.</p></div>'
+          + '</div></div>'
+          + '';
+      }
+    }
+    showWeapon('gauntlets', document.querySelector('.weapon-tabs button'));
+  </script>
+</body>
+</html>

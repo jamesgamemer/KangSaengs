@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slader - 7DS Origin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
+    .page-back:hover { color:var(--gold); }
+    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
+    .potentials-section { margin-top:32px; }
+    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
+    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
+    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
+    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
+    .costumes-section { margin-top:32px; }
+    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
+    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
+    .costume-card p { color:white;font-size:13px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="../index.html">&#127968; Home</a></li>
+      <li><a href="../characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="../tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="../events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Slader</h1>
+          <img src="../images/Slader.png" class="character-image" alt="Slader">
+          <p class="title">SSR</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Description</h2>
+          <p>Former captain of the &lt;Roars of Dawn&gt;, a knight order that once served directly under the king. He holds unwavering loyalty to the former king, Bartra, and continues to act in accordance to his will.</p>
+          <p><strong>Type:</strong> Greatsword, Axe, Cudgel</p>
+        </div>
+      </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('greatsword',this)" class="active">Greatsword</button>
+        <button onclick="showWeapon('axe',this)">Axe</button>
+        <button onclick="showWeapon('cudgel',this)">Cudgel</button>
+      </div>
+
+      <div id="weaponContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'greatsword') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Erase Presence</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Roaring Mask</h3><span class="skill-badge">Passive</span><p>Increases damage dealt to enemies with Fire Burst activated by 15%. Attacking an enemy with Fire Burst activated transforms the Special Attack into an enhanced Special Attack for 5 sec, increasing damage dealt by 30%.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 128% of Attack. 1st hit: 19% 2nd hit: 21% 3rd hit: 33% 4th hit: 56%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 77% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Power Drop</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 215% of Attack. Increases damage dealt to Stunned enemies by 20%.</p></div>'
+          + '<div class="skill-card"><h3>Strike</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 105% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Power Smite</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 356% of Attack. If the enemy has Fire Burst activated, they are Stunned for 5 sec</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with the enhanced Special Attack by 40%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Normal Skill by 30%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Using the Normal Skill to attack an enemy with Fire Burst activated inflicts damage equal to 8% of Attack on nearby enemies every 0.5 sec for 5 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the enhanced Special Attack by 110%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>When an enhanced Special Attack hits, the cooldown of Normal Skills decreases by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Additionally inflicts damage equal to 120% of Attack when using the Ultimate Move.</p></div>'
+          + '</div></div>'
+          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
+          + '<div class="costume-card"><p>Veteran Holy Knight</p></div>'
+          + '<div class="costume-card"><p>Loyal Friend</p></div>'
+          + '<div class="costume-card"><p>Sword of the Old King</p></div>'
+          + '<div class="costume-card"><p>Secret Mission</p></div>'
+          + '<div class="costume-card"><p>Total Readiness</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'axe') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Erase Presence</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Roaring Mask</h3><span class="skill-badge">Passive</span><p>Increases the hero\'s Defense Shatter by 10% and has a 15% chance to reset the Special Attack cooldown when attacking a Bleeding enemy.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 76% of Attack. 1st hit: 18% 2nd hit: 22% 3rd hit: 36%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 77% / 141% of Attack based on the charge level. Increases damage dealt to Bleeding enemies by 30%. Charged attacks inflict Bleed for 20 sec. ※ Bleed: Inflicts Wind damage equal to 10% of the damage dealt every 1 sec. Decreases Healing Efficiency by 20%. Additionally decreases Healing Efficiency by 6% when landing a Critical Hit. (Max: 10 times)</p></div>'
+          + '<div class="skill-card"><h3>Axe Charge</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 183% of Attack and grants the hero Enhanced Bleed for 20 sec. ※ Enhanced Bleed: Increases Bleed damage the hero inflicts by 20%.</p></div>'
+          + '<div class="skill-card"><h3>Axe Slash</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 96% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Bloody Arc</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 288% of Attack. Results in a Critical Hit and inflicts Deep Wound for 15 sec if the enemy is Bleeding. ※ Deep Wound: Increases damage taken by 10%.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 25% 2nd hit: 31% 3rd hit: 51%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 35% / 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Additionally inflicts damage equal to 55% of Attack when using the Normal Skill.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Landing the Tag Skill inflicts Bleed for 20 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases damage dealt with the final strike of the Ultimate Move by 50%.</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'cudgel') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Erase Presence</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Roaring Mask</h3><span class="skill-badge">Passive</span><p>Restores 2 Tag Point(s) when the hero activates a Burst.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 102% of Attack. 1st hit: 15% 2nd hit: 16% 3rd hit: 26% 4th hit: 45%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 93% of Attack. Decreases the enemy\'s Crit Resistance by 20% for 10 sec.</p></div>'
+          + '<div class="skill-card"><h3>Chain Thrust</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 171% of Attack. Each Critical hit additionally increases the Burst Gauge by 25.</p></div>'
+          + '<div class="skill-card"><h3>Blade Wave</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 86% of Attack. Additionally increases the Burst Gauge by 100 if the enemy is Stunned.</p></div>'
+          + '<div class="skill-card"><h3>Iron Fury</h3><span class="skill-badge">Ultimate</span><p>Increases all allied heroes\' Tag Skill damage by 40% for 10 sec, then inflicts damage equal to 252% of Attack.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 21% 2nd hit: 23% 3rd hit: 36% 4th hit: 63%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Changes the Special Attack into a skill that can be used 2 time(s).</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the Burst Gauge applied with the Normal Skill by 100%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Decreases All Elemental Burst Resistance of enemies in range by 20% for 20 sec when using the Ultimate Move.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Additionally inflicts damage equal to 80% of Attack when using the Normal Skill.</p></div>'
+          + '</div></div>'
+          + '';
+      }
+    }
+    showWeapon('greatsword', document.querySelector('.weapon-tabs button'));
+  </script>
+</body>
+</html>

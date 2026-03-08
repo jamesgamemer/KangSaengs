@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tristan - 7DS Origin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
+    .page-back:hover { color:var(--gold); }
+    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
+    .potentials-section { margin-top:32px; }
+    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
+    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
+    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
+    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
+    .costumes-section { margin-top:32px; }
+    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
+    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
+    .costume-card p { color:white;font-size:13px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="../index.html">&#127968; Home</a></li>
+      <li><a href="../characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="../tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="../events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Tristan</h1>
+          <img src="../images/Tristan.png" class="character-image" alt="Tristan">
+          <p class="title">SSR</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Description</h2>
+          <p>The son of Meliodas and Elizabeth, and the prince of the Kingdom of Liones. He admires and looks up to &lt;The Seven Deadly Sins&gt;. Though polite and cautious by nature, he will face any danger if it means protecting those he cares about.</p>
+          <p><strong>Type:</strong> Longsword, Dual Swords, Greatsword</p>
+        </div>
+      </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('longsword',this)" class="active">Longsword</button>
+        <button onclick="showWeapon('dualswords',this)">Dual Swords</button>
+        <button onclick="showWeapon('greatsword',this)">Greatsword</button>
+      </div>
+
+      <div id="weaponContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'longsword') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Novice Adventurer</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Sense of Justice</h3><span class="skill-badge">Passive</span><p>When the hero activates Wind Burst, all allied heroes\' Wind Attack increases by 15% for 20 sec.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 105% of Attack. 1st hit: 16% 2nd hit: 17% 3rd hit: 27% 4th hit: 45%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 103% of Attack, then inflicts Bleed for 20 sec. ※ Bleed: Inflicts Wind damage equal to 10% of the damage dealt every 1 sec. Decreases Healing Efficiency by 20%. Additionally decreases Healing Efficiency by 6% when landing a Critical Hit. (Max: 10 times)</p></div>'
+          + '<div class="skill-card"><h3>Wind Thrust</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 173% of Attack. Additionally increases the Burst Gauge by 200 if the enemy is Bleeding.</p></div>'
+          + '<div class="skill-card"><h3>Wind Strike</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 88% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Blade Storm</h3><span class="skill-badge">Ultimate</span><p>Increases all allied Wind heroes\' All Elemental Burst Efficiency by 20% for 20 sec, then inflicts damage equal to 295% of Attack.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 38% 4th hit: 63%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Landing the Special Attack additionally increases the Burst Gauge by 200.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Changes the Normal Skill into a skill that can be used 2 time(s). Activating Wind Burst with a Normal Skill decreases the enemy\'s Crit Resistance by 15% for 20 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Enhances the Ultimate Move to increase damage dealt with Flurry by 150%.</p></div>'
+          + '</div></div>'
+          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
+          + '<div class="costume-card"><p>Little Prince</p></div>'
+          + '<div class="costume-card"><p>Prince\'s Training Outfit</p></div>'
+          + '<div class="costume-card"><p>Formal Attire</p></div>'
+          + '<div class="costume-card"><p>Royal Dignity</p></div>'
+          + '<div class="costume-card"><p>Prince\'s Adventure</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'dualswords') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Novice Adventurer</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Sense of Justice</h3><span class="skill-badge">Passive</span><p>When Fire Burst is activated, all allied heroes\' Fire Attack increases by 15% for 20 sec.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 105% of Attack. 1st hit: 16% 2nd hit: 17% 3rd hit: 27% 4th hit: 45%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 101% of Attack. Decreases the enemy\'s Fire Defense by 10% for 20 sec.</p></div>'
+          + '<div class="skill-card"><h3>Vertical Slice</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 185% of Attack. If the enemy\'s Fire Defense is decreased, additionally increases the Burst Gauge by 200.</p></div>'
+          + '<div class="skill-card"><h3>Burning Blow</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 87% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Rain of Fire</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 261% of Attack. Increases all allied heroes\' All Elemental Burst Efficiency by 15% for 20 sec.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 22% 2nd hit: 24% 3rd hit: 38% 4th hit: 64%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Inflicts Fire damage equal to 45% of Attack to enemies around the target if Fire Burst activates with the Normal Skill.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>When a Critical Hit is landed with a Special Attack, its cooldown is reset and its damage dealt is increased by 30% for 10 sec. Cooldown reset can be triggered up to 3 time(s) in a row.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>When Fire Burst activates, all allied heroes\' Fire Attack increases by 30%, and Fire heroes\' Crit Chance increases by 10% for 30 sec.</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'greatsword') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Novice Adventurer</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Sense of Justice</h3><span class="skill-badge">Passive</span><p>Each time the Special Attack hits, the hero\'s Crit Chance increases by 1% (Max: 20%) for 10 sec.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 144% of Attack. 1st hit: 22% 2nd hit: 23% 3rd hit: 37% 4th hit: 62%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 12% of Attack on nearby enemies while the stance is maintained, and inflicts damage equal to 72% of Attack with the final strike. Whenever the attack lands, there is a(n) 50% chance to apply 1 Ember effect(s) on the hero for 10 sec. (Max: 10 times) ※ Ember: Increases Normal Skill damage by 2% and Ultimate Move damage by 3%.</p></div>'
+          + '<div class="skill-card"><h3>Punisher</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 243% of Attack, then removes Ember from self.</p></div>'
+          + '<div class="skill-card"><h3>Surprise Attack</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 121% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Severing Cut</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 258% / 280% / 324% of Attack based on the charge level, then removes Ember from self.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 30% 2nd hit: 32% 3rd hit: 53% 4th hit: 86%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 30% and the final strike by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>A fully charged Ultimate Move deals additional damage equal to 85% of Attack without removing Ember.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>The Special Attack\'s chance to grant Ember is increased to 100%. Landing the attack pulls the enemy toward the hero, and landing the final strike Stuns the enemy for 5 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases Ultimate Move damage to 15% / 30% / 50% based on the charge level.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>For every 5 Special Attack hit(s), additional damage equal to 35% of Attack is dealt to nearby enemies.</p></div>'
+          + '</div></div>'
+          + '';
+      }
+    }
+    showWeapon('longsword', document.querySelector('.weapon-tabs button'));
+  </script>
+</body>
+</html>

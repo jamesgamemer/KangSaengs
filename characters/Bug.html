@@ -8,11 +8,22 @@
   <style>
     .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
     .page-back:hover { color:var(--gold); }
-    .coming-soon { text-align:center;padding:80px 20px;color:var(--muted);font-size:18px; }
-    .coming-soon h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px; }
+    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
+    .potentials-section { margin-top:32px; }
+    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
+    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
+    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
+    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
+    .costumes-section { margin-top:32px; }
+    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
+    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
+    .costume-card p { color:white;font-size:13px; }
   </style>
 </head>
 <body>
+
   <nav class="navbar">
     <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
     <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
@@ -23,18 +34,125 @@
       <li><a href="../events.html">&#127881; Events</a></li>
     </ul>
   </nav>
+
   <div class="page-content">
     <div class="container">
       <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
-      <div class="coming-soon">
-        <h2>Bug</h2>
-        <p>Character information will be added soon.</p>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Bug</h1>
+          <img src="../images/Bug.png" class="character-image" alt="Bug">
+          <p class="title">SR</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Description</h2>
+          <p>Even though he is a Demon, he secretly admires &lt;The Seven Deadly Sins&gt; for defeating both the Demon King and &lt;The Ten Commandments&gt;. Normally he takes the form of a tall, athletic man, but can transform into a small monster when the situation calls for it.</p>
+          <p><strong>Type:</strong> Axe, Dual Swords, Book</p>
+        </div>
       </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('axe',this)" class="active">Axe</button>
+        <button onclick="showWeapon('dualswords',this)">Dual Swords</button>
+        <button onclick="showWeapon('book',this)">Book</button>
+      </div>
+
+      <div id="weaponContent"></div>
     </div>
   </div>
+
   <footer class="site-footer">
     <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
   </footer>
+
   <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'axe') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Downsize</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Troublemaker</h3><span class="skill-badge">Passive</span><p>Increases damage dealt to enemies with Darkness Burst activated by 30%.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 129% of Attack. 1st hit: 19% 2nd hit: 21% 3rd hit: 33% 4th hit: 56%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 106% / 166% of Attack based on the charge level. Inflicts damage equal to 60% of Attack when overcharged. Landing the attack at the right moment results in a Critical Hit.</p></div>'
+          + '<div class="skill-card"><h3>Dark Thrash</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 219% of Attack on the enemy and pulls them to the center.</p></div>'
+          + '<div class="skill-card"><h3>Dark Axe Slash</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 105% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Death Swarm</h3><span class="skill-badge">Ultimate</span><p>Increases the hero\'s Darkness Attack by 30% for 20 sec, then inflicts damage equal to 307% of Attack.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 27% 2nd hit: 29% 3rd hit: 46% 4th hit: 78%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Normal Skill. Additionally inflicts damage equal to 20% of Attack each time the attack hits targets in the central area.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases damage dealt by 10% each time the Ultimate Move hits the same enemy.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Gains Reaction Immunity while charging the Special Attack. Landing the attack at the right moment increases damage dealt by 75%.</p></div>'
+          + '</div></div>'
+          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
+          + '<div class="costume-card"><p>Shy Demon</p></div>'
+          + '<div class="costume-card"><p>Demon\'s Outing</p></div>'
+          + '<div class="costume-card"><p>Shadow Walk</p></div>'
+          + '<div class="costume-card"><p>Demon\'s Stealth</p></div>'
+          + '<div class="costume-card"><p>Keen Instinct</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'dualswords') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Downsize</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Troublemaker</h3><span class="skill-badge">Passive</span><p>Increases the hero\'s Evasion Rate by 20% for 10 sec after successfully evading.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 113% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 49%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Increases damage dealt with the next Normal Skill by 50% and resets its cooldown.</p></div>'
+          + '<div class="skill-card"><h3>Darkness Burst</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 137% of Attack, with a 30% chance to inflict additional damage equal to 41% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Dark Dual Sword Dance</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 85% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Nightmare</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 181% of Attack on enemies in a straight line, Stunning them for 3 sec.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 30% 2nd hit: 32% 3rd hit: 52% 4th hit: 86%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Resets the Special Attack cooldown when landing the final strike of the Normal Attack on an enemy with Darkness Burst activated.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases the hero\'s Crit Chance by 30% for 10 sec when successfully landing a Back Attack.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the Special Attack\'s Normal Skill enhancement effect by 50%.</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'book') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Downsize</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Troublemaker</h3><span class="skill-badge">Passive</span><p>Increases all allied heroes\' Darkness damage dealt to Cursed enemies by 20%.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 113% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 29% 4th hit: 49%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Enhances Normal Attacks, slightly increasing damage for 10 sec, and increases enemies\' Curse duration by 2 sec.</p></div>'
+          + '<div class="skill-card"><h3>The Rascal</h3><span class="skill-badge">Skill</span><p>Creates a Decoy at the hero\'s location to Taunt enemies in range for 5 sec and enters Stealth for 10 sec. When the Decoy disappears, it explodes, Stunning Taunted enemies for 3 sec.</p></div>'
+          + '<div class="skill-card"><h3>Dark Flare</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 85% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Solo Stage</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 290% of Attack, then inflicts Curse for 15 sec. ※ Curse: Inflicts Darkness damage equal to 15% of Attack every 3 sec and decreases Darkness Defense by 15%.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 27% 3rd hit: 40% 4th hit: 68%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Tag Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Landing the Ultimate Move decreases Darkness Resistance by 15% for 20 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the duration of Normal Skill\'s Stun by 3 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Increases the hero\'s Movement Speed by 50% while the Normal Skill\'s Stealth is active, and after Stealth ends, increases the hero\'s Crit Chance by 100% for 5 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the Special Attack\'s Normal Attack enhancement duration by 10 sec. Enemies hit by the enhanced Normal Attack are Cursed for 20 sec, and their damage taken from it increases by 50%.</p></div>'
+          + '</div></div>'
+          + '';
+      }
+    }
+    showWeapon('axe', document.querySelector('.weapon-tabs button'));
+  </script>
 </body>
 </html>

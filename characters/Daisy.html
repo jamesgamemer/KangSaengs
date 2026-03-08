@@ -8,6 +8,18 @@
   <style>
     .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
     .page-back:hover { color:var(--gold); }
+    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
+    .potentials-section { margin-top:32px; }
+    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
+    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
+    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
+    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
+    .costumes-section { margin-top:32px; }
+    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
+    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
+    .costume-card p { color:white;font-size:13px; }
   </style>
 </head>
 <body>
@@ -31,13 +43,13 @@
         <div class="character-card">
           <h1>Daisy</h1>
           <img src="../images/Daisy.png" class="character-image" alt="Daisy">
-          <p class="title">Captain of the Seven Deadly Sins</p>
+          <p class="title">SSR</p>
         </div>
 
         <div class="story-card">
-          <h2>Character Story</h2>
-          <p>Daisy เป็นกัปตันของ Seven Deadly Sins ผู้มีบุคลิกสดใสแต่แฝงไปด้วยพลังมหาศาล เธอเป็นผู้นำที่คอยปกป้องเพื่อนร่วมทีมและมักจะเป็นคนที่พุ่งเข้าไปในสนามรบก่อนใคร</p>
-          <p>พลังของ Daisy เกี่ยวข้องกับพลังไฟฟ้าและการควบคุมพลังงาน ทำให้เธอสามารถสนับสนุนทีมได้อย่างยอดเยี่ยม ทั้งการเพิ่ม Crit Damage และช่วยสร้าง Burst Damage ให้กับเพื่อนร่วมทีม</p>
+          <h2>Description</h2>
+          <p>A Fairy transposed from the distant past. She is said to have created a mysterious artifact while conducting research with explorers of various races. By what seems like fate, or mere chance, she crosses paths with Tristan and the gang and becomes caught up in a turmoil that shakes all of Britannia</p>
+          <p><strong>Type:</strong> Shield, Book, Wand</p>
         </div>
       </div>
 
@@ -64,23 +76,78 @@
 
       if (type === 'shield') {
         box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Fruit Barrage</h3><p><b>Cooldown:</b> 10s &nbsp; <b>Magic Cost:</b> 3</p><p>สร้างความเสียหาย <b>261%</b> ของค่า Attack และลดค่า Crit Defense ของศัตรูลง 30%</p><p>สกิลนี้เหมาะใช้เปิดไฟต์ เพราะการลด Crit Defense จะทำให้ศัตรูโดนคริติคอลได้แรงขึ้น</p></div>'
-          + '<div class="skill-card"><h3>Summon Shocking Streetlamp</h3><p><b>Cooldown:</b> 27s</p><p>เรียก Shocking Streetlamp ลงมาในสนามเป็นเวลา 15 วินาที แต่ละครั้งสร้างความเสียหาย <b>13%</b> ของ Attack และเพิ่มดาเมจต่อศัตรูที่ติด Electromagnet อีก 15%</p><p>ทุก 5 ครั้งที่ Streetlamp โจมตี จะมอบบัฟ Electric Charge ให้ทีม (Crit Damage 5%, Crit Chance 2%) สะสมได้สูงสุด 5 Stack</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><p><b>Cooldown:</b> 16s</p><p>เพิ่ม Crit Damage ให้เพื่อนร่วมทีมในระยะ <b>15%</b> เป็นเวลา 20 วินาที ถ้าใช้กับ Streetlamp ที่อยู่ในสนาม จะทำให้มันโจมตีเร็วขึ้นชั่วคราว</p></div>'
-          + '</div>';
+          + '<div class="skill-card"><h3>Artisan\'s Touch</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Offbeat Girl</h3><span class="skill-badge">Passive</span><p>Increases the default state\'s Magic Charging Efficiency by 50%, and the Ultimate Move does not consume Magic.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal</span><p>Inflicts damage equal to 142% of Attack. Increases damage dealt by 30% when Riding. 1st hit: 21% 2nd hit: 23% 3rd hit: 37% 4th hit: 61%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>[Default] Decreases damage taken by 70% while the stance is maintained. Additionally, nearby enemies are Staggered and the Magic Gauge is restored by 100 every 1 sec. [Riding] Inflicts damage equal to up to 163% of Attack. Consumes 100 Magic Gauge to increase damage by 10% every 0.4 sec while the stance is maintained. Restores Magic by 300 when the stance is maintained for 2 sec.</p></div>'
+          + '<div class="skill-card"><h3>Go Away / Energy Blast</h3><span class="skill-badge">Skill</span><p>[Default] Inflicts damage equal to 174% of Attack. Magic Gauge is restored by 300 if an enemy is struck, and their Earth Resistance is decreased by 20% for 20 sec. [Riding] Inflicts damage equal to 256% of Attack. Each hit consumes 100 of the Magic Gauge to increase damage by 10%. Restores the Magic Gauge by 100 when the same target is hit 5 time(s).</p></div>'
+          + '<div class="skill-card"><h3>Here Comes Daisy</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 113% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Help Me, Domby</h3><span class="skill-badge">Ultimate</span><p>The hero summons and rides Domby for 20 sec. The hero gains Reaction Immunity while riding.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 29% 2nd hit: 32% 3rd hit: 52% 4th hit: 85%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Using the Special Attack does not decrease Movement Speed, and its range is greatly increased. The Magic Gauge recovery from Staggering nearby enemies increases by 100%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Decreases the Magic consumption of the Special Attack and Normal Skill when riding by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Slightly increases the range of the Normal Skill while riding. Taking damage from a Normal Skill increases the enemy\'s damage taken by 20%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Normal Skill by 90% and increases the riding duration by 10 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Changes the Normal Skill into a skill that can be used 2 time(s) while riding. The Special Attack\'s damage dealt increases by 100% when fully charged.</p></div>'
+          + '</div></div>'
+          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
+          + '<div class="costume-card"><p>Fairy of the Past</p></div>'
+          + '<div class="costume-card"><p>Small Explorer</p></div>'
+          + '<div class="costume-card"><p>Autumn Scent</p></div>'
+          + '</div></div>'
+          + '';
       } else if (type === 'book') {
         box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Offbeat Girl</h3><p>มอบ Static Shock เป็นเวลา 20 วินาทีเมื่อฮีโร่พันธมิตรได้รับสกิลแท็ก (สูงสุด: 3 ครั้ง) Static Shock: เพิ่มความเสียหาย Lightning 5% ทุกๆ 1 เอฟเฟกต์ เมื่อสแตคสูงสุด จะมอบ High Voltage ให้กับฮีโร่พันธมิตรทุกตัวเป็นเวลา 20 วินาที (Lightning Dmg +25%, Crit Chance +15%)</p></div>'
-          + '<div class="skill-card"><h3>Normal Attack</h3><p>สร้างความเสียหายเท่ากับ 111% ของพลังโจมตี สร้าง Electromagnet ให้กับศัตรูเป็นเวลา 10 วินาที (ลด Crit Resistance 10%)</p></div>'
-          + '<div class="skill-card"><h3>Special Attack</h3><p>เพิ่มความเสียหายคริติคอลของพันธมิตรในระยะ 15% เป็นเวลา 20 วินาที การใช้สกิลนี้กับ Shocking Streetlamp ในระยะจะเพิ่มความเร็วในการโจมตีเล็กน้อยเป็นเวลา 10 วินาที</p></div>'
-          + '<div class="skill-card"><h3>Summon Shocking Streetlamp</h3><p>เรียก Shocking Streetlamp เป็นเวลา 15 วินาที สร้างความเสียหายเท่ากับ 13% ของพลังโจมตีต่อการโจมตีแต่ละครั้ง ทุกๆ 5 ครั้งที่โจมตี จะมอบ Electric Charge ให้กับพันธมิตรในระยะ (Crit Dmg +5%, Crit Chance +2%, สูงสุด 5 Stack)</p></div>'
-          + '<div class="skill-card"><h3>Here Comes Daisy</h3><p>Passive: เพิ่มพลังโจมตีของทีมเมื่อ Streetlamp อยู่ในสนาม</p></div>'
-          + '<div class="skill-card"><h3>Fruit Barrage</h3><p>สร้างความเสียหายเท่ากับ 261% ของพลังโจมตี และลดพลังป้องกันคริติคอลลง 30%</p></div>'
-          + '</div>';
-      } else {
+          + '<div class="skill-card"><h3>Artisan\'s Touch</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Offbeat Girl</h3><span class="skill-badge">Passive</span><p>Grants Static Shock for 20 sec when an allied hero lands the Tag Skill. (Max: 3 times) ※ Static Shock: Increases Lightning damage by 5% for every 1 effect(s). Static Shock is removed at max stacks and grants High Voltage to all allied heroes for 20 sec. ※ High Voltage: Increases Lightning damage by 25% and Crit Chance by 15%.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal</span><p>Inflicts damage equal to 111% of Attack. Inflicts Electromagnet on the enemy for 10 sec if the final strike lands. 1st hit: 16% 2nd hit: 18% 3rd hit: 28% 4th hit: 49% ※ Electromagnet: Decreases Crit Resistance by 10%.</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Increases Crit Damage of allies in range by 15% for 20 sec. Using the skill on a Shocking Streetlamp in range slightly increases its Attack Speed for 10 sec.</p></div>'
+          + '<div class="skill-card"><h3>Summon Shocking Streetlamp</h3><span class="skill-badge">Skill</span><p>Summons a Shocking Streetlamp for 15 sec, inflicting damage equal to 13% of Attack with each hit. Increases damage dealt to enemies affected by Electromagnet by 15%. Every 5 time(s) the Shocking Streetlamp attacks, it grants Electric Charge to allies in range for 20 sec. (Max: 5 times) ※ Electric Charge: Increases Crit Damage by 5% and Crit Chance by 2%.</p></div>'
+          + '<div class="skill-card"><h3>Here Comes Daisy</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 80% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Fruit Barrage!</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 261% of Attack and decreases Crit Defense by 30%.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 26% 3rd hit: 40% 4th hit: 68%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Tag Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the range of the Special Attack and increases Crit Damage boost by 100%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the Normal Attack\'s Electromagnet duration by 10 and increases the Ultimate Move\'s Crit Defense reduction by 15%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Changes the Normal Skill into a skill that can be used 4 time(s) and increases the duration of Shocking Streetlamp by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Slightly increases the range of the Ultimate Move and increases the duration by 100%.</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'wand') {
         box.innerHTML = '<div class="skills">'
-          + '<div class="skill-card"><h3>Arcane Beam</h3><p>Magic beam attack dealing heavy damage.</p></div>'
-          + '</div>';
+          + '<div class="skill-card"><h3>Artisan\'s Touch</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Offbeat Girl</h3><span class="skill-badge">Passive</span><p>Inflicts Wind Seed for 20 sec when the hero\'s attack results in a Critical Hit. ※ Wind Seed: Additionally inflicts damage equal to 80% of Attack and decreases Wind Defense by 5% (Max: 20%) for 20 sec when struck by a Critical Hit, then the effect is removed.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal</span><p>Inflicts damage equal to 100% of Attack. 1st hit: 17% 2nd hit: 18% 3rd hit: 30% 4th hit: 52%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 17% of Attack every 1 sec while the stance is maintained, and the final strike inflicts damage equal to 48% of Attack. If the stance is maintained for 3 sec or more, the enemy hit by the final strike is Stunned for 4 sec and all allied heroes\' Crit Chance is increased by 20% for 20 sec.</p></div>'
+          + '<div class="skill-card"><h3>Seed Bomb</h3><span class="skill-badge">Skill</span><p>Launches 4 Seed Bomb(s), each inflicting damage equal to 40% of Attack. Decreases Crit Resistance of enemies hit by 3% for 20 sec. (Max: 24%) Results in a Critical Hit against Stunned enemies.</p></div>'
+          + '<div class="skill-card"><h3>Here Comes Daisy</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 89% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Oddball\'s Incense Burner</h3><span class="skill-badge">Ultimate</span><p>Decreases Wind Resistance and Block Rate of enemies in range by 20% and 50% respectively, and inflicts Wind Seed every 1 sec for 10 sec. ※ Wind Seed: Additionally inflicts damage equal to 80% of Attack and decreases Wind Defense by 5% (Max: 20%) for 20 sec when struck by a Critical Hit, then the effect is removed.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 24% 2nd hit: 25% 3rd hit: 42% 4th hit: 73%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Inflicts damage equal to 50% of Attack when using the Normal Skill. Adds 2 Seed Bomb(s) that decrease Movement Speed by 40%, and 2 Seed Bomb(s) that decrease Wind Resistance by 20% for 20 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Slightly increases the range of the Ultimate Move and increases the duration by 10 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Inflicts damage equal to 50% of Attack to enemies in range of the Ultimate Move every 1 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases final strike damage by 300% and decreases Shatter Resistance by 15% for 20 sec when the Special Attack stance is maintained for 3 sec.</p></div>'
+          + '</div></div>'
+          + '';
       }
     }
     showWeapon('shield', document.querySelector('.weapon-tabs button'));

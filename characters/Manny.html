@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manny - 7DS Origin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .page-back { display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1px;margin-bottom:24px;transition:color 0.2s; }
+    .page-back:hover { color:var(--gold); }
+    .skill-badge { display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:6px;background:rgba(96,165,250,0.15);color:#60a5fa; }
+    .potentials-section { margin-top:32px; }
+    .potentials-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .potentials-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px; }
+    .potential-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px; }
+    .potential-card h4 { color:var(--gold);font-size:14px;margin-bottom:6px; }
+    .potential-card p { color:var(--muted);font-size:12px;line-height:1.5; }
+    .costumes-section { margin-top:32px; }
+    .costumes-section h2 { font-family:'Cinzel',serif;color:var(--gold);margin-bottom:16px;font-size:20px; }
+    .costumes-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px; }
+    .costume-card { background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center; }
+    .costume-card p { color:white;font-size:13px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-logo">7DS<span>Origin</span></a>
+    <div class="navbar-hamburger" id="navHam"><span></span><span></span><span></span></div>
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="../index.html">&#127968; Home</a></li>
+      <li><a href="../characters.html" class="active">&#9876; Characters</a></li>
+      <li><a href="../tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="../events.html">&#127881; Events</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-content">
+    <div class="container">
+      <a href="../characters.html" class="page-back">&#8592; Back to Characters</a>
+
+      <div class="character-layout">
+        <div class="character-card">
+          <h1>Manny</h1>
+          <img src="../images/Manny.png" class="character-image" alt="Manny">
+          <p class="title">SSR</p>
+        </div>
+
+        <div class="story-card">
+          <h2>Description</h2>
+          <p>Priestess Mannie of the Dracos. She looks different from the other Dracos, but it gives her a look of virtuousness.</p>
+          <p><strong>Type:</strong> Longsword, Dual Swords, Staff</p>
+        </div>
+      </div>
+
+      <div class="weapon-tabs">
+        <button onclick="showWeapon('longsword',this)" class="active">Longsword</button>
+        <button onclick="showWeapon('dualswords',this)">Dual Swords</button>
+        <button onclick="showWeapon('staff',this)">Staff</button>
+      </div>
+
+      <div id="weaponContent"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+  </footer>
+
+  <script src="../js/navbar.js"></script>
+  <script>
+    function showWeapon(type, btn) {
+      document.querySelectorAll('.weapon-tabs button').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var box = document.getElementById('weaponContent');
+
+      if (type === 'longsword') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Starlight Resonation</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Priestess\'s Prayer</h3><span class="skill-badge">Passive</span><p>Attacking an enemy with Cold Burst activated increases Crit Chance by 20% and Crit Damage by 50%.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 126% of Attack. 1st hit: 19% 2nd hit: 20% 3rd hit: 33% 4th hit: 54%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 128% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Frost Release</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 199% of Attack, then gains Frost for 20 sec. ※ Frost: Adds sword blasts to Normal Attacks, additionally inflicting damage equal to 30% of Attack. Landing Normal Attacks 4 times increases Frost Strike damage by 100%. ※ Frost Strike: Enhances the Normal Skill to allow the use of Frost Strike. Using Frost Strike inflicts damage equal to 200% of Attack and removes the Frost effect.</p></div>'
+          + '<div class="skill-card"><h3>Frost Blade</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 104% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Priestess\'s Barrier</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 331% of Attack, then Freezes enemies in range for 6 sec. If the hero is in range, Cold Attack increases by 15%. ※ Freeze: Incapacitated. When hit with a skill, inflicts 20% of damage taken and removes Freeze.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with the Special Attack by 40%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Tag Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Slightly increases the Ultimate Move\'s range, and increases its duration by 10 sec. Increases the Cold damage of allies in range by 15%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with Normal Attacks by 110%. 1st hit: 40% 2nd hit: 42% 3rd hit: 69% 4th hit: 113%</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Sword blasts from Frost Strike explode when disappearing, inflicting additional damage equal to 50% of Attack.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Increases the duration of Frost by 10 sec. Using a Normal Attack while Frost is active inflicts Chill on the enemy, and the hero gains the Crystallize effect for 15 sec. Using Frost Strike on a Chilled enemy inflicts Freeze for 6 sec. ※ Crystallize: Increases Cold Attack by 3% (Max: 60%).</p></div>'
+          + '</div></div>'
+          + '<div class="costumes-section"><h2>Costumes</h2><div class="costumes-grid">'
+          + '<div class="costume-card"><p>Exalted Priestess</p></div>'
+          + '<div class="costume-card"><p>Heart of Prayer</p></div>'
+          + '<div class="costume-card"><p>Arch Priestess\'s Prestige</p></div>'
+          + '<div class="costume-card"><p>Exploration of the Unknown</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'dualswords') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Starlight Resonation</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Priestess\'s Prayer</h3><span class="skill-badge">Passive</span><p>When an allied hero attacks a Chilled enemy, damage dealt increases by 5% per every 1 Chill effect(s).</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 111% of Attack. Resets the Special Attack cooldown if the final strike lands. 1st hit: 17% 2nd hit: 18% 3rd hit: 28% 4th hit: 48%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Inflicts damage equal to 111% of Attack, and decreases Cold Defense by 10% for 20 sec. (Max: 3 times). Inflicts Chill for 15 sec if the enemy has 1 or more Cold Defense Decrease effects. ※ Chill: Decreases Movement Speed by 5% and Cold Burst Resistance by 3% (Max: 10 times). Freezes at max stacks.</p></div>'
+          + '<div class="skill-card"><h3>Frozen Soul Shatter</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 170% of Attack. Inflicts Frostbite for 20 sec if the enemy is Chilled. ※ Frostbite: Inflicts Cold damage equal to 20% of Attack every 2 sec, and decreases Attack by 10%.</p></div>'
+          + '<div class="skill-card"><h3>White Snow</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 92% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Snowfield of the Void</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 265% of Attack, increases damage dealt to Chilled enemies by 50%, and inflicts Freeze on enemies affected by Frostbite for 2 sec. ※ Freeze: Incapacitated. When hit with a skill, inflicts 20% of damage taken and removes Freeze.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 24% 2nd hit: 25% 3rd hit: 39% 4th hit: 67%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Special Attack by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Landing the Special Attack additionally inflicts 1 Chill effects and increases Defense reduction by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases damage dealt with the Normal Skill by 60%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Attacking an enemy with Cold Burst activated increases all allied heroes\' Cold damage by 40% for 20 sec and inflicts Frostbite on the enemy for 20 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Changes the Normal Skill into a skill that can be used 2 time(s) and greatly increases its range. Additionally inflicts damage equal to 18% of Attack to enemies in range every 0.4 sec for 4 sec</p></div>'
+          + '</div></div>'
+          + '';
+      } else if (type === 'staff') {
+        box.innerHTML = '<div class="skills">'
+          + '<div class="skill-card"><h3>Starlight Resonation</h3><span class="skill-badge">Adventure</span><p></p></div>'
+          + '<div class="skill-card"><h3>Priestess\'s Prayer</h3><span class="skill-badge">Passive</span><p>When an allied hero attacks an enemy affected by Punishment, their Ultimate Move damage increases by 30%.</p></div>'
+          + '<div class="skill-card"><h3>Normal Attack</h3><span class="skill-badge">Normal Attack</span><p>Inflicts damage equal to 108% of Attack. 1st hit: 16% 2nd hit: 18% 3rd hit: 28% 4th hit: 46%</p></div>'
+          + '<div class="skill-card"><h3>Special Attack</h3><span class="skill-badge">Special</span><p>Grants allies in range the Draco Priestess effect for 15 sec. ※ Draco Priestess: Increases Crit Damage by 30%.</p></div>'
+          + '<div class="skill-card"><h3>Holy Judgment</h3><span class="skill-badge">Skill</span><p>Inflicts damage equal to 135% of Attack and inflicts Punishment for 10 sec. Results in a Critical Hit when attacking enemies affected by Punishment. ※ Punishment: Inflicts Holy damage equal to 15% of damage dealt every 0.4 sec.</p></div>'
+          + '<div class="skill-card"><h3>Holy Light</h3><span class="skill-badge">Tag</span><p>Inflicts damage equal to 87% of Attack.</p></div>'
+          + '<div class="skill-card"><h3>Flash Explosion</h3><span class="skill-badge">Ultimate</span><p>Inflicts damage equal to 158% of Attack. Inflicts damage equal to 20% of Attack every 1 sec for 5 sec and inflicts Stigmata for 30 sec to enemies in range. Also resets Normal Skill cooldowns of all allied heroes. ※ Stigmata: Decreases All Element Defense by 20%.</p></div>'
+          + '</div>'
+          + '<div class="potentials-section"><h2>Potentials</h2><div class="potentials-grid">'
+          + '<div class="potential-card"><h4>Tier 1</h4><p>Increases Attack by 10%, Defense by 8%, and Max HP by 3%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 2</h4><p>Increases damage dealt with Normal Attacks by 40%. 1st hit: 23% 2nd hit: 25% 3rd hit: 39% 4th hit: 64%</p></div>'
+          + '<div class="potential-card"><h4>Tier 3</h4><p>Increases Attack by 15%, Defense by 12%, and Max HP by 5%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 4</h4><p>Increases damage dealt with the Normal Skill by 30%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 5</h4><p>Increases the duration of the Special Attack by 5 sec, and increases the Crit Damage boost of Draco Priestess by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 6</h4><p>Increases the duration of the Normal Skill\'s Punishment by 15 sec.</p></div>'
+          + '<div class="potential-card"><h4>Tier 7</h4><p>Changes the Normal Skill into a skill that can be used 2 time(s).</p></div>'
+          + '<div class="potential-card"><h4>Tier 8</h4><p>Increases Attack by 25%, Defense by 20%, and Max HP by 8%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 9</h4><p>Increases damage dealt with the Ultimate Move by 50%.</p></div>'
+          + '<div class="potential-card"><h4>Tier 10</h4><p>Slightly increases the range of the Ultimate Move and increases the duration by 5 sec.</p></div>'
+          + '</div></div>'
+          + '';
+      }
+    }
+    showWeapon('longsword', document.querySelector('.weapon-tabs button'));
+  </script>
+</body>
+</html>
