@@ -153,6 +153,23 @@ var SupaDB = (function () {
     return { error };
   }
 
+  async function bulkImport(characters) {
+    if (!_client) return { error: { message: 'Not connected' } };
+    // Strip any existing IDs so Supabase generates new ones
+    var sanitized = characters.map(function(c) {
+      var copy = Object.assign({}, c);
+      delete copy.id;
+      return copy;
+    });
+    const { data, error } = await _client
+      .from('characters')
+      .insert(sanitized)
+      .select();
+
+    if (error) console.error('[SupaDB] database query error (bulkImport):', error.message);
+    return { data, error };
+  }
+
   // ============================================================
   // STORAGE - Image Operations
   // ============================================================
@@ -229,6 +246,7 @@ var SupaDB = (function () {
     insertCharacter,
     updateCharacter,
     deleteCharacter,
+    bulkImport,
     uploadImage,
     deleteImage,
     subscribeToChanges,

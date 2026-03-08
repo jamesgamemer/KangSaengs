@@ -47,11 +47,12 @@
 
       <!-- Quick Actions -->
       <div class="admin-actions">
-        <button class="btn btn-gold" onclick="showAddForm()">&#10133; Add New Character</button>
-        <button class="btn btn-blue" onclick="doExport()">&#128190; Export JSON</button>
+        <button class="btn btn-gold" onclick="showAddForm()">Add New Character</button>
+        <button class="btn btn-blue" onclick="doExport()">Export JSON</button>
+        <button class="btn btn-purple" onclick="importTierList()">Import From Tier List</button>
         <label class="btn btn-outline" style="cursor:pointer;">
-          &#128194; Import JSON
-          <input type="file" accept=".json" style="display:none;" onchange="handleImport(this)">
+          Import JSON
+          <input type="file" accept=".json" style="display:none;" onchange="handleImport(event)">
         </label>
       </div>
 
@@ -291,8 +292,8 @@
         html += '</div></div>';
         html += '<div class="admin-char-actions">';
         html += '<a href="character.html?slug=' + encodeURIComponent(c.slug) + '" class="action-btn view-btn" title="View">&#128065;</a>';
-        html += '<button class="action-btn edit-btn" title="Edit" onclick="editCharacter(\'\' + c.id + '\'\')\">฿9998;</button>';
-        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'\' + c.id + '\',\'' + (c.name || '').replace(/'/g, "\\\'" ) + '\'\')\">฿128465;</button>';
+        html += '<button class="action-btn edit-btn" title="Edit" onclick="editCharacter(\'' + c.id + '\')">&#9998;</button>';
+        html += '<button class="action-btn delete-btn" title="Delete" onclick="deleteCharacter(\'' + c.id + '\',\'' + (c.name || '').replace(/'/g, "\\\'" ) + '\')">&#128465;</button>';
         html += '</div></div>';
       });
       document.getElementById('adminCharList').innerHTML = html;
@@ -647,26 +648,81 @@
       CharDB.exportJSON(allCharacters);
     }
 
-    function handleImport(input) {
-      if (!input.files || !input.files[0]) return;
-      var file = input.files[0];
+    async function importTierList() {
+      try {
+        showNotification('Fetching tier list...', 'info');
+        const response = await fetch("https://7dsorigin.gg/tier-list");
+        if (!response.ok) throw new Error("Failed to fetch tier list");
+        const html = await response.text();
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const characters = [];
+
+        doc.querySelectorAll(".tierlist-character").forEach(el => {
+          const name = el.querySelector(".character-name")?.innerText || "";
+          const image = el.querySelector("img")?.src || "";
+          const tier = el.closest(".tier-row")?.dataset.tier || "B";
+
+          characters.push({
+            name: name,
+            rarity: "SSR",
+            description: "",
+            image: image,
+            tier: tier,
+            types: [],
+            skills: {},
+            potentials: {},
+            costumes: []
+          });
+        });
+
+        if (characters.length === 0) {
+          alert("No characters found on tier list");
+          return;
+        }
+
+        if (confirm('Import ' + characters.length + ' characters from tier list?')) {
+          showNotification('Importing...', 'info');
+          const result = await SupaDB.bulkImport(characters);
+
+          if (result.error) {
+            console.error(result.error);
+            alert("Tier list import failed");
+          } else {
+            alert("Tier list characters imported");
+            location.reload();
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Failed to fetch tier list: " + err.message);
+      }
+    }
+
+    function handleImport(event) {
+      var file = event.target.files[0];
+      if (!file) return;
       var reader = new FileReader();
       reader.onload = async function(e) {
         try {
           var data = JSON.parse(e.target.result);
-          if (!Array.isArray(data)) throw new Error('Invalid format: expected array');
-          
-          if (confirm('Import ' + data.length + ' characters? This will merge with existing data.')) {
-            showNotification('Importing...', 'info');
-            for (var i = 0; i < data.length; i++) {
-              // Basic sanitization
-              delete data[i].id; // Let Supabase generate new IDs or use upsert
-              await SupaDB.insertCharacter(data[i]);
-            }
-            showNotification('Import complete!', 'success');
+          if (!Array.isArray(data)) {
+            alert('Invalid JSON format. Expected an array of characters.');
+            return;
+          }
+          var result = await SupaDB.bulkImport(data);
+          if (result.error) {
+            console.error(result.error);
+            alert('Import failed. Check console.');
+          } else {
+            alert('Characters imported successfully.');
+            location.reload();
           }
         } catch (err) {
-          alert('Import failed: ' + err.message);
+          console.error(err);
+          alert('JSON parsing error.');
         }
       };
       reader.readAsText(file);
